@@ -11,6 +11,11 @@ using GraphQL.Http;
 using Microsoft.Extensions.Logging;
 using GraphQL.Server.Ui.GraphiQL;
 using GraphQL.Server.Ui.Voyager;
+using OpenBreweryDB.API.Data.Core;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace OpenBreweryDB.API
 {
@@ -22,6 +27,9 @@ namespace OpenBreweryDB.API
         {
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
+            services.AddAutoMapper(typeof(Program));
+            services.AddDbContext<BreweryDbContext>();
+            services.AddControllers();
 
             // services.AddGraphQL(_ =>
             // {
