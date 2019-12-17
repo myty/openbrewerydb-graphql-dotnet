@@ -1,7 +1,5 @@
-using System.Net.Http.Headers;
 using System.Linq.Expressions;
 using System;
-
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +11,7 @@ using AutoMapper;
 
 namespace OpenBreweryDB.API.Controllers
 {
-    [Route("[controller]")]
+    [Route("breweries")]
     public class BreweriesController : Controller
     {
         private readonly BreweryDbContext _context;
@@ -25,7 +23,6 @@ namespace OpenBreweryDB.API.Controllers
             _mapper = mapper;
         }
 
-        // GET: breweries
         [HttpGet]
         public ActionResult<IEnumerable<BreweryDto>> Index(
             [FromRoute] string by_city = null,
@@ -40,7 +37,7 @@ namespace OpenBreweryDB.API.Controllers
         )
         {
             // Validation
-            if (ValidationFailure(by_city, by_name, by_state, by_tag, by_tags, by_type, out var errors))
+            if (HasValidationErrors(by_state, by_type, out var errors))
             {
                 return this.BadRequest();
             }
@@ -67,18 +64,79 @@ namespace OpenBreweryDB.API.Controllers
             return _mapper.Map<List<BreweryDto>>(dataResults);
         }
 
-        bool ValidationFailure(
-            string by_name,
+        [HttpGet("{id}")]
+        public ActionResult<BreweryDto> Get(long id)
+        {
+            var result = _context.Breweries
+                .Where(b => b.Id == id)
+                .FirstOrDefault();
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<BreweryDto>(result);
+        }
+
+        public ActionResult Post([FromBody] BreweryDto dto)
+        {
+            // Validation
+            if (HasValidationErrors(dto, out var errors))
+            {
+                return this.BadRequest();
+            }
+
+            var brewery = _mapper.Map<Brewery>(dto);
+
+            var now = DateTime.Now;
+            brewery.CreatedAt = now;
+            brewery.UpdatedAt = now;
+
+            _context.Breweries.Add(brewery);
+            _context.SaveChanges();
+
+            dto = _mapper.Map<BreweryDto>(brewery);
+
+            return CreatedAtAction(nameof(Get), new { id = brewery.Id }, dto);
+        }
+
+        bool HasValidationErrors(
             string by_state,
-            string by_tag,
-            string by_city,
-            string by_tags,
             string by_type,
             out string[] errors)
         {
-            errors = Array.Empty<string>();
+            var errorList = new List<string>();
 
-            return true;
+            if (!String.IsNullOrEmpty(by_state?.Trim()) && by_state.Contains(" "))
+            {
+                errorList.Add("by_state must contain the full state name in snake_case, no abbreviation (ex. \"new_york\")");
+            }
+
+            var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
+            if (!String.IsNullOrEmpty(by_type?.Trim()) && !allowedTypes.Contains(by_type))
+            {
+                errorList.Add("by_type must be one of the following: micro, regional, brewpub, large, planning, bar, contract, proprietor.");
+            }
+
+            errors = errorList.ToArray();
+
+            return errorList.Any();
+        }
+
+        bool HasValidationErrors(BreweryDto dto, out string[] errors)
+        {
+            var errorList = new List<string>();
+
+            var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
+            if (String.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
+            {
+                errorList.Add("BreweryType must be one of the following: micro, regional, brewpub, large, planning, bar, contract, proprietor.");
+            }
+
+            errors = errorList.ToArray();
+
+            return errorList.Any();
         }
 
         Expression<Func<Brewery, bool>> BuildFilter(
@@ -137,6 +195,10 @@ namespace OpenBreweryDB.API.Controllers
             }
 
             return filter;
+        }
+
+        public class Task<T>
+        {
         }
     }
 }
