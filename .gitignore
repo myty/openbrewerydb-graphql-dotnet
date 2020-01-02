@@ -433,3 +433,5 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 openbrewery.db
+
+frontend/src/styles/index.css

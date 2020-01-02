@@ -79,7 +79,8 @@ namespace OpenBreweryDB.API.Controllers
             return _mapper.Map<BreweryDto>(result);
         }
 
-        public ActionResult Post([FromBody] BreweryDto dto)
+        [HttpPost]
+        public ActionResult Create([FromBody] BreweryDto dto)
         {
             // Validation
             if (HasValidationErrors(dto, out var errors))
@@ -99,6 +100,46 @@ namespace OpenBreweryDB.API.Controllers
             dto = _mapper.Map<BreweryDto>(brewery);
 
             return CreatedAtAction(nameof(Get), new { id = brewery.Id }, dto);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Update(
+            [FromRoute] long id,
+            [FromBody] BreweryDto dto)
+        {
+            // Validation
+            if (HasPutValidationErrors(id, dto, out var errors))
+            {
+                return this.BadRequest();
+            }
+
+            var brewery = _mapper.Map<Brewery>(dto);
+
+            var now = DateTime.Now;
+            brewery.UpdatedAt = now;
+
+            _context.Breweries.Update(brewery);
+            _context.SaveChanges();
+
+            dto = _mapper.Map<BreweryDto>(brewery);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] long id)
+        {
+            var foundBrewery = _context.Breweries.FirstOrDefault(b => b.Id == id);
+
+            if (!(foundBrewery is null))
+            {
+                _context.Breweries.Remove(foundBrewery);
+                _context.SaveChanges();
+
+                return Ok();
+            }
+
+            return NotFound();
         }
 
         bool HasValidationErrors(
@@ -127,6 +168,26 @@ namespace OpenBreweryDB.API.Controllers
         bool HasValidationErrors(BreweryDto dto, out string[] errors)
         {
             var errorList = new List<string>();
+
+            var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
+            if (String.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
+            {
+                errorList.Add("BreweryType must be one of the following: micro, regional, brewpub, large, planning, bar, contract, proprietor.");
+            }
+
+            errors = errorList.ToArray();
+
+            return errorList.Any();
+        }
+
+        bool HasPutValidationErrors(long id, BreweryDto dto, out string[] errors)
+        {
+            var errorList = new List<string>();
+
+            if (id != dto.Id)
+            {
+                errorList.Add("Ids for the object and route must match");
+            }
 
             var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
             if (String.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
@@ -195,10 +256,6 @@ namespace OpenBreweryDB.API.Controllers
             }
 
             return filter;
-        }
-
-        public class Task<T>
-        {
         }
     }
 }
