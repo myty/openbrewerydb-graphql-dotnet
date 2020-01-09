@@ -8,6 +8,8 @@ using OpenBreweryDB.API.Data.Models;
 using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.API.Controllers.Dto;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace OpenBreweryDB.API.Controllers
 {
@@ -25,15 +27,15 @@ namespace OpenBreweryDB.API.Controllers
 
         [HttpGet]
         public ActionResult<IEnumerable<BreweryDto>> Index(
-            [FromRoute] string by_city = null,
-            [FromRoute] string by_name = null,
-            [FromRoute] string by_state = null,
-            [FromRoute] string by_tag = null,
-            [FromRoute] string by_tags = null,
-            [FromRoute] string by_type = null,
-            [FromRoute] string sort = null,
-            [FromRoute] int page = 1,
-            [FromRoute] int per_page = 20
+            [FromQuery] string by_city = null,
+            [FromQuery] string by_name = null,
+            [FromQuery] string by_state = null,
+            [FromQuery] string by_tag = null,
+            [FromQuery] string by_tags = null,
+            [FromQuery] string by_type = null,
+            [FromQuery] string sort = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int per_page = 20
         )
         {
             // Validation
@@ -43,7 +45,7 @@ namespace OpenBreweryDB.API.Controllers
             }
 
             // Filtering
-            var filter = BuildFilter(by_city, by_name, by_state, by_tag, by_tags, by_type);
+            var filter = BuildFilter(by_name, by_state, by_tag, by_city, by_tags, by_type);
 
             // Sorting
             if (!String.IsNullOrEmpty(sort?.Trim()))
@@ -55,20 +57,21 @@ namespace OpenBreweryDB.API.Controllers
 
             // Return Results
             var dataResults = _context.Breweries
+                .Include(b => b.BreweryTags)
+                    .ThenInclude(bt => bt.Tag)
                 .Where(filter)
                 .OrderBy(b => b.Name)
                 .Skip((page - 1) * per_page)
-                .Take(per_page)
-                .ToList();
+                .Take(per_page);
 
-            return _mapper.Map<List<BreweryDto>>(dataResults);
+            return _mapper.Map<IEnumerable<Brewery>, List<BreweryDto>>(dataResults);
         }
 
         [HttpGet("{id}")]
         public ActionResult<BreweryDto> Get(long id)
         {
             var result = _context.Breweries
-                .Where(b => b.Id == id)
+                .Where(b => b.BreweryId == id)
                 .FirstOrDefault();
 
             if (result is null)
@@ -94,12 +97,37 @@ namespace OpenBreweryDB.API.Controllers
             brewery.CreatedAt = now;
             brewery.UpdatedAt = now;
 
+            var existingTags = _context.Tags
+                .Where(t => dto.Tags.Contains(t.Name))
+                .ToList();
+
+            var existingTagNames = existingTags
+                .Select(t => t.Name)
+                .ToList();
+
+            var tagsToCreate = dto.Tags
+                .Where(t => !existingTagNames.Contains(t))
+                .Select(t => new Tag { Name = t })
+                .ToList();
+
+            var breweryTags = tagsToCreate
+                .Concat(existingTags)
+                .Select(t => new BreweryTag
+                {
+                    Brewery = brewery,
+                    Tag = t
+                })
+                .ToList();
+
+            _context.BreweryTags.AddRange(breweryTags);
+            _context.Tags.AddRange(tagsToCreate);
             _context.Breweries.Add(brewery);
+
             _context.SaveChanges();
 
             dto = _mapper.Map<BreweryDto>(brewery);
 
-            return CreatedAtAction(nameof(Get), new { id = brewery.Id }, dto);
+            return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
         }
 
         [HttpPut("{id}")]
@@ -129,7 +157,7 @@ namespace OpenBreweryDB.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] long id)
         {
-            var foundBrewery = _context.Breweries.FirstOrDefault(b => b.Id == id);
+            var foundBrewery = _context.Breweries.FirstOrDefault(b => b.BreweryId == id);
 
             if (!(foundBrewery is null))
             {
@@ -214,19 +242,19 @@ namespace OpenBreweryDB.API.Controllers
             // by_city
             if (!String.IsNullOrEmpty(by_city?.Trim()))
             {
-                filter = filter.AndAlso(b => b.City.ToLowerInvariant().Contains(by_city.Trim()));
+                filter = filter.AndAlso(b => b.City.ToLower().Contains(by_city.Trim()));
             }
 
             // by_name
             if (!String.IsNullOrEmpty(by_name?.Trim()))
             {
-                filter = filter.AndAlso(b => b.Name.ToLowerInvariant().Contains(by_name.Trim()));
+                filter = filter.AndAlso(b => b.Name.ToLower().Contains(by_name.Trim()));
             }
 
             // by_state
             if (!String.IsNullOrEmpty(by_state?.Trim()))
             {
-                filter = filter.AndAlso(b => b.State.ToLowerInvariant().Replace(" ", "_") == by_state.Trim());
+                filter = filter.AndAlso(b => b.State.ToLower().Replace(" ", "_") == by_state.Trim());
             }
 
             // by_tag
@@ -246,13 +274,13 @@ namespace OpenBreweryDB.API.Controllers
 
             if (tags.Any())
             {
-                filter = filter.AndAlso(b => b.BreweryTags.Select(bt => bt.Tag.Name).Union(tags).Any());
+                filter = filter.AndAlso(b => b.BreweryTags.Select(bt => bt.Tag.Name).Any(t => tags.Contains(t)));
             }
 
             // by_type
             if (!String.IsNullOrEmpty(by_type?.Trim()))
             {
-                filter = filter.AndAlso(b => b.BreweryType.ToLowerInvariant() == by_type.Trim());
+                filter = filter.AndAlso(b => b.BreweryType.ToLower() == by_type.Trim());
             }
 
             return filter;

@@ -1,7 +1,7 @@
+
 namespace OpenBreweryDB.API.Data.Core
 {
-    public class BaseEntity
+    public interface BaseEntity
     {
-        public long? Id { get; set; }
     }
 }

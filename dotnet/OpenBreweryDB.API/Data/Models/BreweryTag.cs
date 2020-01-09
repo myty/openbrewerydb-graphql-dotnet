@@ -1,5 +1,5 @@
 using System;
-using System.Security.Principal;
+using System.ComponentModel.DataAnnotations;
 using OpenBreweryDB.API.Data.Core;
 
 namespace OpenBreweryDB.API.Data.Models

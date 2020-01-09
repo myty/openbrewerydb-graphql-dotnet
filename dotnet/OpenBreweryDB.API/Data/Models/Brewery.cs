@@ -1,11 +1,13 @@
-using System.Collections.Generic;
-using System;
 using OpenBreweryDB.API.Data.Core;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace OpenBreweryDB.API.Data.Models
 {
     public class Brewery : BaseEntity
     {
+        public long BreweryId { get; set; }
         public string Name { get; set; }
         public string BreweryType { get; set; }
         public string Street { get; set; }

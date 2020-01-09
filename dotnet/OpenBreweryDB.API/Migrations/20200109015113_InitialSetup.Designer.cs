@@ -9,8 +9,8 @@ using OpenBreweryDB.API.Data.Core;
 namespace OpenBreweryDB.API.Migrations
 {
     [DbContext(typeof(BreweryDbContext))]
-    [Migration("20191210181022_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200109015113_InitialSetup")]
+    partial class InitialSetup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace OpenBreweryDB.API.Migrations
 
             modelBuilder.Entity("OpenBreweryDB.API.Data.Models.Brewery", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("BreweryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -63,7 +63,7 @@ namespace OpenBreweryDB.API.Migrations
                     b.Property<string>("WebsiteURL")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("BreweryId");
 
                     b.ToTable("breweries");
                 });
@@ -76,9 +76,6 @@ namespace OpenBreweryDB.API.Migrations
                     b.Property<long>("TagId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("Id")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("BreweryId", "TagId");
 
                     b.HasIndex("TagId");
@@ -88,14 +85,14 @@ namespace OpenBreweryDB.API.Migrations
 
             modelBuilder.Entity("OpenBreweryDB.API.Data.Models.Tag", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("TagId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("TagId");
 
                     b.HasIndex("Name")
                         .HasName("Index_Tags_On_Name");
