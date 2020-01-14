@@ -10,5 +10,8 @@
   "name": "openbrewerydb-qraphql",
   "private": true,
   "version": "0.0.1",
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "dotnet-watch": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run"
+  }
 }

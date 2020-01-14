@@ -1,15 +1,14 @@
-using System.Linq.Expressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OpenBreweryDB.API.Controllers.Dto;
 using OpenBreweryDB.API.Data.Core;
 using OpenBreweryDB.API.Data.Models;
 using OpenBreweryDB.API.Extensions;
-using OpenBreweryDB.API.Controllers.Dto;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace OpenBreweryDB.API.Controllers
 {

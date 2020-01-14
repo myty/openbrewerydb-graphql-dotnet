@@ -8,6 +8,7 @@ public class BreweryProfile : Profile
 {
     public BreweryProfile()
     {
+        // From: Brewery
         CreateMap<Brewery, BreweryDto>()
             .ForMember(
                 dest => dest.Tags,
@@ -21,6 +22,13 @@ public class BreweryProfile : Profile
                 opt => opt.MapFrom(src => src.BreweryId)
             );
 
+        CreateMap<Brewery, AutocompleteBreweryDto>()
+            .ForMember(
+                dest => dest.Id,
+                opt => opt.MapFrom(src => src.BreweryId)
+            );
+
+        // From: BreweryDto
         CreateMap<BreweryDto, Brewery>()
             .ForMember(
                 dest => dest.BreweryId,
