@@ -2,7 +2,7 @@
   "author": "andculture",
   "description": "Demo OpenBreweryDB GraphQL Implementation",
   "devDependencies": {
-    "and-cli": "^0.4.0",
+    "and-cli": "^0.5.1",
     "prettier": "^1.19.1"
   },
   "license": "ISC",
