@@ -12,6 +12,9 @@
   "version": "0.0.1",
   "dependencies": {},
   "scripts": {
+    "dotnet-clean": "cd ./dotnet/OpenBreweryDB.API && dotnet clean",
+    "dotnet-restore": "cd ./dotnet/OpenBreweryDB.API && dotnet restore",
+    "dotnet-build": "cd ./dotnet/OpenBreweryDB.API && dotnet build",
     "dotnet-watch": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run"
   }
 }
