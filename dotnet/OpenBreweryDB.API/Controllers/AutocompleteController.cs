@@ -1,10 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.API.Controllers.Dto;
-using OpenBreweryDB.API.Data.Core;
-using OpenBreweryDB.API.Data.Models;
 using OpenBreweryDB.API.Extensions;
+using OpenBreweryDB.Data;
+using OpenBreweryDB.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

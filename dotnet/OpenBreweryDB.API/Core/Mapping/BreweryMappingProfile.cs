@@ -1,8 +1,7 @@
-using System.Threading.Tasks.Dataflow;
 using System.Linq;
 using AutoMapper;
 using OpenBreweryDB.API.Controllers.Dto;
-using OpenBreweryDB.API.Data.Models;
+using OpenBreweryDB.Data.Models;
 
 public class BreweryProfile : Profile
 {

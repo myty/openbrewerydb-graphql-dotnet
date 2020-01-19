@@ -2,10 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OpenBreweryDB.API.Data.Core;
 
-namespace OpenBreweryDB.API.Migrations
+namespace OpenBreweryDB.Data.Migrations
 {
     [DbContext(typeof(BreweryDbContext))]
     partial class BreweryDbContextModelSnapshot : ModelSnapshot
@@ -16,7 +14,7 @@ namespace OpenBreweryDB.API.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.0");
 
-            modelBuilder.Entity("OpenBreweryDB.API.Data.Models.Brewery", b =>
+            modelBuilder.Entity("OpenBreweryDB.Data.Models.Brewery", b =>
                 {
                     b.Property<long>("BreweryId")
                         .ValueGeneratedOnAdd()
@@ -66,7 +64,7 @@ namespace OpenBreweryDB.API.Migrations
                     b.ToTable("breweries");
                 });
 
-            modelBuilder.Entity("OpenBreweryDB.API.Data.Models.BreweryTag", b =>
+            modelBuilder.Entity("OpenBreweryDB.Data.Models.BreweryTag", b =>
                 {
                     b.Property<long>("BreweryId")
                         .HasColumnType("INTEGER");
@@ -81,7 +79,7 @@ namespace OpenBreweryDB.API.Migrations
                     b.ToTable("BreweryTags");
                 });
 
-            modelBuilder.Entity("OpenBreweryDB.API.Data.Models.Tag", b =>
+            modelBuilder.Entity("OpenBreweryDB.Data.Models.Tag", b =>
                 {
                     b.Property<long>("TagId")
                         .ValueGeneratedOnAdd()
@@ -98,15 +96,15 @@ namespace OpenBreweryDB.API.Migrations
                     b.ToTable("tags");
                 });
 
-            modelBuilder.Entity("OpenBreweryDB.API.Data.Models.BreweryTag", b =>
+            modelBuilder.Entity("OpenBreweryDB.Data.Models.BreweryTag", b =>
                 {
-                    b.HasOne("OpenBreweryDB.API.Data.Models.Brewery", "Brewery")
+                    b.HasOne("OpenBreweryDB.Data.Models.Brewery", "Brewery")
                         .WithMany("BreweryTags")
                         .HasForeignKey("BreweryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OpenBreweryDB.API.Data.Models.Tag", "Tag")
+                    b.HasOne("OpenBreweryDB.Data.Models.Tag", "Tag")
                         .WithMany("BreweryTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)

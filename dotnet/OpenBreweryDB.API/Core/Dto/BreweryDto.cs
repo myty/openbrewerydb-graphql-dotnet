@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System;
 using OpenBreweryDB.API.Core.Dto;
-using OpenBreweryDB.API.Data.Models;
 using System.Text.Json.Serialization;
 
 namespace OpenBreweryDB.API.Controllers.Dto

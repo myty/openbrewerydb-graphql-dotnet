@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using OpenBreweryDB.API.Data.Models;
+using OpenBreweryDB.Data.Models;
 
-namespace OpenBreweryDB.API.Data.Core
+namespace OpenBreweryDB.Data
 {
     public class BreweryDbContext : DbContext
     {

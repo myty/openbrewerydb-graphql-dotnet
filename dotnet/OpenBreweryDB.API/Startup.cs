@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OpenBreweryDB.API.Data.Core;
+using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API
 {
@@ -37,7 +37,8 @@ namespace OpenBreweryDB.API
             {
                 _.EnableMetrics = true;
                 _.ExposeExceptions = true;
-            });
+            })
+            .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

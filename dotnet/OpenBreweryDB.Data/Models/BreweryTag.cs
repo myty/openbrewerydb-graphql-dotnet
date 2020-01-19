@@ -1,8 +1,6 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using OpenBreweryDB.API.Data.Core;
+using OpenBreweryDB.Data.Core;
 
-namespace OpenBreweryDB.API.Data.Models
+namespace OpenBreweryDB.Data.Models
 {
     public class BreweryTag : BaseEntity
     {

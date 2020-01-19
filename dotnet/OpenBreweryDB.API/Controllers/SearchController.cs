@@ -2,13 +2,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.API.Controllers.Dto;
-using OpenBreweryDB.API.Data.Core;
-using OpenBreweryDB.API.Data.Models;
+using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.API.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API.Controllers
 {

@@ -1,5 +1,5 @@
 
-namespace OpenBreweryDB.API.Data.Core
+namespace OpenBreweryDB.Data.Core
 {
     public interface BaseEntity
     {
