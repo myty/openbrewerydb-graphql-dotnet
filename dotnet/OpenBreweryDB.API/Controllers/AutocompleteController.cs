@@ -1,13 +1,11 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using DTO = OpenBreweryDB.Core.Model;
-using OpenBreweryDB.API.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data;
 using OpenBreweryDB.Data.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace OpenBreweryDB.API.Controllers
 {
@@ -16,11 +14,13 @@ namespace OpenBreweryDB.API.Controllers
     {
         private readonly BreweryDbContext _context;
         private readonly IMapper _mapper;
+        readonly IBreweryFilterConductor _filterConductor;
 
-        public AutocompleteController(BreweryDbContext context, IMapper mapper)
+        public AutocompleteController(BreweryDbContext context, IMapper mapper, IBreweryFilterConductor filterConductor)
         {
             _context = context;
             _mapper = mapper;
+            _filterConductor = filterConductor;
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace OpenBreweryDB.API.Controllers
         )
         {
             // Filtering
-            var filter = BuildFilter(query);
+            var filter = _filterConductor.BuildAutocompleteQueryFilter(query);
 
             // Return Results
             var dataResults = _context.Breweries
@@ -42,20 +42,6 @@ namespace OpenBreweryDB.API.Controllers
                 .Take(per_page);
 
             return _mapper.Map<IEnumerable<Brewery>, List<DTO.AutocompleteBrewery>>(dataResults);
-        }
-
-        Expression<Func<Brewery, bool>> BuildFilter(string query = null)
-        {
-            Expression<Func<Brewery, bool>> filter = b => true;
-            var formattedQuery = query?.Trim();
-
-            if (String.IsNullOrEmpty(formattedQuery))
-            {
-                return filter;
-            }
-
-            // by_name
-            return filter.OrElse(b => b.Name.ToLower().Contains(formattedQuery));
         }
     }
 }

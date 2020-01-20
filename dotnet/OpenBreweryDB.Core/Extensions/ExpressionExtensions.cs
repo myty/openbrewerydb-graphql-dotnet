@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace OpenBreweryDB.API.Extensions
+namespace OpenBreweryDB.Core.Extensions
 {
     public static class ExpressionExtensions
     {

@@ -1,14 +1,12 @@
 using AutoMapper;
+using DTO = OpenBreweryDB.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DTO = OpenBreweryDB.Core.Model;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Data;
 using OpenBreweryDB.Data.Models;
-using OpenBreweryDB.API.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API.Controllers
 {
@@ -17,11 +15,13 @@ namespace OpenBreweryDB.API.Controllers
     {
         private readonly BreweryDbContext _context;
         private readonly IMapper _mapper;
+        readonly IBreweryFilterConductor _filterConductor;
 
-        public SearchController(BreweryDbContext context, IMapper mapper)
+        public SearchController(BreweryDbContext context, IMapper mapper, IBreweryFilterConductor filterConductor)
         {
             _context = context;
             _mapper = mapper;
+            _filterConductor = filterConductor;
         }
 
         [HttpGet]
@@ -33,7 +33,7 @@ namespace OpenBreweryDB.API.Controllers
         )
         {
             // Filtering
-            var filter = BuildFilter(query);
+            var filter = _filterConductor.BuildSearchQueryFilter(query);
 
             // Return Results
             var dataResults = _context.Breweries
@@ -45,30 +45,6 @@ namespace OpenBreweryDB.API.Controllers
                 .Take(per_page);
 
             return _mapper.Map<IEnumerable<Brewery>, List<DTO.Brewery>>(dataResults);
-        }
-
-        Expression<Func<Brewery, bool>> BuildFilter(string query = null)
-        {
-            Expression<Func<Brewery, bool>> filter = b => true;
-            var formattedQuery = query?.Trim();
-
-            if (String.IsNullOrEmpty(formattedQuery))
-            {
-                return filter;
-            }
-
-            return filter
-                // by_city
-                .OrElse(b => b.City.ToLower().Contains(formattedQuery))
-
-                // by_name
-                .OrElse(b => b.Name.ToLower().Contains(formattedQuery))
-
-                // by_tag
-                .OrElse(b => b.BreweryTags.Select(bt => bt.Tag.Name).Any(t => t.Contains(formattedQuery)))
-
-                // by_type
-                .OrElse(b => b.BreweryType.ToLower().Contains(formattedQuery));
         }
     }
 }

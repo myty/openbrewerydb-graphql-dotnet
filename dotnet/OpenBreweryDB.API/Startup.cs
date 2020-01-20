@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.Core;
+using OpenBreweryDB.Core.Conductors.Breweries;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Core.GraphQL;
 using OpenBreweryDB.Core.GraphQL.Types;
 using OpenBreweryDB.Data;
@@ -28,6 +30,7 @@ namespace OpenBreweryDB.API
             // services.AddSingleton<CharacterInterface>();
             services.AddScoped<BreweryTypeEnum>();
             services.AddScoped<ISchema, BreweriesSchema>();
+            services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
@@ -38,8 +41,8 @@ namespace OpenBreweryDB.API
 
             services.AddGraphQL(_ =>
             {
-                _.EnableMetrics = true;
-                _.ExposeExceptions = true;
+                //_.EnableMetrics = true;
+                //_.ExposeExceptions = true;
             })
             .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User });
 
@@ -72,10 +75,10 @@ namespace OpenBreweryDB.API
             app.UseStaticFiles();
             app.UseWebSockets();
 
-            // add http for Schema at default url http://locahost:5000/graphql
+            // add http for Schema at default url http://localhost:5000/graphql
             app.UseGraphQL<ISchema>();
 
-            // use graphql-playground at default url http://locahost:5000/ui/playground
+            // use graphql-playground at default url http://localhost:5000/ui/playground
             app.UseGraphQLPlayground();
         }
     }
