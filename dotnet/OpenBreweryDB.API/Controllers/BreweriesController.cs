@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OpenBreweryDB.API.Controllers.Dto;
+using DTO = OpenBreweryDB.Core.Model;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.API.Extensions;
 using System;
@@ -25,7 +25,7 @@ namespace OpenBreweryDB.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<BreweryDto>> Index(
+        public ActionResult<IEnumerable<DTO.Brewery>> Index(
             [FromQuery] string by_city = null,
             [FromQuery] string by_name = null,
             [FromQuery] string by_state = null,
@@ -63,11 +63,11 @@ namespace OpenBreweryDB.API.Controllers
                 .Skip((page - 1) * per_page)
                 .Take(per_page);
 
-            return _mapper.Map<IEnumerable<Brewery>, List<BreweryDto>>(dataResults);
+            return _mapper.Map<IEnumerable<Brewery>, List<DTO.Brewery>>(dataResults);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<BreweryDto> Get(long id)
+        public ActionResult<DTO.Brewery> Get(long id)
         {
             var result = _context.Breweries
                 .Where(b => b.BreweryId == id)
@@ -78,11 +78,11 @@ namespace OpenBreweryDB.API.Controllers
                 return NotFound();
             }
 
-            return _mapper.Map<BreweryDto>(result);
+            return _mapper.Map<DTO.Brewery>(result);
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] BreweryDto dto)
+        public ActionResult Create([FromBody] DTO.Brewery dto)
         {
             // Validation
             if (HasValidationErrors(dto, out var errors))
@@ -124,7 +124,7 @@ namespace OpenBreweryDB.API.Controllers
 
             _context.SaveChanges();
 
-            dto = _mapper.Map<BreweryDto>(brewery);
+            dto = _mapper.Map<DTO.Brewery>(brewery);
 
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
         }
@@ -132,7 +132,7 @@ namespace OpenBreweryDB.API.Controllers
         [HttpPut("{id}")]
         public ActionResult Update(
             [FromRoute] long id,
-            [FromBody] BreweryDto dto)
+            [FromBody] DTO.Brewery dto)
         {
             // Validation
             if (HasPutValidationErrors(id, dto, out var errors))
@@ -148,7 +148,7 @@ namespace OpenBreweryDB.API.Controllers
             _context.Breweries.Update(brewery);
             _context.SaveChanges();
 
-            dto = _mapper.Map<BreweryDto>(brewery);
+            dto = _mapper.Map<DTO.Brewery>(brewery);
 
             return Ok();
         }
@@ -192,7 +192,7 @@ namespace OpenBreweryDB.API.Controllers
             return errorList.Any();
         }
 
-        bool HasValidationErrors(BreweryDto dto, out string[] errors)
+        bool HasValidationErrors(DTO.Brewery dto, out string[] errors)
         {
             var errorList = new List<string>();
 
@@ -207,7 +207,7 @@ namespace OpenBreweryDB.API.Controllers
             return errorList.Any();
         }
 
-        bool HasPutValidationErrors(long id, BreweryDto dto, out string[] errors)
+        bool HasPutValidationErrors(long id, DTO.Brewery dto, out string[] errors)
         {
             var errorList = new List<string>();
 

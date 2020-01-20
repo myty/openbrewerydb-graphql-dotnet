@@ -29,7 +29,7 @@ namespace OpenBreweryDB.API
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
 
-            services.AddAutoMapper(typeof(Program));
+            services.AddAutoMapper(typeof(BreweryProfile));
             services.AddDbContext<BreweryDbContext>();
             services.AddControllers();
 

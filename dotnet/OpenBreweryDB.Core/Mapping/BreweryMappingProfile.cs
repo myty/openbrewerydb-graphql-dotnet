@@ -1,6 +1,6 @@
 using System.Linq;
 using AutoMapper;
-using OpenBreweryDB.API.Controllers.Dto;
+using DTO = OpenBreweryDB.Core.Model;
 using OpenBreweryDB.Data.Models;
 
 public class BreweryProfile : Profile
@@ -8,7 +8,7 @@ public class BreweryProfile : Profile
     public BreweryProfile()
     {
         // From: Brewery
-        CreateMap<Brewery, BreweryDto>()
+        CreateMap<Brewery, DTO.Brewery>()
             .ForMember(
                 dest => dest.Tags,
                 opt => opt
@@ -21,14 +21,14 @@ public class BreweryProfile : Profile
                 opt => opt.MapFrom(src => src.BreweryId)
             );
 
-        CreateMap<Brewery, AutocompleteBreweryDto>()
+        CreateMap<Brewery, DTO.AutocompleteBrewery>()
             .ForMember(
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.BreweryId)
             );
 
         // From: BreweryDto
-        CreateMap<BreweryDto, Brewery>()
+        CreateMap<DTO.Brewery, Brewery>()
             .ForMember(
                 dest => dest.BreweryId,
                 opt => opt.MapFrom(src => src.Id));

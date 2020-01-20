@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="automapper" Version="9.0.0" />
     <PackageReference Include="GraphQL" Version="3.0.0-preview-1352" />
   </ItemGroup>
 

@@ -1,9 +1,9 @@
-using OpenBreweryDB.API.Core.Dto;
+using OpenBreweryDB.Core.Model;
 using System.Text.Json.Serialization;
 
-namespace OpenBreweryDB.API.Controllers.Dto
+namespace OpenBreweryDB.Core.Model
 {
-    public class AutocompleteBreweryDto : BaseDto
+    public class AutocompleteBrewery : BaseDto
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }

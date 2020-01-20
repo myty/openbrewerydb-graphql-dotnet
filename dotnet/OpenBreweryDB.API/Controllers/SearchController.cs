@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OpenBreweryDB.API.Controllers.Dto;
+using DTO = OpenBreweryDB.Core.Model;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.API.Extensions;
 using System;
@@ -25,7 +25,7 @@ namespace OpenBreweryDB.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<BreweryDto>> Index(
+        public ActionResult<IEnumerable<DTO.Brewery>> Index(
             [FromQuery] string query = null,
             [FromQuery] string sort = null,
             [FromQuery] int page = 1,
@@ -44,7 +44,7 @@ namespace OpenBreweryDB.API.Controllers
                 .Skip((page - 1) * per_page)
                 .Take(per_page);
 
-            return _mapper.Map<IEnumerable<Brewery>, List<BreweryDto>>(dataResults);
+            return _mapper.Map<IEnumerable<Brewery>, List<DTO.Brewery>>(dataResults);
         }
 
         Expression<Func<Brewery, bool>> BuildFilter(string query = null)
