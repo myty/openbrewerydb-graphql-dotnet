@@ -3,10 +3,11 @@ using System.Linq;
 using AutoMapper;
 using GraphQL.Types;
 using OpenBreweryDB.Core.GraphQL.Types;
-using DTO = OpenBreweryDB.Core.Model;
+using DTO = OpenBreweryDB.Core.Models;
 using OpenBreweryDB.Data;
 using System.Collections.Generic;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace OpenBreweryDB.Core
 {
@@ -35,7 +36,8 @@ namespace OpenBreweryDB.Core
             Field<ListGraphType<BreweryType>>(
                 "breweries",
                 arguments: new QueryArguments(
-                    new QueryArgument<StringGraphType> { Name = "name", Description = "name of the brewery" }
+                    new QueryArgument<StringGraphType> { Name = "name", Description = "name of the brewery" },
+                    new QueryArgument<StringGraphType> { Name = "tag", Description = "tag associated w/ brewery" }
                 ),
                 resolve: GetBreweries
             );
@@ -44,9 +46,13 @@ namespace OpenBreweryDB.Core
         private IList<DTO.Brewery> GetBreweries(ResolveFieldContext<object> context)
         {
             var filter = _filterConductor.BuildFilter(
-                by_name: context.GetArgument<string>("name"));
+                by_name: context.GetArgument<string>("name"),
+                by_tag: context.GetArgument<string>("tag"));
 
-            var result = _data.Breweries.Where(filter);
+            var result = _data.Breweries
+                .Include(b => b.BreweryTags)
+                    .ThenInclude(bt => bt.Tag)
+                .Where(filter);
 
             return _mapper.Map<IList<DTO.Brewery>>(result);
         }
@@ -55,10 +61,14 @@ namespace OpenBreweryDB.Core
         {
             var id = context.GetArgument<long>("id");
             var result = _data.Breweries
+                .Include(b => b.BreweryTags)
+                    .ThenInclude(bt => bt.Tag)
                 .Where(b => b.BreweryId == id)
                 .FirstOrDefault();
 
-            return _mapper.Map<DTO.Brewery>(result);
+            var brewery = _mapper.Map<DTO.Brewery>(result);
+
+            return brewery;
         }
     }
 }

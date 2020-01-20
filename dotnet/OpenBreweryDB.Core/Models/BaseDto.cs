@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace OpenBreweryDB.Core.Model
+namespace OpenBreweryDB.Core.Models
 {
     public class BaseDto
     {

@@ -1,6 +1,6 @@
 using System.Linq;
 using AutoMapper;
-using DTO = OpenBreweryDB.Core.Model;
+using DTO = OpenBreweryDB.Core.Models;
 using OpenBreweryDB.Data.Models;
 
 public class BreweryProfile : Profile

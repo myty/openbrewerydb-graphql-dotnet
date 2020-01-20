@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DTO = OpenBreweryDB.Core.Model;
+using DTO = OpenBreweryDB.Core.Models;
 using OpenBreweryDB.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -71,6 +71,8 @@ namespace OpenBreweryDB.API.Controllers
         public ActionResult<DTO.Brewery> Get(long id)
         {
             var result = _context.Breweries
+                .Include(b => b.BreweryTags)
+                    .ThenInclude(bt => bt.Tag)
                 .Where(b => b.BreweryId == id)
                 .FirstOrDefault();
 

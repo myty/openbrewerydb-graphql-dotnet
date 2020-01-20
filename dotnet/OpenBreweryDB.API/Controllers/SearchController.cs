@@ -1,5 +1,5 @@
 using AutoMapper;
-using DTO = OpenBreweryDB.Core.Model;
+using DTO = OpenBreweryDB.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;

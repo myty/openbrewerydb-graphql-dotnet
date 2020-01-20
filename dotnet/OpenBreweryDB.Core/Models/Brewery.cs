@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System;
-using OpenBreweryDB.Core.Model;
+using OpenBreweryDB.Core.Models;
 using System.Text.Json.Serialization;
 
-namespace OpenBreweryDB.Core.Model
+namespace OpenBreweryDB.Core.Models
 {
     public class Brewery : BaseDto
     {
