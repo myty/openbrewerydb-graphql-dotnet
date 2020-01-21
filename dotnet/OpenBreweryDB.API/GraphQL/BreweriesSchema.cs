@@ -1,8 +1,9 @@
 using GraphQL.Types;
 using GraphQL.Utilities;
+using OpenBreweryDB.API.GraphQL.Queries;
 using System;
 
-namespace OpenBreweryDB.Core.GraphQL
+namespace OpenBreweryDB.API.GraphQL
 {
     public class BreweriesSchema : Schema
     {

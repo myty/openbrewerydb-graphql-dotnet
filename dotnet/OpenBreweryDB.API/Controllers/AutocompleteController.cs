@@ -32,7 +32,7 @@ namespace OpenBreweryDB.API.Controllers
         )
         {
             // Filtering
-            var filter = _filterConductor.BuildAutocompleteQueryFilter(query);
+            var filter = _filterConductor.BuildSearchQueryFilter(query);
 
             // Return Results
             var dataResults = _context.Breweries

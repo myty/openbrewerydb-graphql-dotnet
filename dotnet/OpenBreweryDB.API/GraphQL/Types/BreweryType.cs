@@ -1,7 +1,7 @@
 using GraphQL.Types;
 using OpenBreweryDB.Core.Models;
 
-namespace OpenBreweryDB.Core.GraphQL.Types
+namespace OpenBreweryDB.API.GraphQL.Types
 {
     public class BreweryType : ObjectGraphType<Brewery>
     {

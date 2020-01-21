@@ -68,7 +68,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             return filter;
         }
 
-        public Expression<Func<Brewery, bool>> BuildAutocompleteQueryFilter(string query = null)
+        public Expression<Func<Brewery, bool>> BuildSearchQueryFilter(string query = null)
         {
             Expression<Func<Brewery, bool>> filter = b => true;
             var formattedQuery = query?.Trim();
@@ -80,30 +80,6 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
             // by_name
             return filter.OrElse(b => b.Name.ToLower().Contains(formattedQuery));
-        }
-
-        public Expression<Func<Brewery, bool>> BuildSearchQueryFilter(string query = null)
-        {
-            Expression<Func<Brewery, bool>> filter = b => true;
-            var formattedQuery = query?.Trim();
-
-            if (String.IsNullOrEmpty(formattedQuery))
-            {
-                return filter;
-            }
-
-            return filter
-                // by_city
-                .OrElse(b => b.City.ToLower().Contains(formattedQuery))
-
-                // by_name
-                .OrElse(b => b.Name.ToLower().Contains(formattedQuery))
-
-                // by_tag
-                .OrElse(b => b.BreweryTags.Select(bt => bt.Tag.Name).Any(t => t.Contains(formattedQuery)))
-
-                // by_type
-                .OrElse(b => b.BreweryType.ToLower().Contains(formattedQuery));
         }
     }
 }

@@ -14,8 +14,6 @@ namespace OpenBreweryDB.Core.Conductors.Breweries.Interfaces
             string by_tags = null,
             string by_type = null);
 
-        Expression<Func<Brewery, bool>> BuildAutocompleteQueryFilter(string query = null);
-
         Expression<Func<Brewery, bool>> BuildSearchQueryFilter(string query = null);
     }
 }

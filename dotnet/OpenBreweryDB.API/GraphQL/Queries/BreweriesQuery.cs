@@ -1,15 +1,17 @@
-using System;
 using System.Linq;
 using AutoMapper;
 using GraphQL.Types;
-using OpenBreweryDB.Core.GraphQL.Types;
+using OpenBreweryDB.API.GraphQL.Types;
 using DTO = OpenBreweryDB.Core.Models;
+using Entity = OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Data;
 using System.Collections.Generic;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System;
 
-namespace OpenBreweryDB.Core
+namespace OpenBreweryDB.API.GraphQL.Queries
 {
     public class BreweriesQuery : ObjectGraphType
     {
@@ -25,17 +27,10 @@ namespace OpenBreweryDB.Core
 
             Name = nameof(BreweriesQuery);
 
-            Field<BreweryType>(
-                "brewery",
-                arguments: new QueryArguments(
-                    new QueryArgument<LongGraphType> { Name = "id", Description = "id of the brewery" }
-                ),
-                resolve: GetBrewery
-            );
-
             Field<ListGraphType<BreweryType>>(
                 "breweries",
                 arguments: new QueryArguments(
+                    new QueryArgument<IdGraphType> { Name = "id", Description = "id of the brewery" },
                     new QueryArgument<StringGraphType> { Name = "name", Description = "name of the brewery" },
                     new QueryArgument<StringGraphType> { Name = "tag", Description = "tag associated w/ brewery" }
                 ),
@@ -43,32 +38,29 @@ namespace OpenBreweryDB.Core
             );
         }
 
-        private IList<DTO.Brewery> GetBreweries(ResolveFieldContext<object> context)
+        private IEnumerable<DTO.Brewery> GetBreweries(ResolveFieldContext<object> context)
         {
-            var filter = _filterConductor.BuildFilter(
-                by_name: context.GetArgument<string>("name"),
-                by_tag: context.GetArgument<string>("tag"));
+            Expression<Func<Entity.Brewery, bool>> filter = null;
+
+            if (context.HasArgument("id"))
+            {
+                var id = context.GetArgument<long>("id");
+
+                filter = b => b.BreweryId == id;
+            }
+            else
+            {
+                filter = _filterConductor.BuildFilter(
+                    by_name: context.GetArgument<string>("name"),
+                    by_tag: context.GetArgument<string>("tag"));
+            }
 
             var result = _data.Breweries
                 .Include(b => b.BreweryTags)
                     .ThenInclude(bt => bt.Tag)
                 .Where(filter);
 
-            return _mapper.Map<IList<DTO.Brewery>>(result);
-        }
-
-        private DTO.Brewery GetBrewery(ResolveFieldContext<object> context)
-        {
-            var id = context.GetArgument<long>("id");
-            var result = _data.Breweries
-                .Include(b => b.BreweryTags)
-                    .ThenInclude(bt => bt.Tag)
-                .Where(b => b.BreweryId == id)
-                .FirstOrDefault();
-
-            var brewery = _mapper.Map<DTO.Brewery>(result);
-
-            return brewery;
+            return _mapper.Map<IEnumerable<DTO.Brewery>>(result);
         }
     }
 }

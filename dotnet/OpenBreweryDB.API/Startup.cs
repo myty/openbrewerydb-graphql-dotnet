@@ -10,8 +10,9 @@ using Microsoft.Extensions.Logging;
 using OpenBreweryDB.Core;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.GraphQL;
-using OpenBreweryDB.Core.GraphQL.Types;
+using OpenBreweryDB.API.GraphQL;
+using OpenBreweryDB.API.GraphQL.Queries;
+using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API
@@ -22,14 +23,11 @@ namespace OpenBreweryDB.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // GraphQL
             services.AddScoped<BreweriesQuery>();
-            // services.AddSingleton<StarWarsMutation>();
             services.AddScoped<BreweryType>();
-            // services.AddSingleton<HumanInputType>();
-            // services.AddSingleton<DroidType>();
-            // services.AddSingleton<CharacterInterface>();
-            services.AddScoped<BreweryTypeEnum>();
             services.AddScoped<ISchema, BreweriesSchema>();
+
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
 
             services.AddLogging(builder => builder.AddConsole());
@@ -39,10 +37,10 @@ namespace OpenBreweryDB.API
             services.AddDbContext<BreweryDbContext>();
             services.AddControllers();
 
-            services.AddGraphQL(_ =>
+            services.AddGraphQL(graphqlConfig =>
             {
-                //_.EnableMetrics = true;
-                //_.ExposeExceptions = true;
+                graphqlConfig.EnableMetrics = false;
+                graphqlConfig.ExposeExceptions = false;
             })
             .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User });
 
