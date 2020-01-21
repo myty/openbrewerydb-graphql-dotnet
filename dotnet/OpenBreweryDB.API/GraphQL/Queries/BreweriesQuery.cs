@@ -32,6 +32,7 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                 arguments: new QueryArguments(
                     new QueryArgument<IdGraphType> { Name = "id", Description = "id of the brewery" },
                     new QueryArgument<StringGraphType> { Name = "name", Description = "name of the brewery" },
+                    new QueryArgument<StringGraphType> { Name = "search", Description = "search for name or partial name of all breweries" },
                     new QueryArgument<StringGraphType> { Name = "tag", Description = "tag associated w/ brewery" }
                 ),
                 resolve: GetBreweries

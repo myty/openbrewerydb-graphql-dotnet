@@ -39,8 +39,8 @@ namespace OpenBreweryDB.API
 
             services.AddGraphQL(graphqlConfig =>
             {
-                graphqlConfig.EnableMetrics = false;
-                graphqlConfig.ExposeExceptions = false;
+                graphqlConfig.EnableMetrics = true;
+                graphqlConfig.ExposeExceptions = true;
             })
             .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User });
 
