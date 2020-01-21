@@ -1,15 +1,17 @@
-using System.Linq;
 using AutoMapper;
 using GraphQL.Types;
+using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.API.GraphQL.Types;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Core.Extensions;
+using OpenBreweryDB.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
-using OpenBreweryDB.Data;
-using System.Collections.Generic;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using System;
 
 namespace OpenBreweryDB.API.GraphQL.Queries
 {
@@ -32,8 +34,11 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                 arguments: new QueryArguments(
                     new QueryArgument<IdGraphType> { Name = "id", Description = "id of the brewery" },
                     new QueryArgument<StringGraphType> { Name = "name", Description = "name of the brewery" },
+                    new QueryArgument<StringGraphType> { Name = "city", Description = "city of the brewery" },
+                    new QueryArgument<StringGraphType> { Name = "state", Description = "state of the brewery" },
+                    new QueryArgument<StringGraphType> { Name = "type", Description = "type of brewery" },
                     new QueryArgument<StringGraphType> { Name = "search", Description = "search for name or partial name of all breweries" },
-                    new QueryArgument<StringGraphType> { Name = "tag", Description = "tag associated w/ brewery" }
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "tags", Description = "tag associated w/ brewery" }
                 ),
                 resolve: GetBreweries
             );
@@ -53,7 +58,17 @@ namespace OpenBreweryDB.API.GraphQL.Queries
             {
                 filter = _filterConductor.BuildFilter(
                     by_name: context.GetArgument<string>("name"),
-                    by_tag: context.GetArgument<string>("tag"));
+                    by_state: context.GetArgument<string>("state"),
+                    by_type: context.GetArgument<string>("type"),
+                    by_tags: context.GetArgument<IEnumerable<string>>("tags"));
+
+                if (context.HasArgument("search"))
+                {
+                    var searchFilter = _filterConductor.BuildFilter(
+                        by_name: context.GetArgument<string>("search"));
+
+                    filter = filter.AndAlso(searchFilter);
+                }
             }
 
             var result = _data.Breweries

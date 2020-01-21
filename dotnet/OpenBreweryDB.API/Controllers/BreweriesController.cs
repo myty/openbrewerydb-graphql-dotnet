@@ -44,8 +44,23 @@ namespace OpenBreweryDB.API.Controllers
                 return this.BadRequest();
             }
 
+            // by_tag
+            var tags = new List<string>();
+
+            if (!String.IsNullOrEmpty(by_tag?.Trim()))
+            {
+                tags.Add(by_tag.Trim());
+            }
+
+            // by_tags
+            if (!String.IsNullOrEmpty(by_tags?.Trim()))
+            {
+                tags.AddRange(by_tags.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                tags = tags.Distinct().ToList();
+            }
+
             // Filtering
-            var filter = _filterConductor.BuildFilter(by_name, by_state, by_tag, by_city, by_tags, by_type);
+            var filter = _filterConductor.BuildFilter(by_name, by_state, by_city, by_type, tags);
 
             // Sorting
             if (!String.IsNullOrEmpty(sort?.Trim()))

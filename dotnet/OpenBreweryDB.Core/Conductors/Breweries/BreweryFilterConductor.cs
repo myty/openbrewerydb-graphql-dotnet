@@ -13,10 +13,9 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
         public Expression<Func<Brewery, bool>> BuildFilter(
             string by_name = null,
             string by_state = null,
-            string by_tag = null,
             string by_city = null,
-            string by_tags = null,
-            string by_type = null)
+            string by_type = null,
+            IEnumerable<string> by_tags = null)
         {
 
             Expression<Func<Brewery, bool>> filter = b => true;
@@ -39,24 +38,10 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 filter = filter.AndAlso(b => b.State.ToLower().Replace(" ", "_") == by_state.Trim());
             }
 
-            // by_tag
-            var tags = new List<string>();
-
-            if (!String.IsNullOrEmpty(by_tag?.Trim()))
+            //  by_tags
+            if (by_tags?.Any() == true)
             {
-                tags.Add(by_tag.Trim());
-            }
-
-            // by_tags
-            if (!String.IsNullOrEmpty(by_tags?.Trim()))
-            {
-                tags.AddRange(by_tags.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
-                tags = tags.Distinct().ToList();
-            }
-
-            if (tags.Any())
-            {
-                filter = filter.AndAlso(b => b.BreweryTags.Select(bt => bt.Tag.Name).Any(t => tags.Contains(t)));
+                filter = filter.AndAlso(b => b.BreweryTags.Select(bt => bt.Tag.Name).Any(t => by_tags.Contains(t)));
             }
 
             // by_type
