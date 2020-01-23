@@ -14,6 +14,8 @@ using OpenBreweryDB.API.GraphQL;
 using OpenBreweryDB.API.GraphQL.Queries;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Data;
+using OpenBreweryDB.API.GraphQL.Mutations;
+using OpenBreweryDB.API.GraphQL.InputTypes;
 
 namespace OpenBreweryDB.API
 {
@@ -25,7 +27,9 @@ namespace OpenBreweryDB.API
         {
             // GraphQL
             services.AddScoped<BreweriesQuery>();
+            services.AddScoped<BreweriesMutation>();
             services.AddScoped<BreweryType>();
+            services.AddScoped<BreweryInputType>();
             services.AddScoped<ISchema, BreweriesSchema>();
 
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();

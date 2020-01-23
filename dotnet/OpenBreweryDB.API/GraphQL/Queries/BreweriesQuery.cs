@@ -38,7 +38,9 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                     new QueryArgument<StringGraphType> { Name = "state", Description = "state of the brewery" },
                     new QueryArgument<StringGraphType> { Name = "type", Description = "type of brewery" },
                     new QueryArgument<StringGraphType> { Name = "search", Description = "search for name or partial name of all breweries" },
-                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "tags", Description = "tag associated w/ brewery" }
+                    new QueryArgument<ListGraphType<StringGraphType>> { Name = "tags", Description = "tag associated w/ brewery" },
+                    new QueryArgument<IntGraphType> { Name = "skip", Description = "number of records to skip" },
+                    new QueryArgument<IntGraphType> { Name = "limit", Description = "number of return records to limit" }
                 ),
                 resolve: GetBreweries
             );
@@ -71,10 +73,15 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                 }
             }
 
+            var skip = context.GetArgument<int>("skip", 0);
+            var limit = context.GetArgument<int>("limit", 10);
+
             var result = _data.Breweries
                 .Include(b => b.BreweryTags)
                     .ThenInclude(bt => bt.Tag)
-                .Where(filter);
+                .Where(filter)
+                .Skip(skip)
+                .Take(limit);
 
             return _mapper.Map<IEnumerable<DTO.Brewery>>(result);
         }
