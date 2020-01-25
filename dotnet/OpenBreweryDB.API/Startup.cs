@@ -32,7 +32,9 @@ namespace OpenBreweryDB.API
             services.AddScoped<BreweryInputType>();
             services.AddScoped<ISchema, BreweriesSchema>();
 
+            services.AddScoped<IBreweryConductor, BreweryConductor>();
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
+            services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();

@@ -15,22 +15,11 @@ public class BreweryProfile : Profile
                     .MapFrom(src => src.BreweryTags
                         .Select(bt => bt.Tag.Name)
                         .Distinct())
-            )
-            .ForMember(
-                dest => dest.Id,
-                opt => opt.MapFrom(src => src.BreweryId)
             );
 
-        CreateMap<Brewery, DTO.AutocompleteBrewery>()
-            .ForMember(
-                dest => dest.Id,
-                opt => opt.MapFrom(src => src.BreweryId)
-            );
+        CreateMap<Brewery, DTO.AutocompleteBrewery>();
 
         // From: BreweryDto
-        CreateMap<DTO.Brewery, Brewery>()
-            .ForMember(
-                dest => dest.BreweryId,
-                opt => opt.MapFrom(src => src.Id));
+        CreateMap<DTO.Brewery, Brewery>();
     }
 }

@@ -3,12 +3,14 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.Data.Migrations
 {
     [DbContext(typeof(BreweryDbContext))]
-    [Migration("20200109015113_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20200125210434_InitialModel")]
+    partial class InitialModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,7 +20,7 @@ namespace OpenBreweryDB.Data.Migrations
 
             modelBuilder.Entity("OpenBreweryDB.Data.Models.Brewery", b =>
                 {
-                    b.Property<long>("BreweryId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -61,7 +63,7 @@ namespace OpenBreweryDB.Data.Migrations
                     b.Property<string>("WebsiteURL")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("BreweryId");
+                    b.HasKey("Id");
 
                     b.ToTable("breweries");
                 });
@@ -74,6 +76,9 @@ namespace OpenBreweryDB.Data.Migrations
                     b.Property<long>("TagId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("Id")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("BreweryId", "TagId");
 
                     b.HasIndex("TagId");
@@ -83,14 +88,14 @@ namespace OpenBreweryDB.Data.Migrations
 
             modelBuilder.Entity("OpenBreweryDB.Data.Models.Tag", b =>
                 {
-                    b.Property<long>("TagId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("TagId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .HasName("Index_Tags_On_Name");

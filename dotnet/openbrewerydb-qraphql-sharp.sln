@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.API", "OpenBreweryDB.API\OpenBreweryDB.API.csproj", "{A5EB41BF-8517-4675-B147-046B057C18E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.GraphQL", "OpenBreweryDB.GraphQL\OpenBreweryDB.GraphQL.csproj", "{41D3D9C4-A8A5-4F08-B2B0-6EBE7BA0019D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.Core", "OpenBreweryDB.Core\OpenBreweryDB.Core.csproj", "{41D3D9C4-A8A5-4F08-B2B0-6EBE7BA0019D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.Data", "OpenBreweryDB.Data\OpenBreweryDB.Data.csproj", "{9DCCE9E8-A119-483A-8FFC-023A40EC1ABC}"
 EndProject

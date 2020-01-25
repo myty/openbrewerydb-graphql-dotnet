@@ -1,8 +1,8 @@
-using OpenBreweryDB.Data.Core;
+using AndcultureCode.CSharp.Core.Models.Entities;
 
 namespace OpenBreweryDB.Data.Models
 {
-    public class BreweryTag : BaseEntity
+    public class BreweryTag : Entity
     {
         public long BreweryId { get; set; }
         public Brewery Brewery { get; set; }

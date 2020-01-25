@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using OpenBreweryDB.Data.Core;
+using AndcultureCode.CSharp.Core.Models.Entities;
 
 namespace OpenBreweryDB.Data.Models
 {
-    public class Tag : BaseEntity
+    public class Tag : Entity
     {
-        public long TagId { get; set; }
         public string Name { get; set; }
 
         public List<BreweryTag> BreweryTags { get; set; }

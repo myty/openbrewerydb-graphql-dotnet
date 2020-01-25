@@ -1,21 +1,22 @@
 {
-  "author": "andculture",
-  "description": "Demo OpenBreweryDB GraphQL Implementation",
-  "devDependencies": {
-    "and-cli": "^0.5.1",
-    "prettier": "^1.19.1"
-  },
-  "license": "ISC",
-  "main": "npx and-cli",
-  "name": "openbrewerydb-qraphql",
-  "private": true,
-  "version": "0.0.1",
-  "dependencies": {},
-  "scripts": {
-    "dotnet-clean": "cd ./dotnet/OpenBreweryDB.API && dotnet clean",
-    "dotnet-restore": "cd ./dotnet/OpenBreweryDB.API && dotnet restore",
-    "dotnet-build": "cd ./dotnet/OpenBreweryDB.API && dotnet build",
-    "dotnet-watch": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
-    "serve": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run"
-  }
+    "author": "andculture",
+    "description": "Demo OpenBreweryDB GraphQL Implementation",
+    "devDependencies": {
+        "and-cli": "^0.5.1",
+        "prettier": "^1.19.1"
+    },
+    "license": "ISC",
+    "main": "npx and-cli",
+    "name": "openbrewerydb-qraphql",
+    "private": true,
+    "version": "0.1.0",
+    "dependencies": {},
+    "scripts": {
+        "build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
+        "clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
+        "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
+        "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
+        "restore": "dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
+        "serve": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run"
+    }
 }

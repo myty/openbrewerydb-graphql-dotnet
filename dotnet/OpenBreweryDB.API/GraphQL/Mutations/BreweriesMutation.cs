@@ -10,18 +10,22 @@ using OpenBreweryDB.Core.Extensions;
 
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using GraphQL;
 
 namespace OpenBreweryDB.API.GraphQL.Mutations
 {
     public class BreweriesMutation : ObjectGraphType
     {
-        readonly BreweryDbContext _data;
+        readonly IBreweryConductor _breweryConductor;
         readonly IMapper _mapper;
+        readonly IBreweryValidationConductor _validationConductor;
 
-        public BreweriesMutation(BreweryDbContext data, IMapper mapper)
+        public BreweriesMutation(IBreweryConductor breweryConductor, IMapper mapper, IBreweryValidationConductor validationConductor)
         {
-            _data = data;
+            _breweryConductor = breweryConductor;
             _mapper = mapper;
+            _validationConductor = validationConductor;
 
             Field<BreweryType>(
                 "createBrewery",
@@ -45,10 +49,8 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
                 resolve: context =>
                 {
                     var breweryId = context.GetArgument<long>("id");
-                    var brewery = _data.Breweries.Find(breweryId);
 
-                    _data.Remove<Entity.Brewery>(brewery);
-                    _data.SaveChanges();
+                    _breweryConductor.Delete(breweryId);
 
                     return $"The brewery with the id: {breweryId} has been successfully deleted.";
                 }
@@ -58,39 +60,14 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
         private DTO.Brewery CreateBrewery(ResolveFieldContext<object> context)
         {
             var dto = context.ConvertContextToObject<DTO.Brewery>(ConvertBrewery);
-            var brewery = _mapper.Map<Entity.Brewery>(dto);
 
-            var now = DateTime.Now;
-            brewery.CreatedAt = now;
-            brewery.UpdatedAt = now;
+            if (!_validationConductor.CanCreate(dto, out var errors))
+            {
+                context.Errors.AddRange(errors.Select(err => new ExecutionError(err)));
+                return null;
+            }
 
-            var existingTags = _data.Tags
-                .Where(t => dto.Tags.Contains(t.Name))
-                .ToList();
-
-            var existingTagNames = existingTags
-                .Select(t => t.Name)
-                .ToList();
-
-            var tagsToCreate = dto.Tags
-                .Where(t => !existingTagNames.Contains(t))
-                .Select(t => new Entity.Tag { Name = t })
-                .ToList();
-
-            var breweryTags = tagsToCreate
-                .Concat(existingTags)
-                .Select(t => new Entity.BreweryTag
-                {
-                    Brewery = brewery,
-                    Tag = t
-                })
-                .ToList();
-
-            _data.BreweryTags.AddRange(breweryTags);
-            _data.Tags.AddRange(tagsToCreate);
-            _data.Breweries.Add(brewery);
-
-            _data.SaveChanges();
+            var brewery = _breweryConductor.Create(_mapper.Map<Entity.Brewery>(dto));
 
             return _mapper.Map<DTO.Brewery>(brewery);
         }
@@ -99,13 +76,13 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
         {
             var dto = context.ConvertContextToObject<DTO.Brewery>(ConvertBrewery);
 
-            var brewery = _mapper.Map<Entity.Brewery>(dto);
+            if (!_validationConductor.CanUpdate(dto.Id ?? default, dto, out var errors))
+            {
+                context.Errors.AddRange(errors.Select(err => new ExecutionError(err)));
+                return null;
+            }
 
-            var now = DateTime.Now;
-            brewery.UpdatedAt = now;
-
-            _data.Breweries.Update(brewery);
-            _data.SaveChanges();
+            var brewery = _breweryConductor.Update(_mapper.Map<Entity.Brewery>(dto));
 
             return _mapper.Map<DTO.Brewery>(brewery);
         }

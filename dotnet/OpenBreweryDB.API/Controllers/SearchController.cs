@@ -13,15 +13,15 @@ namespace OpenBreweryDB.API.Controllers
     [Route("breweries/search")]
     public class SearchController : Controller
     {
-        private readonly BreweryDbContext _context;
-        private readonly IMapper _mapper;
+        readonly IBreweryConductor _breweryConductor;
         readonly IBreweryFilterConductor _filterConductor;
+        private readonly IMapper _mapper;
 
-        public SearchController(BreweryDbContext context, IMapper mapper, IBreweryFilterConductor filterConductor)
+        public SearchController(IBreweryConductor breweryConductor, IBreweryFilterConductor filterConductor, IMapper mapper)
         {
-            _context = context;
-            _mapper = mapper;
+            _breweryConductor = breweryConductor;
             _filterConductor = filterConductor;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -36,13 +36,11 @@ namespace OpenBreweryDB.API.Controllers
             var filter = _filterConductor.BuildSearchQueryFilter(query);
 
             // Return Results
-            var dataResults = _context.Breweries
-                .Include(b => b.BreweryTags)
-                    .ThenInclude(bt => bt.Tag)
-                .Where(filter)
-                .OrderBy(b => b.Name)
-                .Skip((page - 1) * per_page)
-                .Take(per_page);
+            var dataResults = _breweryConductor.FindAll(
+                filter: filter,
+                skip: (page - 1) * per_page,
+                take: per_page
+            );
 
             return _mapper.Map<IEnumerable<Brewery>, List<DTO.Brewery>>(dataResults);
         }

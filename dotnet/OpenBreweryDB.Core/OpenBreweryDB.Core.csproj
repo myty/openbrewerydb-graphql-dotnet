@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AndcultureCode.CSharp.Conductors" Version="1.0.0" />
+    <PackageReference Include="AndcultureCode.CSharp.Core" Version="0.2.1" />
     <PackageReference Include="automapper" Version="9.0.0" />
     <PackageReference Include="GraphQL" Version="3.0.0-preview-1352" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

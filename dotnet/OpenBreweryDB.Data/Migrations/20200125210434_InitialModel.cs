@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OpenBreweryDB.Data.Migrations
 {
-    public partial class InitialSetup : Migration
+    public partial class InitialModel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,7 @@ namespace OpenBreweryDB.Data.Migrations
                 name: "breweries",
                 columns: table => new
                 {
-                    BreweryId = table.Column<long>(nullable: false)
+                    Id = table.Column<long>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true),
                     BreweryType = table.Column<string>(nullable: true),
@@ -29,20 +29,20 @@ namespace OpenBreweryDB.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_breweries", x => x.BreweryId);
+                    table.PrimaryKey("PK_breweries", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "tags",
                 columns: table => new
                 {
-                    TagId = table.Column<long>(nullable: false)
+                    Id = table.Column<long>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tags", x => x.TagId);
+                    table.PrimaryKey("PK_tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,7 +50,8 @@ namespace OpenBreweryDB.Data.Migrations
                 columns: table => new
                 {
                     BreweryId = table.Column<long>(nullable: false),
-                    TagId = table.Column<long>(nullable: false)
+                    TagId = table.Column<long>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,13 +60,13 @@ namespace OpenBreweryDB.Data.Migrations
                         name: "FK_BreweryTags_breweries_BreweryId",
                         column: x => x.BreweryId,
                         principalTable: "breweries",
-                        principalColumn: "BreweryId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BreweryTags_tags_TagId",
                         column: x => x.TagId,
                         principalTable: "tags",
-                        principalColumn: "TagId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
