@@ -1,4 +1,5 @@
 using GraphQL.Types;
+
 using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Types
