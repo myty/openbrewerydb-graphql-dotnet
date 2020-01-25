@@ -50,7 +50,13 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
                 {
                     var breweryId = context.GetArgument<long>("id");
 
-                    _breweryConductor.Delete(breweryId);
+                    var deleteResult = _breweryConductor.Delete(breweryId);
+
+                    if (deleteResult.HasErrors || !deleteResult.ResultObject)
+                    {
+                        context.Errors.AddRange(deleteResult.Errors.Select(err => new ExecutionError(err.Message)));
+                        return null;
+                    }
 
                     return $"The brewery with the id: {breweryId} has been successfully deleted.";
                 }
@@ -69,7 +75,13 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
 
             var brewery = _breweryConductor.Create(_mapper.Map<Entity.Brewery>(dto));
 
-            return _mapper.Map<DTO.Brewery>(brewery);
+            if (brewery.HasErrors || brewery.ResultObject is null)
+            {
+                context.Errors.AddRange(brewery.Errors.Select(err => new ExecutionError(err.Message)));
+                return null;
+            }
+
+            return _mapper.Map<DTO.Brewery>(brewery.ResultObject);
         }
 
         private DTO.Brewery UpdateBrewery(ResolveFieldContext<object> context)
@@ -84,7 +96,13 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
 
             var brewery = _breweryConductor.Update(_mapper.Map<Entity.Brewery>(dto));
 
-            return _mapper.Map<DTO.Brewery>(brewery);
+            if (brewery.HasErrors || brewery.ResultObject is null)
+            {
+                context.Errors.AddRange(brewery.Errors.Select(err => new ExecutionError(err.Message)));
+                return null;
+            }
+
+            return _mapper.Map<DTO.Brewery>(brewery.ResultObject);
         }
 
         private DTO.Brewery ConvertBrewery(ResolveFieldContext<object> context)

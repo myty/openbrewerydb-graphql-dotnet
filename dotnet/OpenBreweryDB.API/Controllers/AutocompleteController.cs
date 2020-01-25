@@ -1,11 +1,11 @@
+
 using AutoMapper;
-using DTO = OpenBreweryDB.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Data;
 using OpenBreweryDB.Data.Models;
 using System.Collections.Generic;
-using System.Linq;
+
+using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.Controllers
 {
@@ -41,7 +41,12 @@ namespace OpenBreweryDB.API.Controllers
                 take: per_page
             );
 
-            return _mapper.Map<IEnumerable<Brewery>, List<DTO.AutocompleteBrewery>>(dataResults);
+            if (dataResults.HasErrors || dataResults.ResultObject is null)
+            {
+                return BadRequest();
+            }
+
+            return _mapper.Map<IEnumerable<Brewery>, List<DTO.AutocompleteBrewery>>(dataResults.ResultObject);
         }
     }
 }

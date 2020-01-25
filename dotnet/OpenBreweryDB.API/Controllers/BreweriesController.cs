@@ -1,12 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenBreweryDB.Data;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 
 using DTO = OpenBreweryDB.Core.Models;
 
@@ -69,7 +67,12 @@ namespace OpenBreweryDB.API.Controllers
                 take: per_page
             );
 
-            return _mapper.Map<IEnumerable<Brewery>, List<DTO.Brewery>>(dataResults);
+            if (dataResults.HasErrors || dataResults.ResultObject is null)
+            {
+                return BadRequest();
+            }
+
+            return _mapper.Map<IEnumerable<Brewery>, List<DTO.Brewery>>(dataResults.ResultObject);
         }
 
         [HttpGet("{id}")]
@@ -77,7 +80,7 @@ namespace OpenBreweryDB.API.Controllers
         {
             var result = _breweryConductor.Find(id);
 
-            if (result is null)
+            if (result.HasErrors || result.ResultObject is null)
             {
                 return NotFound();
             }
@@ -96,13 +99,18 @@ namespace OpenBreweryDB.API.Controllers
 
             var brewery = _breweryConductor.Create(_mapper.Map<Brewery>(dto));
 
-            dto = _mapper.Map<DTO.Brewery>(brewery);
+            if (brewery.HasErrors || brewery.ResultObject is null)
+            {
+                return BadRequest(brewery.Errors);
+            }
+
+            dto = _mapper.Map<DTO.Brewery>(brewery.ResultObject);
 
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(
+        public IActionResult Update(
             [FromRoute] long id,
             [FromBody] DTO.Brewery dto)
         {
@@ -114,7 +122,12 @@ namespace OpenBreweryDB.API.Controllers
 
             var brewery = _breweryConductor.Update(_mapper.Map<Brewery>(dto));
 
-            dto = _mapper.Map<DTO.Brewery>(brewery);
+            if (brewery.HasErrors || brewery.ResultObject is null)
+            {
+                return BadRequest(brewery.Errors);
+            }
+
+            dto = _mapper.Map<DTO.Brewery>(brewery.ResultObject);
 
             return Ok();
         }
@@ -122,7 +135,9 @@ namespace OpenBreweryDB.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] long id)
         {
-            if (!_breweryConductor.Delete(id))
+            var result = _breweryConductor.Delete(id);
+
+            if (result.HasErrors || !result.ResultObject)
             {
                 return NotFound();
             }

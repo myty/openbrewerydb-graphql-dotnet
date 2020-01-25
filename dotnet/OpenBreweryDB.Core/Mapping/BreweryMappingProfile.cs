@@ -20,6 +20,11 @@ public class BreweryProfile : Profile
         CreateMap<Brewery, DTO.AutocompleteBrewery>();
 
         // From: BreweryDto
-        CreateMap<DTO.Brewery, Brewery>();
+        CreateMap<DTO.Brewery, Brewery>()
+            .ForMember(
+                dest => dest.BreweryTags,
+                opt => opt
+                    .MapFrom(src => src.Tags.Select(t => new BreweryTag { Tag = new Tag { Name = t } }))
+            );
     }
 }

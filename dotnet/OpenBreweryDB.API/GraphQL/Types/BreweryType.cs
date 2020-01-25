@@ -23,7 +23,12 @@ namespace OpenBreweryDB.API.GraphQL.Types
             Field(d => d.State, nullable: false).Description("The state of the brewery.");
             Field(d => d.Street, nullable: true).Description("The street of the brewery.");
             Field(d => d.Tags, nullable: false).Name("tag_list").Description("Tags that have been attached to the brewery.");
-            Field(d => d.UpdatedAt, nullable: false).Name("updated_at").Description("Date timestamp of the last time the record was updated");
+
+            Field<NonNullGraphType<DateTimeGraphType>>(
+                name: "updated_at",
+                description: "Date timestamp of the last time the record was updated",
+                resolve: ctx => ctx.Source.UpdatedAt);
+
             Field(d => d.WebsiteURL, nullable: true).Name("website_url").Description("Webiste address for the brewery.");
         }
     }

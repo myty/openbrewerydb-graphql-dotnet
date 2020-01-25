@@ -49,9 +49,15 @@ namespace OpenBreweryDB.API.GraphQL.Queries
             {
                 var id = context.GetArgument<long>("id");
 
-                var brewery = _breweryConductor.Find(id);
+                var breweryResult = _breweryConductor.Find(id);
 
-                return new List<DTO.Brewery> { _mapper.Map<DTO.Brewery>(brewery) };
+                if (breweryResult.HasErrors || breweryResult.ResultObject is null)
+                {
+                    context.Errors.AddRange(breweryResult.Errors.Select(err => new ExecutionError(err.Message)));
+                    return null;
+                }
+
+                return new List<DTO.Brewery> { _mapper.Map<DTO.Brewery>(breweryResult.ResultObject) };
             }
 
             var by_state = context.GetArgument<string>("state");
@@ -82,7 +88,13 @@ namespace OpenBreweryDB.API.GraphQL.Queries
 
             var result = _breweryConductor.FindAll(filter: filter, skip: skip, take: limit);
 
-            return _mapper.Map<IEnumerable<DTO.Brewery>>(result);
+            if (result.HasErrors || result.ResultObject is null)
+            {
+                context.Errors.AddRange(result.Errors.Select(err => new ExecutionError(err.Message)));
+                return null;
+            }
+
+            return _mapper.Map<IEnumerable<DTO.Brewery>>(result.ResultObject);
         }
     }
 }

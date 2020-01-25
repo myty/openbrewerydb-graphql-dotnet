@@ -1,11 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+using AndcultureCode.CSharp.Core;
+using AndcultureCode.CSharp.Core.Extensions;
+using AndcultureCode.CSharp.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data;
 using OpenBreweryDB.Data.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace OpenBreweryDB.Core.Conductors.Breweries
 {
@@ -18,13 +21,13 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             _data = data;
         }
 
-        public Brewery Create(Brewery brewery)
+        public IResult<Brewery> Create(Brewery brewery) => Do<Brewery>.Try((r) =>
         {
             var now = DateTime.Now;
             brewery.CreatedAt = now;
             brewery.UpdatedAt = now;
 
-            var tags = brewery.BreweryTags.Select(bt => bt.Tag.Name);
+            var tags = brewery.BreweryTags.Select(bt => bt.Tag.Name).ToList();
 
             var existingTags = _data.Tags
                 .Where(t => tags.Contains(t.Name))
@@ -32,6 +35,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
             var existingTagNames = existingTags
                 .Select(t => t.Name)
+                .Distinct()
                 .ToList();
 
             var tagsToCreate = tags
@@ -39,7 +43,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 .Select(t => new Tag { Name = t })
                 .ToList();
 
-            var breweryTags = tagsToCreate
+            brewery.BreweryTags = tagsToCreate
                 .Concat(existingTags)
                 .Select(t => new BreweryTag
                 {
@@ -48,21 +52,21 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 })
                 .ToList();
 
-            _data.BreweryTags.AddRange(breweryTags);
-            _data.Tags.AddRange(tagsToCreate);
             _data.Breweries.Add(brewery);
 
             _data.SaveChanges();
 
             return brewery;
-        }
+        }).Result;
 
-        public bool Delete(long id)
+        public IResult<bool> Delete(long id) => Do<bool>.Try((r) =>
         {
             var brewery = _data.Breweries.Find(id);
 
             if (brewery == null)
             {
+                r.AddError("Not Found", $"The brewery (id: {id}) was not found.");
+
                 return false;
             }
 
@@ -70,18 +74,25 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             _data.SaveChanges();
 
             return true;
-        }
+        }).Result;
 
-        public Brewery Find(long id)
+        public IResult<Brewery> Find(long id) => Do<Brewery>.Try((r) =>
         {
-            return FindAll(b => b.Id == id).SingleOrDefault();
-        }
+            var breweryResult = FindAll(b => b.Id == id, take: 1);
 
-        public IEnumerable<Brewery> FindAll(
+            if (breweryResult.HasErrors || breweryResult.ResultObject is null)
+            {
+                r.AddError("Not Found", $"The brewery (id: {id}) was not found.");
+            }
+
+            return breweryResult.ResultObject.SingleOrDefault();
+        }).Result;
+
+        public IResult<IEnumerable<Brewery>> FindAll(
             Expression<Func<Brewery, bool>> filter = null,
             Expression<Func<Brewery, object>> orderBy = null,
             int skip = 0,
-            int take = 100)
+            int take = 100) => Do<IEnumerable<Brewery>>.Try((r) =>
         {
             if (filter == null)
             {
@@ -100,9 +111,9 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 .OrderBy(orderBy)
                 .Skip(skip)
                 .Take(take);
-        }
+        }).Result;
 
-        public Brewery Update(Brewery brewery)
+        public IResult<Brewery> Update(Brewery brewery) => Do<Brewery>.Try((r) =>
         {
             var now = DateTime.Now;
             brewery.UpdatedAt = now;
@@ -111,6 +122,6 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             _data.SaveChanges();
 
             return brewery;
-        }
+        }).Result;
     }
 }
