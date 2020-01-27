@@ -34,6 +34,7 @@ namespace OpenBreweryDB.API
 
             services.AddScoped<IBreweryConductor, BreweryConductor>();
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
+            services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
             services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
 
             services.AddLogging(builder => builder.AddConsole());

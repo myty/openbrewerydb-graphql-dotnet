@@ -8,7 +8,7 @@ using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.Controllers
 {
-    [Route("breweries/search")]
+    [Route("api/breweries/search")]
     public class SearchController : Controller
     {
         readonly IBreweryConductor _breweryConductor;

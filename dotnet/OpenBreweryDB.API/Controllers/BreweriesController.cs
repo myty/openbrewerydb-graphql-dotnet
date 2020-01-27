@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using OpenBreweryDB.Core.Conductors;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
 using System;
@@ -10,23 +11,26 @@ using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.Controllers
 {
-    [Route("breweries")]
+    [Route("api/breweries")]
     public class BreweriesController : Controller
     {
         readonly IBreweryConductor _breweryConductor;
         readonly IBreweryFilterConductor _filterConductor;
         readonly IMapper _mapper;
+        readonly IBreweryOrderConductor _orderConductor;
         readonly IBreweryValidationConductor _validationConductor;
 
         public BreweriesController(
             IBreweryConductor breweryConductor,
             IBreweryFilterConductor filterConductor,
+            IBreweryOrderConductor orderConductor,
             IBreweryValidationConductor validationConductor,
             IMapper mapper)
         {
             _breweryConductor = breweryConductor;
             _filterConductor = filterConductor;
             _mapper = mapper;
+            _orderConductor = orderConductor;
             _validationConductor = validationConductor;
         }
 
@@ -53,16 +57,25 @@ namespace OpenBreweryDB.API.Controllers
             var filter = _filterConductor.BuildFilter(by_name, by_state, by_city, by_type, BuildTags(by_tag, by_tags));
 
             // Sorting
-            if (!String.IsNullOrEmpty(sort?.Trim()))
-            {
-                var sortingList = sort.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var orderBy = _orderConductor.OrderByFields(
+                sort?
+                    .Trim()
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => {
+                        if (s.FirstOrDefault() == '-')
+                        {
+                            return new KeyValuePair<string, SortDirection>(s.Substring(1), SortDirection.DESC);
+                        }
 
-                // TODO: Add sorting solution
-            }
+                        return new KeyValuePair<string, SortDirection>(s, SortDirection.ASC);
+                    })
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+            );
 
             // Return Results
             var dataResults = _breweryConductor.FindAll(
                 filter: filter,
+                orderBy: orderBy,
                 skip: (page - 1) * per_page,
                 take: per_page
             );

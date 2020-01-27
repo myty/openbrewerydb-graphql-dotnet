@@ -90,7 +90,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
         public IResult<IEnumerable<Brewery>> FindAll(
             Expression<Func<Brewery, bool>> filter = null,
-            Expression<Func<Brewery, object>> orderBy = null,
+            Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null,
             int skip = 0,
             int take = 100) => Do<IEnumerable<Brewery>>.Try((r) =>
         {
@@ -99,16 +99,17 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 filter = b => true;
             }
 
-            if (orderBy == null)
-            {
-                orderBy = b => b.Name;
-            }
-
-            return _data.Breweries
+            var query = _data.Breweries
                 .Include(b => b.BreweryTags)
                     .ThenInclude(bt => bt.Tag)
-                .Where(filter)
-                .OrderBy(orderBy)
+                .Where(filter);
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            return query
                 .Skip(skip)
                 .Take(take);
         }).Result;

@@ -9,7 +9,7 @@ using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.Controllers
 {
-    [Route("breweries/autocomplete")]
+    [Route("api/breweries/autocomplete")]
     public class AutocompleteController : Controller
     {
         readonly IBreweryConductor _breweryConductor;
