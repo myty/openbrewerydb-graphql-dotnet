@@ -20,15 +20,36 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                     {
                         if (kvp.Key == "name")
                         {
-                            orderBy = (orderBy is null)
-                                ? OrderBy(q, (b) => b.Name, kvp.Value)
-                                : ThenBy(orderBy, (b) => b.Name, kvp.Value);
+                            orderBy = WithOrder(q, orderBy, (b) => b.Name, kvp.Value);
+                        }
+                        else if (kvp.Key == "type")
+                        {
+                            orderBy = WithOrder(q, orderBy, (b) => b.BreweryType, kvp.Value);
+                        }
+                        else if (kvp.Key == "city")
+                        {
+                            orderBy = WithOrder(q, orderBy, (b) => b.City, kvp.Value);
+                        }
+                        else if (kvp.Key == "state")
+                        {
+                            orderBy = WithOrder(q, orderBy, (b) => b.State, kvp.Value);
                         }
                     }
                 }
 
                 return orderBy ?? q;
             };
+        }
+
+        private IOrderedQueryable<Brewery> WithOrder<T>(
+            IQueryable<Brewery> initialQuery,
+            IOrderedQueryable<Brewery> sortedQuery,
+            Expression<Func<Brewery, T>> sortOptionExpression,
+            SortDirection direction = SortDirection.ASC)
+        {
+            return (sortedQuery is null)
+                ? OrderBy(initialQuery, sortOptionExpression, direction)
+                : ThenBy(sortedQuery, sortOptionExpression, direction);
         }
 
         private IOrderedQueryable<Brewery> OrderBy<T>(
