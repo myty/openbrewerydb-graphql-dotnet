@@ -33,13 +33,18 @@ namespace OpenBreweryDB.Console
 
             var breweryConductor = serviceProvider.GetService<IBreweryConductor>();
 
-            var breweriesResult = breweryConductor.FindAll(take: 1000);
+            var breweriesResult = breweryConductor.FindAll(take: Int32.MaxValue);
             if (breweriesResult.ErrorCount > 0)
             {
                 throw new Exception(breweriesResult.Errors.FirstOrDefault()?.Message);
             }
 
-            System.Console.WriteLine($"About to delete {breweriesResult.ResultObject.Count()} records.");
+            var deleteCount = breweriesResult.ResultObject.Count();
+            if (deleteCount > 0)
+            {
+                System.Console.WriteLine($"Deleting {deleteCount} record(s).");
+            }
+
             foreach (var brewery in breweriesResult.ResultObject)
             {
                 breweryConductor.Delete(brewery.Id);
@@ -66,7 +71,7 @@ namespace OpenBreweryDB.Console
                 var erroredImports = breweryImportResults.Where(r => r.ErrorCount > 0).ToList();
 
                 System.Console.WriteLine($"Successful Imports: {successfulImports.Count}");
-                System.Console.WriteLine($"Errored Imports: {erroredImports.Count}");
+                System.Console.WriteLine($"Failed Imports: {erroredImports.Count}");
             }
         }
 
