@@ -6,6 +6,7 @@ Some fun things to possibly add to this:
 
 - Pull in Google reviews api data if any is available for breweries
 - Explore [Conventions](https://github.com/graphql-dotnet/conventions#getting-started) and [GraphQL.EntityFramework](https://github.com/SimonCropp/GraphQL.EntityFramework) integration
+- Add a frontend using [React](https://reactjs.org/) and [Tailwind CSS](https://tailwindcss.com/)
 
 ## Prerequisites
 
