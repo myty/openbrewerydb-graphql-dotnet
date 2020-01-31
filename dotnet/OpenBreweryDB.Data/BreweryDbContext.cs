@@ -5,12 +5,11 @@ namespace OpenBreweryDB.Data
 {
     public class BreweryDbContext : DbContext
     {
+        public BreweryDbContext(DbContextOptions<BreweryDbContext> options) : base(options) { }
+
         public DbSet<Brewery> Breweries { get; set; }
         public DbSet<BreweryTag> BreweryTags { get; set; }
         public DbSet<Tag> Tags { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=openbrewery.db");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -23,19 +23,21 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             // by_city
             if (!String.IsNullOrEmpty(by_city?.Trim()))
             {
-                filter = filter.AndAlso(b => b.City.ToLower().Contains(by_city.Trim()));
+                by_city = by_city.ToLower().Trim();
+
+                filter = filter.AndAlso(b => b.City.ToLower().Contains(by_city));
             }
 
             // by_name
             if (!String.IsNullOrEmpty(by_name?.Trim()))
             {
-                filter = filter.AndAlso(b => b.Name.ToLower().Contains(by_name.Trim()));
+                filter = filter.AndAlso(b => b.Name.ToLower().Contains(by_name.ToLower().Trim()));
             }
 
             // by_state
             if (!String.IsNullOrEmpty(by_state?.Trim()))
             {
-                filter = filter.AndAlso(b => b.State.ToLower().Replace(" ", "_") == by_state.Trim());
+                filter = filter.AndAlso(b => b.State.ToLower().Replace(" ", "_") == by_state.ToLower().Trim().Replace(" ", "_"));
             }
 
             //  by_tags
@@ -47,7 +49,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             // by_type
             if (!String.IsNullOrEmpty(by_type?.Trim()))
             {
-                filter = filter.AndAlso(b => b.BreweryType.ToLower() == by_type.Trim());
+                filter = filter.AndAlso(b => b.BreweryType.ToLower() == by_type.ToLower().Trim());
             }
 
             return filter;

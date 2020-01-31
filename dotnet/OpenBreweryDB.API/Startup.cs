@@ -16,6 +16,7 @@ using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Data;
 using OpenBreweryDB.API.GraphQL.Mutations;
 using OpenBreweryDB.API.GraphQL.InputTypes;
+using Microsoft.EntityFrameworkCore;
 
 namespace OpenBreweryDB.API
 {
@@ -41,7 +42,7 @@ namespace OpenBreweryDB.API
             services.AddHttpContextAccessor();
 
             services.AddAutoMapper(typeof(BreweryProfile));
-            services.AddDbContext<BreweryDbContext>();
+            services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
             services.AddGraphQL(graphqlConfig =>
