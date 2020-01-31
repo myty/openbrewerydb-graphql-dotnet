@@ -12,7 +12,7 @@
         "build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
-        "import-data": "cd ./dotnet/OpenBreweryDB.Console && dotnet watch run",
+        "import-data": "cd ./dotnet/OpenBreweryDB.Console && dotnet run",
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "serve": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run"
