@@ -5,7 +5,6 @@ using AutoMapper;
 using GraphQL.Types;
 using OpenBreweryDB.API.GraphQL.InputTypes;
 using OpenBreweryDB.API.GraphQL.Types;
-using OpenBreweryDB.Data;
 using OpenBreweryDB.Core.Extensions;
 
 using DTO = OpenBreweryDB.Core.Models;

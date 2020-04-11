@@ -2,11 +2,11 @@
     "author": "andculture",
     "description": "Demo OpenBreweryDB .NET Core GraphQL Implementation",
     "devDependencies": {
-        "prettier": "^1.19.1"
+        "prettier": "^2.0.4"
     },
     "name": "openbrewerydb-qraphql",
     "private": true,
-    "version": "0.1.0",
+    "version": "0.2.0",
     "dependencies": {},
     "scripts": {
         "build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
