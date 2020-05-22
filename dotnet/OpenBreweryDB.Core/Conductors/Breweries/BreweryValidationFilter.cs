@@ -15,13 +15,13 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
         {
             var errorList = new List<string>();
 
-            if (!String.IsNullOrEmpty(by_state?.Trim()) && by_state.Contains(" "))
+            if (!string.IsNullOrEmpty(by_state?.Trim()) && by_state.Contains(" "))
             {
                 errorList.Add("by_state must contain the full state name in snake_case, no abbreviation (ex. \"new_york\")");
             }
 
             var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
-            if (!String.IsNullOrEmpty(by_type?.Trim()) && !allowedTypes.Contains(by_type))
+            if (!(string.IsNullOrEmpty(by_type?.Trim()) || allowedTypes.Contains(by_type)))
             {
                 errorList.Add("by_type must be one of the following: micro, regional, brewpub, large, planning, bar, contract, proprietor.");
             }
@@ -36,7 +36,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             var errorList = new List<string>();
 
             var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
-            if (String.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
+            if (string.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
             {
                 errorList.Add("BreweryType must be one of the following: micro, regional, brewpub, large, planning, bar, contract, proprietor.");
             }
@@ -60,7 +60,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             }
 
             var allowedTypes = new string[] { "micro", "regional", "brewpub", "large", "planning", "bar", "contract", "proprietor" };
-            if (String.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
+            if (string.IsNullOrEmpty(dto.BreweryType?.Trim()) || !allowedTypes.Contains(dto.BreweryType))
             {
                 errorList.Add("BreweryType must be one of the following: micro, regional, brewpub, large, planning, bar, contract, proprietor.");
             }

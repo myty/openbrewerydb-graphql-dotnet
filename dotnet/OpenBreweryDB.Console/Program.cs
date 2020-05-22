@@ -18,10 +18,15 @@ using Entity = OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.Console
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
+            if (args is null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var serviceProvider = new ServiceCollection()
                 .AddScoped<IBreweryConductor, BreweryConductor>()
                 .AddScoped<IBreweryFilterConductor, BreweryFilterConductor>()
@@ -33,7 +38,7 @@ namespace OpenBreweryDB.Console
 
             var breweryConductor = serviceProvider.GetService<IBreweryConductor>();
 
-            var breweriesResult = breweryConductor.FindAll(take: Int32.MaxValue);
+            var breweriesResult = breweryConductor.FindAll(take: int.MaxValue);
             if (breweriesResult.ErrorCount > 0)
             {
                 throw new Exception(breweriesResult.Errors.FirstOrDefault()?.Message);

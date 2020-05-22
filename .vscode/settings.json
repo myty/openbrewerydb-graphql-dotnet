@@ -1,4 +1,11 @@
 {
     "omnisharp.defaultLaunchSolution": "./dotnet/openbrewerydb-graphql-sharp.sln",
-    "omnisharp.enableEditorConfigSupport": true
+    "omnisharp.enableEditorConfigSupport": true,
+    "[csharp]": {
+        "editor.formatOnType": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true,
+            "source.fixAll": true
+        }
+    }
 }
