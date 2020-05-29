@@ -21,40 +21,22 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             _data = data;
         }
 
+        public IResult<IEnumerable<Brewery>> BulkCreate(IEnumerable<Brewery> breweries) => Do<IEnumerable<Brewery>>.Try((r) =>
+        {
+            breweries = breweries.Select(b => ProcessBrewery(b));
+
+            _data.Breweries.AddRange(breweries);
+            _data.SaveChanges();
+
+            return breweries;
+        }).Result;
+
         public IResult<Brewery> Create(Brewery brewery) => Do<Brewery>.Try((r) =>
         {
-            var now = DateTime.Now;
-            brewery.CreatedAt = now;
-            brewery.UpdatedAt = now;
+            brewery = ProcessBrewery(brewery);
 
-            var tags = brewery.BreweryTags.Select(bt => bt.Tag.Name).ToList();
-
-            var existingTags = _data.Tags
-                .Where(t => tags.Contains(t.Name))
-                .ToList();
-
-            var existingTagNames = existingTags
-                .Select(t => t.Name)
-                .Distinct()
-                .ToList();
-
-            var tagsToCreate = tags
-                .Where(t => !existingTagNames.Contains(t))
-                .Select(t => new Tag { Name = t })
-                .ToList();
-
-            brewery.BreweryTags = tagsToCreate
-                .Concat(existingTags)
-                .Select(t => new BreweryTag
-                {
-                    Brewery = brewery,
-                    Tag = t
-                })
-                .ToList();
-
-            _data.Breweries.Add(brewery);
-
-            _data.SaveChanges();
+            _ = _data.Breweries.Add(brewery);
+            _ = _data.SaveChanges();
 
             return brewery;
         }).Result;
@@ -124,5 +106,39 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
             return brewery;
         }).Result;
+
+        private Brewery ProcessBrewery(Brewery brewery)
+        {
+            var now = DateTime.Now;
+            brewery.CreatedAt = now;
+            brewery.UpdatedAt = now;
+
+            var tags = brewery.BreweryTags.Select(bt => bt.Tag.Name).ToList();
+
+            var existingTags = _data.Tags
+                .Where(t => tags.Contains(t.Name))
+                .ToList();
+
+            var existingTagNames = existingTags
+                .Select(t => t.Name)
+                .Distinct()
+                .ToList();
+
+            var tagsToCreate = tags
+                .Where(t => !existingTagNames.Contains(t))
+                .Select(t => new Tag { Name = t })
+                .ToList();
+
+            brewery.BreweryTags = tagsToCreate
+                .Concat(existingTags)
+                .Select(t => new BreweryTag
+                {
+                    Brewery = brewery,
+                    Tag = t
+                })
+                .ToList();
+
+            return brewery;
+        }
     }
 }

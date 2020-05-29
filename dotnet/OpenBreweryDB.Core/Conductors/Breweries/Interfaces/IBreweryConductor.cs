@@ -16,6 +16,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries.Interfaces
             int skip = default,
             int take = 100);
         IResult<Brewery> Create(Brewery brewery);
+        IResult<IEnumerable<Brewery>> BulkCreate(IEnumerable<Brewery> breweries);
         IResult<Brewery> Update(Brewery brewery);
         IResult<bool> Delete(long id);
     }
