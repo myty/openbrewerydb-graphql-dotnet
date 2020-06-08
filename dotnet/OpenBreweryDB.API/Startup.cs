@@ -98,40 +98,42 @@ namespace OpenBreweryDB.API
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
+                var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
                 var dbContext = serviceScope.ServiceProvider.GetService<BreweryDbContext>();
                 var breweryConductor = serviceScope.ServiceProvider.GetService<IBreweryConductor>();
 
                 if (!dbContext.AllMigrationsApplied())
                 {
+                    logger.LogInformation($"Initializing Database");
+
                     dbContext.Database.Migrate();
-                    dbContext.EnsureSeeded(async () =>
-                    {
-                        var url = "https://raw.githubusercontent.com/chrisjm/openbrewerydb-rails-api/master/db/breweries.csv";
-
-                        using (var file = new FileDownload(url))
-                        {
-                            var streamReader = await file.StreamReader();
-
-                            var breweryImportResults = GetBreweries(streamReader)
-                                .Select(b =>
-                                {
-                                    b.Id = default;
-                                    b.BreweryTags = new List<Entity.BreweryTag>();
-
-                                    Console.WriteLine($"Importing {b.Name}");
-
-                                    return breweryConductor.Create(b);
-                                })
-                                .ToList();
-
-                            var successfulImports = breweryImportResults.Where(r => r.ErrorCount < 1).ToList();
-                            var erroredImports = breweryImportResults.Where(r => r.ErrorCount > 0).ToList();
-
-                            Console.WriteLine($"Successful Imports: {successfulImports.Count}");
-                            Console.WriteLine($"Failed Imports: {erroredImports.Count}");
-                        }
-                    });
                 }
+
+                dbContext.EnsureSeeded(() =>
+                {
+                    var url = "https://raw.githubusercontent.com/chrisjm/openbrewerydb-rails-api/master/db/breweries.csv";
+
+                    logger.LogInformation($"Downloading: {url}");
+
+                    using (var file = new FileDownload(url))
+                    {
+                        var streamReader = file.StreamReader().ConfigureAwait(false).GetAwaiter().GetResult();
+
+                        var breweryImportEntities = GetBreweries(streamReader)
+                            .Select(b =>
+                            {
+                                b.Id = default;
+                                b.BreweryTags = new List<Entity.BreweryTag>();
+
+                                return b;
+                            })
+                            .ToList();
+
+                        logger.LogInformation($"Importing {breweryImportEntities.Count} breweries");
+
+                        var results = breweryConductor.BulkCreate(breweryImportEntities);
+                    }
+                });
             }
         }
 

@@ -31,7 +31,7 @@ namespace OpenBreweryDB.API.Extensions
 
         public static void EnsureSeeded(this BreweryDbContext context, Action generator)
         {
-            if (!context.Breweries.Any())
+            if (context.Breweries.Any() == false)
             {
                 generator();
             }
