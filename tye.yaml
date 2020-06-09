@@ -13,7 +13,7 @@ services:
     port: 5001
 
 - name: frontend
-  image: openbrewerydb:dev
+  dockerFile: frontend/Dockerfile
   bindings:
   - protocol: http
     port: 4400
