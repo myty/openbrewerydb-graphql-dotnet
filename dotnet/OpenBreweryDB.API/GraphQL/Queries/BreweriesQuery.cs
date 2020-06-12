@@ -1,13 +1,9 @@
 using AutoMapper;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Types;
-using OpenBreweryDB.Core.Conductors;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
+using AndcultureCode.CSharp.Core.Extensions;
+using HotChocolate;
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
 
@@ -19,19 +15,41 @@ namespace OpenBreweryDB.API.GraphQL.Queries
         {
             descriptor.Field("brewery")
                 .Type<BreweryType>()
-                .Argument("id", a => a
-                    .Type<NonNullType<IdType>>()
-                    .Description("id of the brewery (required)"))
-                .Resolver(ctx =>
-                {
-                    var breweryId = ctx.Argument<long>("id");
-                    var query = ctx.Service<Query>();
-                    var breweryResult = query.GetBrewery(breweryId);
+                .Argument(
+                    "id",
+                    a => a
+                        .Type<NonNullType<IdType>>()
+                        .Description("id of the brewery (required)")
+                )
+                .Resolver(
+                    ctx =>
+                    {
+                        var breweryId        = ctx.Argument<long>("id");
+                        var breweryConductor = ctx.Service<IBreweryConductor>();
+                        var mapper           = ctx.Service<IMapper>();
 
-                    // TODO: Add error handling
+                        var breweryResult = breweryConductor.Find(breweryId);
 
-                    return breweryResult.ResultObject;
-                });
+                        if (!breweryResult.HasErrorsOrResultIsNull())
+                        {
+                            return mapper.Map<DTO.Brewery>(breweryResult.ResultObject);
+                        }
+
+                        foreach (var err in breweryResult.Errors)
+                        {
+                            ctx.ReportError(
+                                ErrorBuilder.New()
+                                    .SetCode(err.Key)
+                                    .SetPath(ctx.Path)
+                                    .AddLocation(ctx.FieldSelection)
+                                    .SetMessage(err.Message)
+                                    .Build()
+                            );
+                        }
+
+                        return null;
+                    }
+                );
 
             // TODO: Create GetBreweries Resolver
             // descriptor.Field(t => t.GetBreweries(default, default, default))

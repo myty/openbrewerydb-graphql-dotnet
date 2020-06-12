@@ -9,7 +9,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
         {
             descriptor
                 .Name("Brewery")
-                .Description("A brewery of beer.");
+                .Description("A brewery of beer");
 
             descriptor.Field(t => t.BreweryType)
                 .Type<NonNullType<StringType>>()
@@ -30,7 +30,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
 
             descriptor.Field(t => t.Longitude)
                 .Type<DecimalType>()
-                .Description("Longtitude portion of lat/long coordinates");
+                .Description("Longitude portion of lat/long coordinates");
 
             descriptor.Field(t => t.Latitude)
                 .Type<DecimalType>()
@@ -60,7 +60,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
             descriptor.Field(t => t.Tags)
                 .Type<NonNullType<ListType<StringType>>>()
                 .Name("tag_list")
-                .Description("Tags that have been attached to the brewery.");
+                .Description("Tags that have been attached to the brewery");
 
             descriptor.Field(t => t.UpdatedAt)
                 .Type<NonNullType<DateTimeType>>()
@@ -70,7 +70,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
             descriptor.Field(t => t.WebsiteURL)
                 .Type<StringType>()
                 .Name("website_url")
-                .Description("Webiste address for the brewery");
+                .Description("Website address for the brewery");
         }
     }
 }

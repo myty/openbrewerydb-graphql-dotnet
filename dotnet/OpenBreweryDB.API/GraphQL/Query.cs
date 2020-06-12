@@ -67,19 +67,13 @@ namespace OpenBreweryDB.API.GraphQL
 
             // Sorting
             Func<IQueryable<Entity.Brewery>, IQueryable<Entity.Brewery>> orderBy = null;
-            if (sort is object)
+            if (sort != null)
             {
                 orderBy = _orderConductor.OrderByFields(
                     sort?
-                        .Select(s =>
-                        {
-                            if (s.FirstOrDefault() == '-')
-                            {
-                                return new KeyValuePair<string, SortDirection>(s.Substring(1), SortDirection.DESC);
-                            }
-
-                            return new KeyValuePair<string, SortDirection>(s, SortDirection.ASC);
-                        })
+                        .Select(s => s.FirstOrDefault() == '-'
+                            ? new KeyValuePair<string, SortDirection>(s.Substring(1), SortDirection.DESC)
+                            : new KeyValuePair<string, SortDirection>(s, SortDirection.ASC))
                         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
                 );
             }
@@ -99,13 +93,14 @@ namespace OpenBreweryDB.API.GraphQL
         {
             var breweryResult = _breweryConductor.Find(id);
 
-            if (breweryResult.HasErrorsOrResultIsNull())
+            if (!breweryResult.HasErrorsOrResultIsNull())
             {
-                r.AddErrors(breweryResult.Errors);
-                return null;
+                return _mapper.Map<DTO.Brewery>(breweryResult.ResultObject);
             }
 
-            return _mapper.Map<DTO.Brewery>(breweryResult.ResultObject);
+            r.AddErrors(breweryResult.Errors);
+            return null;
+
         }).Result;
     }
 }
