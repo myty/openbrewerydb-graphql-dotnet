@@ -47,7 +47,7 @@ namespace OpenBreweryDB.API
 
                 // Adds the authorize directive and
                 // enable the authorization middleware.
-                // .AddAuthorizeDirectiveType()
+                .AddAuthorizeDirectiveType()
 
                 .AddQueryType<BreweriesQuery>()
                 .AddType<BreweryType>()
