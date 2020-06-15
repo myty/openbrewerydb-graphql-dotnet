@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.Data
