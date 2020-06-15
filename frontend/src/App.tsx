@@ -29,7 +29,7 @@ class App extends PureComponent<unknown, AppState> {
                 <div
                     id="header"
                     className="bg-gray-700 text-center font-bold text-white p-3 shadow-lg">
-                    <h1>openbrewerydb (React, GraphQL & .NET Core)</h1>
+                    <h1>OpenBreweryDB (React, GraphQL & .NET Core)</h1>
                 </div>
                 <div id="body" className="p-4"></div>
             </div>

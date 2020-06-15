@@ -7,5 +7,10 @@
             "source.organizeImports": true,
             "source.fixAll": true
         }
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/dotnet/tye/master/src/schema/tye-schema.json": [
+            "tye.yaml"
+        ]
     }
 }
