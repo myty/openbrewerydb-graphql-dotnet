@@ -11,7 +11,12 @@ class App extends PureComponent<unknown, AppState> {
         super(props);
 
         this.state = {
-            breweries: [],
+            breweries: [
+                { id: 1, name: "test1" },
+                { id: 2, name: "test2" },
+                { id: 3, name: "test3" },
+                { id: 4, name: "test4" },
+            ],
         };
     }
 
@@ -31,7 +36,11 @@ class App extends PureComponent<unknown, AppState> {
                     className="bg-gray-700 text-center font-bold text-white p-3 shadow-lg">
                     <h1>OpenBreweryDB (React, GraphQL & .NET Core)</h1>
                 </div>
-                <div id="body" className="p-4"></div>
+                <div id="body" className="p-4">
+                    {this.state.breweries.map((b) => (
+                        <div key={b.id}>{b.name}</div>
+                    ))}
+                </div>
             </div>
         );
     }

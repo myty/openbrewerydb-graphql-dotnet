@@ -25,5 +25,6 @@ services:
         target: /app
       - target: /app/node_modules
   bindings:
-  - protocol: http
+  - name: "web"
+    protocol: http
     port: 3000
