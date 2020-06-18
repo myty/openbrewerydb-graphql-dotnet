@@ -1,49 +1,47 @@
-import React, { PureComponent } from "react";
+import React from "react";
+import Header from "./components/header";
+import { theme, ThemeProvider, CSSReset } from "@chakra-ui/core";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { Router } from "@reach/router";
+import { HomePage } from "./pages/home-page";
+import { BreweryPage } from "./pages/brewery-page";
 
-interface AppState {
-    breweries: any[];
-}
+const client = new ApolloClient({
+    uri: "https://localhost:5001/graphql",
+});
 
-const BODY_BG_CLASS = "bg-gray-100";
+type Breakpoints = string[] & {
+    sm?: string;
+    md?: string;
+    lg?: string;
+    xl?: string;
+};
 
-class App extends PureComponent<unknown, AppState> {
-    constructor(props: unknown) {
-        super(props);
+const breakpoints: Breakpoints = ["360px", "768px", "1024px", "1440px"];
+breakpoints.sm = breakpoints[0];
+breakpoints.md = breakpoints[1];
+breakpoints.lg = breakpoints[2];
+breakpoints.xl = breakpoints[3];
 
-        this.state = {
-            breweries: [
-                { id: 1, name: "test1" },
-                { id: 2, name: "test2" },
-                { id: 3, name: "test3" },
-                { id: 4, name: "test4" },
-            ],
-        };
-    }
+const newTheme = {
+    ...theme,
+    breakpoints,
+};
 
-    componentDidMount() {
-        document.body.classList.add(BODY_BG_CLASS);
-    }
-
-    componentWillUnmount() {
-        document.body.classList.remove(BODY_BG_CLASS);
-    }
-
-    render() {
-        return (
-            <div>
-                <div
-                    id="header"
-                    className="bg-gray-700 text-center font-bold text-white p-3 shadow-lg">
-                    <h1>OpenBreweryDB (React, GraphQL & .NET Core)</h1>
-                </div>
-                <div id="body" className="p-4">
-                    {this.state.breweries.map((b) => (
-                        <div key={b.id}>{b.name}</div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
+function App() {
+    return (
+        <ApolloProvider client={client}>
+            <ThemeProvider theme={newTheme}>
+                <CSSReset />
+                <Header title="OpenBreweryDB" />
+                <Router>
+                    <HomePage path="/" />
+                    <BreweryPage path="brewery/:breweryId" />
+                </Router>
+            </ThemeProvider>
+        </ApolloProvider>
+    );
 }
 
 export default App;

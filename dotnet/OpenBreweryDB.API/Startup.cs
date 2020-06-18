@@ -25,6 +25,8 @@ namespace OpenBreweryDB.API
 {
     public class Startup
     {
+        readonly string _myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -59,6 +61,17 @@ namespace OpenBreweryDB.API
             {
                 options.AllowSynchronousIO = true;
             });
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    // TODO: Build based upon the Tye params
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod(); ;
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +95,8 @@ namespace OpenBreweryDB.API
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseCors();
 
             app.UseWebSockets()
                 .UseGraphQL("/graphql")
