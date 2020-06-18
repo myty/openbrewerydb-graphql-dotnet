@@ -35,10 +35,12 @@ function App() {
             <ThemeProvider theme={newTheme}>
                 <CSSReset />
                 <Header title="OpenBreweryDB" />
-                <Router>
-                    <HomePage path="/" />
-                    <BreweryPage path="brewery/:breweryId" />
-                </Router>
+                <div id="main" style={{ padding: 24 }}>
+                    <Router>
+                        <HomePage path="/" />
+                        <BreweryPage path="breweries/:breweryId" />
+                    </Router>
+                </div>
             </ThemeProvider>
         </ApolloProvider>
     );

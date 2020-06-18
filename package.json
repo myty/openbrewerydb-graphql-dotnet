@@ -14,6 +14,7 @@
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
-        "serve": "tye run --watch"
+        "serve": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
+        "tye": "tye run --watch"
     }
 }
