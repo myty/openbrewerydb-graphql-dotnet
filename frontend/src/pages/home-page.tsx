@@ -12,16 +12,15 @@ const BREWERIES = gql`
     }
 `;
 
-type Brewery = {
-    id: string;
-    name: string;
-};
-
 export const HomePage = (props: RouteComponentProps) => {
-    const { loading, error, data } = useQuery<Brewery>(BREWERIES);
+    const { loading, error, data } = useQuery(BREWERIES);
 
     if (loading) return <p>Loading...</p>;
-    if (error || !data) return <p>Error :(</p>;
+    if (error) return <p>Error :(</p>;
 
-    return <h1>{data.name}</h1>;
+    return (
+        <div style={{marginTop: 70}}>
+            <h1>{data.brewery.name}</h1>
+        </div>
+    );
 };
