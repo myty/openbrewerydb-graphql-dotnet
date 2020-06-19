@@ -35,11 +35,9 @@ export const HomePage = (props: PropsWithChildren<RouteComponentProps>) => {
     if (loading) return <Loading />;
     if (error || !data?.breweries) return <p>Error :(</p>;
 
-    const { breweries } = data;
-
     return (
         <>
-            {breweries.map((b: Brewery) => (
+            {data.breweries.map((b: Brewery) => (
                 <Box
                     as="button"
                     p={5}
