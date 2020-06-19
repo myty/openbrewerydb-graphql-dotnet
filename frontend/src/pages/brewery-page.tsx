@@ -3,6 +3,8 @@ import { RouteComponentProps } from "@reach/router";
 import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import { Text, Heading } from "@chakra-ui/core";
+import { Brewery } from "../types/brewery";
+import { Loading } from "../components/loading";
 
 const BREWERIES = gql`
     query Brewery($breweryId: ID!) {
@@ -16,12 +18,7 @@ const BREWERIES = gql`
 `;
 
 interface BreweryQuery {
-    brewery: {
-        id: number;
-        name: string;
-        city: string;
-        state: string;
-    };
+    brewery: Brewery;
 }
 
 interface BreweryPageProps extends RouteComponentProps {
@@ -34,7 +31,7 @@ export const BreweryPage = (props: BreweryPageProps) => {
         variables: { breweryId },
     });
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading />;
     if (error || !data?.brewery) return <p>Error :(</p>;
 
     return (

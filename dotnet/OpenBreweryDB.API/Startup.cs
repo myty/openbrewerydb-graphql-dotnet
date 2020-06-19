@@ -34,7 +34,6 @@ namespace OpenBreweryDB.API
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
             services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
             services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
-            services.AddScoped<Query>();
 
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
@@ -68,7 +67,7 @@ namespace OpenBreweryDB.API
                     // TODO: Build based upon the Tye params
                     builder.WithOrigins("http://localhost:3000")
                         .AllowAnyHeader()
-                        .AllowAnyMethod(); ;
+                        .AllowAnyMethod();
                 });
             });
         }

@@ -6,6 +6,11 @@ using AndcultureCode.CSharp.Core.Extensions;
 using HotChocolate;
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
+using System;
+using System.Collections.Generic;
+using OpenBreweryDB.Core.Extensions;
+using System.Linq;
+using OpenBreweryDB.Core.Conductors;
 
 namespace OpenBreweryDB.API.GraphQL.Queries
 {
@@ -24,9 +29,9 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                 .Resolver(
                     ctx =>
                     {
-                        var breweryId        = ctx.Argument<long>("id");
+                        var breweryId = ctx.Argument<long>("id");
                         var breweryConductor = ctx.Service<IBreweryConductor>();
-                        var mapper           = ctx.Service<IMapper>();
+                        var mapper = ctx.Service<IMapper>();
 
                         var breweryResult = breweryConductor.Find(breweryId);
 
@@ -51,8 +56,153 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                     }
                 );
 
-            // TODO: Create GetBreweries Resolver
-            // descriptor.Field(t => t.GetBreweries(default, default, default))
+            descriptor
+                .Field("breweries")
+                .Type<ListType<BreweryType>>()
+                .Argument(
+                    "state",
+                    a => a
+                        .Type<StringType>()
+                        .Description("filter by state")
+                )
+                .Argument(
+                    "type",
+                    a => a
+                        .Type<StringType>()
+                        .Description("filter by type")
+                )
+                .Argument(
+                    "city",
+                    a => a
+                        .Type<StringType>()
+                        .Description("search by city name")
+                )
+                .Argument(
+                    "name",
+                    a => a
+                        .Type<StringType>()
+                        .Description("search by brewery name")
+                )
+                .Argument(
+                    "search",
+                    a => a
+                        .Type<StringType>()
+                        .Description("general search")
+                )
+                .Argument(
+                    "sort",
+                    a => a
+                        .Type<ListType<StringType>>()
+                        .Description("sort by")
+                        .DefaultValue(Array.Empty<string>())
+                )
+                .Argument(
+                    "tags",
+                    a => a
+                        .Type<ListType<StringType>>()
+                        .Description("filter by tags")
+                        .DefaultValue(Array.Empty<string>())
+                )
+                .Argument(
+                    "skip",
+                    a => a
+                        .Type<IntType>()
+                        .Description("number of records to skip")
+                        .DefaultValue(0)
+                )
+                .Argument(
+                    "limit",
+                    a => a
+                        .Type<IntType>()
+                        .Description("max number of records to take")
+                        .DefaultValue(10)
+                )
+                .Resolver(
+                    ctx =>
+                    {
+                        // Arguments
+                        var name = ctx.Argument<string>("name");
+                        var state = ctx.Argument<string>("state");
+                        var city = ctx.Argument<string>("city");
+                        var type = ctx.Argument<string>("type");
+                        var search = ctx.Argument<string>("search");
+                        var sort = ctx.Argument<IEnumerable<string>>("sort");
+                        var tags = ctx.Argument<IEnumerable<string>>("tags");
+                        var skip = ctx.Argument<int>("skip");
+                        var limit = ctx.Argument<int>("limit");
+
+                        // Dependencies
+                        var breweryConductor = ctx.Service<IBreweryConductor>();
+                        var validationConductor = ctx.Service<IBreweryValidationConductor>();
+                        var filterConductor = ctx.Service<IBreweryFilterConductor>();
+                        var orderConductor = ctx.Service<IBreweryOrderConductor>();
+                        var mapper = ctx.Service<IMapper>();
+
+                        if (!validationConductor.CanSearch(state, type, out var errors))
+                        {
+                            foreach (var (key, message) in errors)
+                            {
+                                ctx.ReportError(
+                                    ErrorBuilder.New()
+                                        .SetCode(key)
+                                        .SetPath(ctx.Path)
+                                        .AddLocation(ctx.FieldSelection)
+                                        .SetMessage(message)
+                                        .Build()
+                                );
+                            }
+
+                            return null;
+                        }
+
+                        var filter = filterConductor.BuildFilter(
+                            by_name: name,
+                            by_state: state,
+                            by_type: type,
+                            by_city: city,
+                            by_tags: tags);
+
+                        if (!string.IsNullOrEmpty(search))
+                        {
+                            filter = filter.AndAlso(filterConductor
+                                .BuildFilter(by_name: search));
+                        }
+
+                        // Sorting
+                        Func<IQueryable<Entity.Brewery>, IQueryable<Entity.Brewery>> orderBy = null;
+                        if (sort != null)
+                        {
+                            orderBy = orderConductor.OrderByFields(
+                                sort?
+                                    .Select(s => s.FirstOrDefault() == '-'
+                                        ? new KeyValuePair<string, SortDirection>(s.Substring(1), SortDirection.DESC)
+                                        : new KeyValuePair<string, SortDirection>(s, SortDirection.ASC))
+                                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+                            );
+                        }
+
+                        var result = breweryConductor.FindAll(filter: filter, orderBy: orderBy, skip: skip, take: limit);
+
+                        if (!result.HasErrorsOrResultIsNull())
+                        {
+                            return mapper.Map<IEnumerable<DTO.Brewery>>(result.ResultObject);
+                        }
+
+                        foreach (var err in result.Errors)
+                        {
+                            ctx.ReportError(
+                                ErrorBuilder.New()
+                                    .SetCode(err.Key)
+                                    .SetPath(ctx.Path)
+                                    .AddLocation(ctx.FieldSelection)
+                                    .SetMessage(err.Message)
+                                    .Build()
+                            );
+                        }
+
+                        return null;
+                    }
+                );
         }
     }
 }

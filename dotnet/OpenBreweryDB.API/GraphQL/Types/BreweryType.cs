@@ -50,7 +50,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Description("The state of the brewery");
 
             descriptor.Field(t => t.State)
-                .Type<NonNullType<StringType>>()
+                .Type<StringType>()
                 .Description("The state of the brewery");
 
             descriptor.Field(t => t.Street)
