@@ -20,17 +20,17 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
                 .Argument("brewery", a => a.Type<NonNullType<BreweryInputType>>())
                 .Resolver(CreateBrewery);
 
-            // descriptor
-            //     .Field("updateBrewery")
-            //     .Type<BreweryType>()
-            //     .Argument("brewery", a => a.Type<NonNullType<BreweryInputType>>())
-            //     .Resolver(UpdateBrewery);
-            //
-            // descriptor
-            //     .Field("deleteBrewery")
-            //     .Type<StringType>()
-            //     .Argument("id", a => a.Type<NonNullType<IdType>>())
-            //     .Resolver(DeleteBrewery);
+            descriptor
+                .Field("updateBrewery")
+                .Type<BreweryType>()
+                .Argument("brewery", a => a.Type<NonNullType<BreweryInputType>>())
+                .Resolver(UpdateBrewery);
+
+            descriptor
+                .Field("deleteBrewery")
+                .Type<StringType>()
+                .Argument("id", a => a.Type<NonNullType<IdType>>())
+                .Resolver(DeleteBrewery);
         }
 
         private DTO.Brewery CreateBrewery(IResolverContext context)

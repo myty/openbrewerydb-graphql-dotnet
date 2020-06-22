@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using GraphQL.Types;
 using HotChocolate.Types;
@@ -57,7 +58,7 @@ namespace OpenBreweryDB.API.GraphQL.InputTypes
 
             descriptor.Field(t => t.Tags)
                 .Type<NonNullType<ListType<StringType>>>()
-                .DefaultValue(Enumerable.Empty<string>())
+                .DefaultValue(Array.Empty<string>())
                 .Name("tag_list")
                 .Description("Tags that have been attached to the brewery");
 
