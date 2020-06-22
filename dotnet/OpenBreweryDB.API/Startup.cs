@@ -43,6 +43,7 @@ namespace OpenBreweryDB.API
             services.AddControllers();
 
             services.AddGraphQL(sp => SchemaBuilder.New()
+                .EnableRelaySupport()
                 .AddServices(sp)
 
                 // Adds the authorize directive and

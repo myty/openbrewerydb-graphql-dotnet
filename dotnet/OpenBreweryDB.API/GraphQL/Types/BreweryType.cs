@@ -1,4 +1,6 @@
+using HotChocolate;
 using HotChocolate.Types;
+using OpenBreweryDB.API.GraphQL.Resolvers;
 using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Types
@@ -7,6 +9,10 @@ namespace OpenBreweryDB.API.GraphQL.Types
     {
         protected override void Configure(IObjectTypeDescriptor<DTO.Brewery> descriptor)
         {
+            descriptor.AsNode()
+                .IdField(t => t.Id)
+                .NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id ?? default));
+
             descriptor
                 .Name("Brewery")
                 .Description("A brewery of beer");
@@ -15,10 +21,6 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Type<NonNullType<StringType>>()
                 .Name("brewery_type")
                 .Description("Type of Brewery");
-
-            descriptor.Field(t => t.Id)
-                .Type<IdType>()
-                .Description("Brewery Unique Identifier");
 
             descriptor.Field(t => t.City)
                 .Type<StringType>()

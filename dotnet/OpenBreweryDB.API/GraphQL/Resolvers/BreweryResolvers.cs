@@ -1,5 +1,7 @@
+using AndcultureCode.CSharp.Core.Extensions;
 using AutoMapper;
 using HotChocolate;
+using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Core.Conductors;
@@ -8,26 +10,39 @@ using OpenBreweryDB.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Resolvers
 {
-    public class BreweryResolvers
+    public static class BreweryResolvers
     {
-        // public IEnumerable<DTO.Brewery> GetBreweries(
-        //     [Parent]ICharacter character,
-        //     [Service]CharacterRepository repository)
-        // {
-        //     foreach (string friendId in character.Friends)
-        //     {
-        //         ICharacter friend = repository.GetCharacter(friendId);
-        //         if (friend != null)
-        //         {
-        //             yield return friend;
-        //         }
-        //     }
-        // }
+        public static async Task<DTO.Brewery> BreweryNodeResolver(IResolverContext ctx, long id = default)
+        {
+            var breweryConductor = ctx.Service<IBreweryConductor>();
+            var mapper = ctx.Service<IMapper>();
+
+            var breweryResult = breweryConductor.Find(id);
+
+            if (!breweryResult.HasErrorsOrResultIsNull())
+            {
+                return await Task.FromResult(mapper.Map<DTO.Brewery>(breweryResult.ResultObject));
+            }
+
+            foreach (var err in breweryResult.Errors)
+            {
+                ctx.ReportError(
+                    ErrorBuilder.New()
+                        .SetCode(err.Key)
+                        .SetPath(ctx.Path)
+                        .AddLocation(ctx.FieldSelection)
+                        .SetMessage(err.Message)
+                        .Build()
+                );
+            }
+
+            return null;
+        }
     }
 }
