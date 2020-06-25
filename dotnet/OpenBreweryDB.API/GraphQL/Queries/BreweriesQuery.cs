@@ -1,4 +1,5 @@
 using AutoMapper;
+using HotChocolate;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using OpenBreweryDB.Core.Extensions;
 using System.Linq;
 using OpenBreweryDB.Core.Conductors;
+using HotChocolate.Types.Relay;
 
 namespace OpenBreweryDB.API.GraphQL.Queries
 {
@@ -18,47 +20,47 @@ namespace OpenBreweryDB.API.GraphQL.Queries
     {
         protected override void Configure(IObjectTypeDescriptor descriptor)
         {
-            descriptor.Field("brewery")
-                .Type<BreweryType>()
-                .Argument(
-                    "id",
-                    a => a
-                        .Type<NonNullType<IdType>>()
-                        .Description("id of the brewery (required)")
-                )
-                .Resolver(
-                    ctx =>
-                    {
-                        var breweryId = ctx.Argument<long>("id");
-                        var breweryConductor = ctx.Service<IBreweryConductor>();
-                        var mapper = ctx.Service<IMapper>();
+            // descriptor.Field("brewery")
+            //     .Type<BreweryType>()
+            //     .Argument(
+            //         "id",
+            //         a => a
+            //             .Type<NonNullType<IdType>>()
+            //             .Description("id of the brewery (required)")
+            //     )
+            //     .Resolver(
+            //         ctx =>
+            //         {
+            //             var breweryId = ctx.ArgumentKind().Argument<long>("id");
+            //             var breweryConductor = ctx.Service<IBreweryConductor>();
+            //             var mapper = ctx.Service<IMapper>();
 
-                        var breweryResult = breweryConductor.Find(breweryId);
+            //             var breweryResult = breweryConductor.Find(breweryId);
 
-                        if (!breweryResult.HasErrorsOrResultIsNull())
-                        {
-                            return mapper.Map<DTO.Brewery>(breweryResult.ResultObject);
-                        }
+            //             if (!breweryResult.HasErrorsOrResultIsNull())
+            //             {
+            //                 return mapper.Map<DTO.Brewery>(breweryResult.ResultObject);
+            //             }
 
-                        foreach (var err in breweryResult.Errors)
-                        {
-                            ctx.ReportError(
-                                ErrorBuilder.New()
-                                    .SetCode(err.Key)
-                                    .SetPath(ctx.Path)
-                                    .AddLocation(ctx.FieldSelection)
-                                    .SetMessage(err.Message)
-                                    .Build()
-                            );
-                        }
+            //             foreach (var err in breweryResult.Errors)
+            //             {
+            //                 ctx.ReportError(
+            //                     ErrorBuilder.New()
+            //                         .SetCode(err.Key)
+            //                         .SetPath(ctx.Path)
+            //                         .AddLocation(ctx.FieldSelection)
+            //                         .SetMessage(err.Message)
+            //                         .Build()
+            //                 );
+            //             }
 
-                        return null;
-                    }
-                );
+            //             return null;
+            //         }
+            //     );
 
             descriptor
                 .Field("breweries")
-                .Type<ListType<BreweryType>>()
+                .UsePaging<BreweryType>()
                 .Argument(
                     "state",
                     a => a
@@ -103,20 +105,6 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                         .Description("filter by tags")
                         .DefaultValue(Array.Empty<string>())
                 )
-                .Argument(
-                    "skip",
-                    a => a
-                        .Type<IntType>()
-                        .Description("number of records to skip")
-                        .DefaultValue(0)
-                )
-                .Argument(
-                    "limit",
-                    a => a
-                        .Type<IntType>()
-                        .Description("max number of records to take")
-                        .DefaultValue(10)
-                )
                 .Resolver(
                     ctx =>
                     {
@@ -128,8 +116,6 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                         var search = ctx.Argument<string>("search");
                         var sort = ctx.Argument<IEnumerable<string>>("sort");
                         var tags = ctx.Argument<IEnumerable<string>>("tags");
-                        var skip = ctx.Argument<int>("skip");
-                        var limit = ctx.Argument<int>("limit");
 
                         // Dependencies
                         var breweryConductor = ctx.Service<IBreweryConductor>();
@@ -181,11 +167,11 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                             );
                         }
 
-                        var result = breweryConductor.FindAll(filter: filter, orderBy: orderBy, skip: skip, take: limit);
+                        var result = breweryConductor.FindAllQueryable(filter: filter, orderBy: orderBy);
 
                         if (!result.HasErrorsOrResultIsNull())
                         {
-                            return mapper.Map<IEnumerable<DTO.Brewery>>(result.ResultObject);
+                            return result.ResultObject;
                         }
 
                         foreach (var err in result.Errors)

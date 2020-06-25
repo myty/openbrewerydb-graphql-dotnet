@@ -18,16 +18,15 @@ namespace OpenBreweryDB.API.GraphQL.Resolvers
 {
     public static class BreweryResolvers
     {
-        public static async Task<DTO.Brewery> BreweryNodeResolver(IResolverContext ctx, long id = default)
+        public static async Task<Entity.Brewery> BreweryNodeResolver(IResolverContext ctx, long id)
         {
             var breweryConductor = ctx.Service<IBreweryConductor>();
-            var mapper = ctx.Service<IMapper>();
 
             var breweryResult = breweryConductor.Find(id);
 
             if (!breweryResult.HasErrorsOrResultIsNull())
             {
-                return await Task.FromResult(mapper.Map<DTO.Brewery>(breweryResult.ResultObject));
+                return await Task.FromResult(breweryResult.ResultObject);
             }
 
             foreach (var err in breweryResult.Errors)

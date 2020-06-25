@@ -61,7 +61,8 @@ namespace OpenBreweryDB.API.Controllers
                 sort?
                     .Trim()
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => {
+                    .Select(s =>
+                    {
                         if (s.FirstOrDefault() == '-')
                         {
                             return new KeyValuePair<string, SortDirection>(s.Substring(1), SortDirection.DESC);

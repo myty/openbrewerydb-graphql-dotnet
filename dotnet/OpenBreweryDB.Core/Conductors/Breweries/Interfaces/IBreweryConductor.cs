@@ -15,6 +15,9 @@ namespace OpenBreweryDB.Core.Conductors.Breweries.Interfaces
             Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null,
             int skip = default,
             int take = 100);
+        IResult<IQueryable<Brewery>> FindAllQueryable(
+            Expression<Func<Brewery, bool>> filter = null,
+            Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null);
         IResult<Brewery> Create(Brewery brewery);
         IResult<IEnumerable<Brewery>> BulkCreate(IEnumerable<Brewery> breweries);
         IResult<Brewery> Update(Brewery brewery);

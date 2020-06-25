@@ -1,17 +1,20 @@
+using System;
+using System.Linq;
 using HotChocolate;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Resolvers;
 using DTO = OpenBreweryDB.Core.Models;
+using Entity = OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Types
 {
-    public class BreweryType : ObjectType<DTO.Brewery>
+    public class BreweryType : ObjectType<Entity.Brewery>
     {
-        protected override void Configure(IObjectTypeDescriptor<DTO.Brewery> descriptor)
+        protected override void Configure(IObjectTypeDescriptor<Entity.Brewery> descriptor)
         {
             descriptor.AsNode()
                 .IdField(t => t.Id)
-                .NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id ?? default));
+                .NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
 
             descriptor
                 .Name("Brewery")
@@ -59,10 +62,14 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Type<StringType>()
                 .Description("The street of the brewery");
 
-            descriptor.Field(t => t.Tags)
+            descriptor.Field("tag_list")
                 .Type<NonNullType<ListType<StringType>>>()
-                .Name("tag_list")
-                .Description("Tags that have been attached to the brewery");
+                .Description("Tags that have been attached to the brewery")
+                .Resolver(ctx => {
+                    return ctx.Parent<Entity.Brewery>()?.BreweryTags?
+                        .Select(bt => bt.Tag.Name)
+                        .Distinct() ?? Array.Empty<string>();
+                });
 
             descriptor.Field(t => t.UpdatedAt)
                 .Type<NonNullType<DateTimeType>>()

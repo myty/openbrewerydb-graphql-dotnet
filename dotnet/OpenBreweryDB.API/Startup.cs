@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.API.GraphQL;
 using OpenBreweryDB.API.GraphQL.Queries;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Data;
@@ -18,8 +17,6 @@ using OpenBreweryDB.API.Extensions;
 using HotChocolate;
 using HotChocolate.AspNetCore;
 using HotChocolate.AspNetCore.Voyager;
-using HotChocolate.Execution.Configuration;
-using HotChocolate.Subscriptions;
 
 namespace OpenBreweryDB.API
 {

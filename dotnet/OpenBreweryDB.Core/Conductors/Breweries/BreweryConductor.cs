@@ -76,6 +76,23 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             int skip = 0,
             int take = 100) => Do<IEnumerable<Brewery>>.Try((r) =>
         {
+            var query = FindAllQueryable(filter, orderBy);
+
+            if (query.HasErrorsOrResultIsNull())
+            {
+                r.AddError("Error", $"Results for the brewery query could not be retreived.");
+            }
+
+            return query.ResultObject
+                .Skip(skip)
+                .Take(take);
+        }).Result;
+
+        public IResult<IQueryable<Brewery>> FindAllQueryable(
+            Expression<Func<Brewery, bool>> filter = null,
+            Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null
+        ) => Do<IQueryable<Brewery>>.Try((r) =>
+        {
             if (filter == null)
             {
                 filter = b => true;
@@ -91,9 +108,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 query = orderBy(query);
             }
 
-            return query
-                .Skip(skip)
-                .Take(take);
+            return query;
         }).Result;
 
         public IResult<Brewery> Update(Brewery brewery) => Do<Brewery>.Try((r) =>
