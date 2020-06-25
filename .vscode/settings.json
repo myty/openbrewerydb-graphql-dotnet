@@ -1,4 +1,24 @@
 {
     "omnisharp.defaultLaunchSolution": "./dotnet/openbrewerydb-graphql-sharp.sln",
-    "omnisharp.enableEditorConfigSupport": true
+    "omnisharp.enableEditorConfigSupport": true,
+    "[csharp]": {
+        "editor.formatOnType": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true,
+            "source.fixAll": true
+        }
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/dotnet/tye/master/src/schema/tye-schema.json": [
+            "tye.yaml"
+        ]
+    },
+    "files.exclude": {
+        "**/._*": true,
+        "**/node_modules/**": true,
+        "dotnet/**/bin/**": true,
+        "dotnet/**/obj/**": true,
+        "dotnet/.idea/**": true,
+        "frontend/build/**": true
+    }
 }

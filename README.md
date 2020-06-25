@@ -1,31 +1,22 @@
-# OpenBreweryDB - graphql-dotnet
+# OpenBreweryDB - GraphQL (.NET Core)
 
-This is an exercise in learning GraphQL in .Net Core by taking an api like, https://www.openbrewerydb.org/ and transforming that into a GraphQL schema.
+This is an exercise in learning GraphQL in .NET Core by taking an API like, https://www.openbrewerydb.org/ and transforming that into a GraphQL schema.  I initially started with [graphql-dotnet](https://github.com/graphql-dotnet/graphql-dotnet) as the backend server, but have since moved everything over to use [Hot Chocolate](https://hotchocolate.io/). In it's current state I am attempting to have it follow as close as possible to GraphQL schema standards such as the [GraphQL Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm) that came out of the [Relay](https://relay.dev/) team at Facebook.
 
-Some fun things to possibly add to this:
+Some things I am planning to add:
 
-- Pull in Google reviews api data if any is available for breweries
-- Explore [Conventions](https://github.com/graphql-dotnet/conventions#getting-started) and [GraphQL.EntityFramework](https://github.com/SimonCropp/GraphQL.EntityFramework) integration
-- Add a frontend using [React](https://reactjs.org/) and [Tailwind CSS](https://tailwindcss.com/)
+- Pull in Google reviews api data if any is available for breweries (Schema Stiching)
+- Nearby breweries (Dataloader)
 
 ## Prerequisites
 
-- .Net Core 3.1
+- .NET Core 3.1
 - Yarn/NPM
 
 ## Getting Started
 
-Setup the database:
+Run this from your favorit commandline:
 ```bash
-yarn database update
+yarn dotnet
 ```
 
-Load the data (run this only once, since this will reset the entire data set):
-```bash
-yarn import-data
-```
-
-Start up the API:
-```bash
-yarn serve
-```
+Once you see `Application started. Press Ctrl+C to shut down.`, go to this url, https://localhost:5001/graphql/playground/ and play around.

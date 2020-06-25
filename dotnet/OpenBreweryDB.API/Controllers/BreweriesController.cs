@@ -50,7 +50,7 @@ namespace OpenBreweryDB.API.Controllers
             // Validation
             if (!_validationConductor.CanSearch(by_state, by_type, out var errors))
             {
-                return this.BadRequest();
+                return BadRequest();
             }
 
             // Filtering
@@ -61,7 +61,8 @@ namespace OpenBreweryDB.API.Controllers
                 sort?
                     .Trim()
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => {
+                    .Select(s =>
+                    {
                         if (s.FirstOrDefault() == '-')
                         {
                             return new KeyValuePair<string, SortDirection>(s.Substring(1), SortDirection.DESC);
@@ -107,7 +108,7 @@ namespace OpenBreweryDB.API.Controllers
             // Validation
             if (!_validationConductor.CanCreate(dto, out var errors))
             {
-                return this.BadRequest();
+                return BadRequest();
             }
 
             var brewery = _breweryConductor.Create(_mapper.Map<Brewery>(dto));
@@ -128,9 +129,9 @@ namespace OpenBreweryDB.API.Controllers
             [FromBody] DTO.Brewery dto)
         {
             // Validation
-            if (!_validationConductor.CanUpdate(id, dto, out var errors))
+            if (!_validationConductor.CanUpdate(id, dto, out _))
             {
-                return this.BadRequest();
+                return BadRequest();
             }
 
             var brewery = _breweryConductor.Update(_mapper.Map<Brewery>(dto));
@@ -140,7 +141,7 @@ namespace OpenBreweryDB.API.Controllers
                 return BadRequest(brewery.Errors);
             }
 
-            dto = _mapper.Map<DTO.Brewery>(brewery.ResultObject);
+            _ = _mapper.Map<DTO.Brewery>(brewery.ResultObject);
 
             return Ok();
         }
@@ -163,13 +164,13 @@ namespace OpenBreweryDB.API.Controllers
             // by_tag
             var tags = new List<string>();
 
-            if (!String.IsNullOrEmpty(by_tag?.Trim()))
+            if (!string.IsNullOrEmpty(by_tag?.Trim()))
             {
                 tags.Add(by_tag.Trim());
             }
 
             // by_tags
-            if (!String.IsNullOrEmpty(by_tags?.Trim()))
+            if (!string.IsNullOrEmpty(by_tags?.Trim()))
             {
                 tags.AddRange(by_tags.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
                 tags = tags.Distinct().ToList();

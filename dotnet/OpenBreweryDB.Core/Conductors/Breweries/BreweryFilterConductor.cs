@@ -21,7 +21,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             Expression<Func<Brewery, bool>> filter = b => true;
 
             // by_city
-            if (!String.IsNullOrEmpty(by_city?.Trim()))
+            if (!string.IsNullOrEmpty(by_city?.Trim()))
             {
                 by_city = by_city.ToLower().Trim();
 
@@ -29,13 +29,13 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             }
 
             // by_name
-            if (!String.IsNullOrEmpty(by_name?.Trim()))
+            if (!string.IsNullOrEmpty(by_name?.Trim()))
             {
                 filter = filter.AndAlso(b => b.Name.ToLower().Contains(by_name.ToLower().Trim()));
             }
 
             // by_state
-            if (!String.IsNullOrEmpty(by_state?.Trim()))
+            if (!string.IsNullOrEmpty(by_state?.Trim()))
             {
                 filter = filter.AndAlso(b => b.State.ToLower().Replace(" ", "_") == by_state.ToLower().Trim().Replace(" ", "_"));
             }
@@ -47,7 +47,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             }
 
             // by_type
-            if (!String.IsNullOrEmpty(by_type?.Trim()))
+            if (!string.IsNullOrEmpty(by_type?.Trim()))
             {
                 filter = filter.AndAlso(b => b.BreweryType.ToLower() == by_type.ToLower().Trim());
             }
@@ -60,7 +60,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             Expression<Func<Brewery, bool>> filter = b => true;
             var formattedQuery = query?.Trim();
 
-            if (String.IsNullOrEmpty(formattedQuery))
+            if (string.IsNullOrEmpty(formattedQuery))
             {
                 return filter;
             }

@@ -1,20 +1,20 @@
 {
-    "author": "andculture",
+    "author": "Michael Tyson",
     "description": "Demo OpenBreweryDB .NET Core GraphQL Implementation",
     "devDependencies": {
-        "prettier": "^2.0.4"
+        "prettier": "^2.0.5"
     },
     "name": "openbrewerydb-qraphql",
     "private": true,
-    "version": "0.2.0",
+    "version": "0.3.0",
     "dependencies": {},
     "scripts": {
         "build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
-        "import-data": "cd ./dotnet/OpenBreweryDB.Console && dotnet run",
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
-        "restore": "dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
-        "serve": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run"
+        "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
+        "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
+        "serve": "dotnet tool restore && dotnet tye run --watch"
     }
 }

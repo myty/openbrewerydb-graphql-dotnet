@@ -1,6 +1,4 @@
 using AutoMapper;
-using GraphQL.Server;
-using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -9,29 +7,26 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.API.GraphQL;
 using OpenBreweryDB.API.GraphQL.Queries;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Data;
 using OpenBreweryDB.API.GraphQL.Mutations;
 using OpenBreweryDB.API.GraphQL.InputTypes;
 using Microsoft.EntityFrameworkCore;
+using OpenBreweryDB.API.Extensions;
+using HotChocolate;
+using HotChocolate.AspNetCore;
+using HotChocolate.AspNetCore.Voyager;
 
 namespace OpenBreweryDB.API
 {
     public class Startup
     {
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // GraphQL
-            services.AddScoped<BreweriesQuery>();
-            services.AddScoped<BreweriesMutation>();
-            services.AddScoped<BreweryType>();
-            services.AddScoped<BreweryInputType>();
-            services.AddScoped<ISchema, BreweriesSchema>();
-
             services.AddScoped<IBreweryConductor, BreweryConductor>();
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
             services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
@@ -44,16 +39,34 @@ namespace OpenBreweryDB.API
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
-            services.AddGraphQL(graphqlConfig =>
-            {
-                graphqlConfig.EnableMetrics = true;
-                graphqlConfig.ExposeExceptions = true;
-            })
-            .AddUserContextBuilder(httpContext => new GraphQLUserContext { User = httpContext.User });
+            services.AddGraphQL(sp => SchemaBuilder.New()
+                .EnableRelaySupport()
+                .AddServices(sp)
+
+                // Adds the authorize directive and
+                // enable the authorization middleware.
+                .AddAuthorizeDirectiveType()
+
+                .AddQueryType<BreweriesQuery>()
+                .AddType<BreweryType>()
+                .AddMutationType<BreweriesMutation>()
+                .AddType<BreweryInputType>()
+                .Create());
 
             services.Configure<KestrelServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    // TODO: Build based upon the Tye params
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             });
         }
 
@@ -78,13 +91,16 @@ namespace OpenBreweryDB.API
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseWebSockets();
 
-            // add http for Schema at default url http://localhost:5000/graphql
-            app.UseGraphQL<ISchema>();
+            app.UseCors();
 
-            // use graphql-playground at default url http://localhost:5000/ui/playground
-            app.UseGraphQLPlayground();
+            app.UseWebSockets()
+                .UseGraphQL("/graphql")
+                .UsePlayground("/graphql")
+                .UseVoyager("/graphql");
+
+            // Parse and seed the db
+            app.SeedDatabase("https://raw.githubusercontent.com/chrisjm/openbrewerydb-rails-api/master/db/breweries.csv");
         }
     }
 }
