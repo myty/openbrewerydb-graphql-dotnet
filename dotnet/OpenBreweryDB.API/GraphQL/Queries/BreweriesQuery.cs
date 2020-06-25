@@ -1,18 +1,16 @@
+using AndcultureCode.CSharp.Core.Extensions;
 using AutoMapper;
 using HotChocolate;
 using HotChocolate.Types;
+using HotChocolate.Types.Relay;
 using OpenBreweryDB.API.GraphQL.Types;
+using OpenBreweryDB.Core.Conductors;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using AndcultureCode.CSharp.Core.Extensions;
-using HotChocolate;
-using DTO = OpenBreweryDB.Core.Models;
-using Entity = OpenBreweryDB.Data.Models;
+using OpenBreweryDB.Core.Extensions;
+using OpenBreweryDB.Data.Models;
 using System;
 using System.Collections.Generic;
-using OpenBreweryDB.Core.Extensions;
 using System.Linq;
-using OpenBreweryDB.Core.Conductors;
-using HotChocolate.Types.Relay;
 
 namespace OpenBreweryDB.API.GraphQL.Queries
 {
@@ -20,44 +18,6 @@ namespace OpenBreweryDB.API.GraphQL.Queries
     {
         protected override void Configure(IObjectTypeDescriptor descriptor)
         {
-            // descriptor.Field("brewery")
-            //     .Type<BreweryType>()
-            //     .Argument(
-            //         "id",
-            //         a => a
-            //             .Type<NonNullType<IdType>>()
-            //             .Description("id of the brewery (required)")
-            //     )
-            //     .Resolver(
-            //         ctx =>
-            //         {
-            //             var breweryId = ctx.ArgumentKind().Argument<long>("id");
-            //             var breweryConductor = ctx.Service<IBreweryConductor>();
-            //             var mapper = ctx.Service<IMapper>();
-
-            //             var breweryResult = breweryConductor.Find(breweryId);
-
-            //             if (!breweryResult.HasErrorsOrResultIsNull())
-            //             {
-            //                 return mapper.Map<DTO.Brewery>(breweryResult.ResultObject);
-            //             }
-
-            //             foreach (var err in breweryResult.Errors)
-            //             {
-            //                 ctx.ReportError(
-            //                     ErrorBuilder.New()
-            //                         .SetCode(err.Key)
-            //                         .SetPath(ctx.Path)
-            //                         .AddLocation(ctx.FieldSelection)
-            //                         .SetMessage(err.Message)
-            //                         .Build()
-            //                 );
-            //             }
-
-            //             return null;
-            //         }
-            //     );
-
             descriptor
                 .Field("breweries")
                 .UsePaging<BreweryType>()
@@ -155,7 +115,7 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                         }
 
                         // Sorting
-                        Func<IQueryable<Entity.Brewery>, IQueryable<Entity.Brewery>> orderBy = null;
+                        Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null;
                         if (sort != null)
                         {
                             orderBy = orderConductor.OrderByFields(

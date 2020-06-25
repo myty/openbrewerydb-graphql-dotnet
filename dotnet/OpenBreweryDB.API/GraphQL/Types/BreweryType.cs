@@ -1,16 +1,15 @@
-using System;
-using System.Linq;
 using HotChocolate;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Resolvers;
-using DTO = OpenBreweryDB.Core.Models;
-using Entity = OpenBreweryDB.Data.Models;
+using OpenBreweryDB.Data.Models;
+using System;
+using System.Linq;
 
 namespace OpenBreweryDB.API.GraphQL.Types
 {
-    public class BreweryType : ObjectType<Entity.Brewery>
+    public class BreweryType : ObjectType<Brewery>
     {
-        protected override void Configure(IObjectTypeDescriptor<Entity.Brewery> descriptor)
+        protected override void Configure(IObjectTypeDescriptor<Brewery> descriptor)
         {
             descriptor.AsNode()
                 .IdField(t => t.Id)
@@ -62,11 +61,14 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Type<StringType>()
                 .Description("The street of the brewery");
 
+            descriptor.Field(t => t.BreweryTags).Ignore();
+
             descriptor.Field("tag_list")
                 .Type<NonNullType<ListType<StringType>>>()
                 .Description("Tags that have been attached to the brewery")
-                .Resolver(ctx => {
-                    return ctx.Parent<Entity.Brewery>()?.BreweryTags?
+                .Resolver(ctx =>
+                {
+                    return ctx.Parent<Brewery>()?.BreweryTags?
                         .Select(bt => bt.Tag.Name)
                         .Distinct() ?? Array.Empty<string>();
                 });
