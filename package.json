@@ -13,8 +13,8 @@
         "clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
-        "restore": "dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
+        "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "serve": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
-        "tye": "tye run --watch"
+        "tye": "dotnet tye run --watch"
     }
 }
