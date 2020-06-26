@@ -1,20 +1,24 @@
-using HotChocolate;
-using HotChocolate.Types;
-using OpenBreweryDB.API.GraphQL.Resolvers;
-using OpenBreweryDB.Data.Models;
 using System;
-using System.Linq;
+using HotChocolate.Types;
+using OpenBreweryDB.API.GraphQL.Mutations;
+using DTO = OpenBreweryDB.Core.Models;
 
-namespace OpenBreweryDB.API.GraphQL.Types
+namespace OpenBreweryDB.API.GraphQL.InputTypes
 {
-    public class BreweryType : ObjectType<Brewery>
+    public class CreateBreweryInputType : InputObjectType<DTO.Brewery>
     {
-        protected override void Configure(IObjectTypeDescriptor<Brewery> descriptor)
+        protected override void Configure(IInputObjectTypeDescriptor<DTO.Brewery> descriptor)
         {
+            descriptor.Name("CreateBreweryInput");
+
             descriptor
-                .Name("Brewery")
-                .Description("A brewery of beer")
-                .AsNode().IdField(t => t.Id).NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
+                .Field("clientMutationId")
+                .Description("Relay Client Mutation Id")
+                .Type<NonNullType<StringType>>();
+
+            descriptor.Field(t => t.City)
+                .Type<NonNullType<StringType>>()
+                .Description("The city of the brewery");
 
             descriptor.Field(t => t.BreweryType)
                 .Type<NonNullType<StringType>>()
@@ -51,29 +55,20 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Description("The state of the brewery");
 
             descriptor.Field(t => t.State)
-                .Type<StringType>()
+                .Type<NonNullType<StringType>>()
                 .Description("The state of the brewery");
 
             descriptor.Field(t => t.Street)
                 .Type<StringType>()
                 .Description("The street of the brewery");
 
-            descriptor.Field(t => t.BreweryTags).Ignore();
+            descriptor.Field(t => t.Tags)
+                .Type<ListType<NonNullType<StringType>>>()
+                .DefaultValue(Array.Empty<string>())
+                .Name("tag_list")
+                .Description("Tags that have been attached to the brewery");
 
-            descriptor.Field("tag_list")
-                .Type<NonNullType<ListType<StringType>>>()
-                .Description("Tags that have been attached to the brewery")
-                .Resolver(ctx =>
-                {
-                    return ctx.Parent<Brewery>()?.BreweryTags?
-                        .Select(bt => bt.Tag.Name)
-                        .Distinct() ?? Array.Empty<string>();
-                });
-
-            descriptor.Field(t => t.UpdatedAt)
-                .Type<NonNullType<DateTimeType>>()
-                .Name("updated_at")
-                .Description("Date timestamp of the last time the record was updated");
+            descriptor.Field(t => t.UpdatedAt).Ignore();
 
             descriptor.Field(t => t.WebsiteURL)
                 .Type<StringType>()

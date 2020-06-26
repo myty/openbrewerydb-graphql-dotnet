@@ -50,7 +50,7 @@ namespace OpenBreweryDB.API
                 .AddQueryType<BreweriesQuery>()
                 .AddType<BreweryType>()
                 .AddMutationType<BreweriesMutation>()
-                .AddType<BreweryInputType>()
+                .AddType<CreateBreweryInputType>()
                 .Create());
 
             services.Configure<KestrelServerOptions>(options =>
