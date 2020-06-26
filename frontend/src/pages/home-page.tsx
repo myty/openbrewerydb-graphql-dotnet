@@ -1,43 +1,79 @@
 import React, { PropsWithChildren } from "react";
 import { RouteComponentProps, navigate } from "@reach/router";
-import { useQuery } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
 import { Heading, Box, Badge } from "@chakra-ui/core";
 import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
+import { useQuery } from "react-query";
+import { request } from "graphql-request";
 
-const BREWERIES = gql`
+const BREWERIES_QUERY = `
     query Breweries {
-        breweries(limit: 1000, state: "Pennsylvania", sort: ["city"]) {
-            name
-            id
-            street
-            city
-            state
-            country
-            website_url
-            brewery_type
-            tag_list
-            phone
-            latitude
-            longitude
+        breweries(first: 25, state: "Pennsylvania", sort: ["city"]) {
+            totalCount
+            pageInfo {
+                startCursor
+                hasNextPage
+                hasPreviousPage
+                endCursor
+            }
+            edges {
+                cursor
+                node {
+                    name
+                    id
+                    street
+                    city
+                    state
+                    country
+                    website_url
+                    brewery_type
+                    tag_list
+                    phone
+                    latitude
+                    longitude
+                }
+            }
         }
     }
 `;
 
+interface Edge<T> {
+    cursor: string;
+    node: T;
+}
+
 interface BreweriesQuery {
-    breweries: Brewery[];
+    breweries: {
+        totalCount: number;
+        pageInfo: {
+            startCursor: string;
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            endCursor: string;
+        };
+        edges: Array<Edge<Brewery>>;
+    };
 }
 
 export const HomePage = (props: PropsWithChildren<RouteComponentProps>) => {
-    const { loading, error, data } = useQuery<BreweriesQuery>(BREWERIES);
+    const { data, status } = useQuery<BreweriesQuery, string>(
+        "breweries",
+        async (key) => {
+            const results = await request(
+                "https://localhost:5001/graphql",
+                BREWERIES_QUERY
+            );
 
-    if (loading) return <Loading />;
-    if (error || !data?.breweries) return <p>Error :(</p>;
+            return results;
+        }
+    );
+
+    if (status === "loading") return <Loading />;
+    if (status === "error") return <p>Error :(</p>;
 
     return (
         <>
-            {data.breweries.map((b: Brewery) => (
+            {data?.breweries.edges.map((b: Edge<Brewery>) => (
                 <Box
                     as="button"
                     p={5}
@@ -46,14 +82,14 @@ export const HomePage = (props: PropsWithChildren<RouteComponentProps>) => {
                     shadow="md"
                     borderWidth="1px"
                     rounded="md"
-                    onClick={() => navigate(`/breweries/${b.id}`)}
+                    onClick={() => navigate(`/breweries/${b.node.id}`)}
                     textAlign="left">
                     <Heading fontSize="xl" isTruncated pb={2}>
-                        {b.name}
+                        {b.node.name}
                     </Heading>
                     <Box d="flex" alignItems="baseline">
                         <Badge rounded="full" px="2" variantColor="teal">
-                            {b.brewery_type}
+                            {b.node.brewery_type}
                         </Badge>
                         <Box
                             color="gray.500"
@@ -62,7 +98,7 @@ export const HomePage = (props: PropsWithChildren<RouteComponentProps>) => {
                             fontSize="xs"
                             textTransform="uppercase"
                             ml="2">
-                            {b.city}, {b.state}
+                            {b.node.city}, {b.node.state}
                         </Box>
                     </Box>
                 </Box>

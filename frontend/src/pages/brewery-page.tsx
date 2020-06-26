@@ -1,18 +1,21 @@
 import React from "react";
 import { RouteComponentProps } from "@reach/router";
-import { useQuery } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
 import { Text, Heading } from "@chakra-ui/core";
 import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
+import { useQuery } from "react-query";
+import { request } from "graphql-request";
 
-const BREWERIES = gql`
+const BREWERY_QUERY = `
     query Brewery($breweryId: ID!) {
-        brewery(id: $breweryId) {
+        brewery: node(id: $breweryId) {
             id
-            name
-            city
-            state
+            ... on Brewery {
+                id
+                name
+                city
+                state
+            }
         }
     }
 `;
@@ -27,19 +30,29 @@ interface BreweryPageProps extends RouteComponentProps {
 
 export const BreweryPage = (props: BreweryPageProps) => {
     const { breweryId } = props;
-    const { loading, error, data } = useQuery<BreweryQuery>(BREWERIES, {
-        variables: { breweryId },
-    });
 
-    if (loading) return <Loading />;
-    if (error || !data?.brewery) return <p>Error :(</p>;
+    const { data, status } = useQuery<BreweryQuery, [string, string?]>(
+        ["brewery", breweryId],
+        async (key, breweryId) => {
+            const results = await request(
+                "https://localhost:5001/graphql",
+                BREWERY_QUERY,
+                { breweryId }
+            );
+
+            return results;
+        }
+    );
+
+    if (status === "loading") return <Loading />;
+    if (status === "error") return <p>Error :(</p>;
 
     return (
         <React.Fragment>
             <Heading as="h1" size="2xl" letterSpacing={"-.1rem"}>
-                {data.brewery.name}
+                {data?.brewery.name}
             </Heading>
-            <Text>{`${data.brewery.city}, ${data.brewery.state}`}</Text>
+            <Text>{`${data?.brewery.city}, ${data?.brewery.state}`}</Text>
         </React.Fragment>
     );
 };
