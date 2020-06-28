@@ -21,6 +21,11 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Name("brewery_type")
                 .Description("Type of Brewery");
 
+            descriptor.Field(t => t.BreweryId)
+                .Type<NonNullType<StringType>>()
+                .Name("brewery_id")
+                .Description("Friendly id for Brewery");
+
             descriptor.Field(t => t.City)
                 .Type<StringType>()
                 .Description("The city of the brewery");

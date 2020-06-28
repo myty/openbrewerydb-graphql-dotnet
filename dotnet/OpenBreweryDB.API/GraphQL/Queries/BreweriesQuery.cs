@@ -11,6 +11,7 @@ using OpenBreweryDB.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace OpenBreweryDB.API.GraphQL.Queries
 {
@@ -21,6 +22,12 @@ namespace OpenBreweryDB.API.GraphQL.Queries
             descriptor
                 .Field("breweries")
                 .UsePaging<BreweryType>()
+                .Argument(
+                    "brewery_id",
+                    a => a
+                        .Type<StringType>()
+                        .Description("filter by brewery id")
+                )
                 .Argument(
                     "state",
                     a => a
@@ -69,6 +76,7 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                     ctx =>
                     {
                         // Arguments
+                        var brewery_id = ctx.Argument<string>("brewery_id");
                         var name = ctx.Argument<string>("name");
                         var state = ctx.Argument<string>("state");
                         var city = ctx.Argument<string>("city");
@@ -101,12 +109,21 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                             return null;
                         }
 
-                        var filter = filterConductor.BuildFilter(
-                            by_name: name,
-                            by_state: state,
-                            by_type: type,
-                            by_city: city,
-                            by_tags: tags);
+                        Expression<Func<Brewery, bool>> filter;
+
+                        if (!string.IsNullOrEmpty(brewery_id?.Trim()))
+                        {
+                            filter = (b) => b.BreweryId == brewery_id;
+                        }
+                        else
+                        {
+                            filter = filterConductor.BuildFilter(
+                                by_name: name,
+                                by_state: state,
+                                by_type: type,
+                                by_city: city,
+                                by_tags: tags);
+                        }
 
                         if (!string.IsNullOrEmpty(search))
                         {

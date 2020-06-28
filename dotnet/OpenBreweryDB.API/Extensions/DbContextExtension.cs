@@ -81,7 +81,7 @@ namespace OpenBreweryDB.API.Extensions
                         static IEnumerable<Entity.Brewery> GetBreweries(StreamReader breweriesStreamReader)
                         {
                             var mapper = SeparatedValueTypeMapper.Define<Entity.Brewery>();
-                            mapper.Property(c => c.Id).ColumnName("id");
+                            mapper.Property(c => c.BreweryId).ColumnName("id");
                             mapper.Property(c => c.Name).ColumnName("name");
                             mapper.Property(c => c.BreweryType).ColumnName("brewery_type");
                             mapper.Property(c => c.Street).ColumnName("street");

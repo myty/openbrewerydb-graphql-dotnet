@@ -100,7 +100,7 @@ namespace OpenBreweryDB.API
                 .UseVoyager("/graphql");
 
             // Parse and seed the db
-            app.SeedDatabase("https://raw.githubusercontent.com/chrisjm/openbrewerydb-rails-api/master/db/breweries.csv");
+            app.SeedDatabase("https://github.com/openbrewerydb/openbrewerydb/raw/master/breweries.csv");
         }
     }
 }
