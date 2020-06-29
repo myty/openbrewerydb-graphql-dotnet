@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace OpenBreweryDB.API.GraphQL.Types
 {
-    public class CreateBreweryPayloadType : ObjectType<Brewery>
+    internal class CreateBreweryPayloadType : ObjectType<Brewery>
     {
         protected override void Configure(IObjectTypeDescriptor<Brewery> descriptor)
         {
@@ -26,6 +26,11 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Type<NonNullType<StringType>>()
                 .Name("brewery_type")
                 .Description("Type of Brewery");
+
+            descriptor.Field(t => t.BreweryId)
+                .Type<NonNullType<StringType>>()
+                .Name("brewery_id")
+                .Description("Friendly id for Brewery");
 
             descriptor.Field(t => t.City)
                 .Type<StringType>()

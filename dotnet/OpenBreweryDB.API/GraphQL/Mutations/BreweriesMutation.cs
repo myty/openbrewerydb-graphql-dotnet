@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AutoMapper;
 using OpenBreweryDB.API.GraphQL.InputTypes;
 using OpenBreweryDB.API.GraphQL.Types;
@@ -10,7 +11,7 @@ using HotChocolate;
 
 namespace OpenBreweryDB.API.GraphQL.Mutations
 {
-    internal class ClientMutation
+    internal class BreweryMutation : DTO.Brewery
     {
         public string ClientMutationId { get; set; }
     }
@@ -38,15 +39,14 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
             //     .Resolver(DeleteBrewery);
         }
 
-        private DTO.Brewery CreateBrewery(IResolverContext context)
+        private BreweryMutation CreateBrewery(IResolverContext context)
         {
-            var dto                 = context.Argument<DTO.Brewery>("input");
-            var clientMutation      = context.Argument<ClientMutation>("input");
+            var dto = context.Argument<BreweryMutation>("input");
             var validationConductor = context.Service<IBreweryValidationConductor>();
-            var breweryConductor    = context.Service<IBreweryConductor>();
-            var mapper              = context.Service<IMapper>();
+            var breweryConductor = context.Service<IBreweryConductor>();
+            var mapper = context.Service<IMapper>();
 
-            context.ContextData.Add("clientMutationId", clientMutation.ClientMutationId);
+            context.ContextData.Add("clientMutationId", dto.ClientMutationId);
 
             if (!validationConductor.CanCreate(dto, out var errors))
             {
@@ -69,7 +69,7 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
 
             if (!brewery.HasErrors && !(brewery.ResultObject is null))
             {
-                return mapper.Map<DTO.Brewery>(brewery.ResultObject);
+                return mapper.Map<BreweryMutation>(brewery.ResultObject);
             }
 
             foreach (var err in brewery.Errors)

@@ -1,13 +1,12 @@
-using System;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Mutations;
-using DTO = OpenBreweryDB.Core.Models;
+using System;
 
 namespace OpenBreweryDB.API.GraphQL.InputTypes
 {
-    public class CreateBreweryInputType : InputObjectType<DTO.Brewery>
+    internal class CreateBreweryInputType : InputObjectType<BreweryMutation>
     {
-        protected override void Configure(IInputObjectTypeDescriptor<DTO.Brewery> descriptor)
+        protected override void Configure(IInputObjectTypeDescriptor<BreweryMutation> descriptor)
         {
             descriptor.Name("CreateBreweryInput");
 
