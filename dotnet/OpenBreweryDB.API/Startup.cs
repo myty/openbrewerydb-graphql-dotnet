@@ -10,13 +10,15 @@ using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.API.GraphQL.Queries;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Data;
-using OpenBreweryDB.API.GraphQL.Mutations;
-using OpenBreweryDB.API.GraphQL.InputTypes;
 using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.API.Extensions;
 using HotChocolate;
 using HotChocolate.AspNetCore;
 using HotChocolate.AspNetCore.Voyager;
+using OpenBreweryDB.API.GraphQL.Breweries;
+using HotChocolate.Execution;
+using OpenBreweryDB.API.GraphQL;
+using HotChocolate.Execution.Configuration;
 
 namespace OpenBreweryDB.API
 {
@@ -35,7 +37,7 @@ namespace OpenBreweryDB.API
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
 
-            services.AddAutoMapper(typeof(BreweryProfile));
+            services.AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile));
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
@@ -49,9 +51,14 @@ namespace OpenBreweryDB.API
 
                 .AddQueryType<BreweriesQuery>()
                 .AddType<BreweryType>()
-                .AddMutationType<BreweriesMutation>()
-                .AddType<CreateBreweryInputType>()
-                .Create());
+                .AddMutationType(d => d.Name("Mutation"))
+                .AddType<BreweryMutations>()
+                .Create(),
+                new QueryExecutionOptions
+                {
+                    IncludeExceptionDetails = true,
+                    TracingPreference = TracingPreference.Always
+                });
 
             services.Configure<KestrelServerOptions>(options =>
             {

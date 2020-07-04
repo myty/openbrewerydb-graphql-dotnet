@@ -1,0 +1,5 @@
+bin\
+obj\
+.dockerignore
+Dockerfile
+Dockerfile.prod

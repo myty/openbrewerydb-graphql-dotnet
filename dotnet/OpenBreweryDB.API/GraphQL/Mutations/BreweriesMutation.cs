@@ -1,6 +1,7 @@
+/*
+
 using System.Collections.Generic;
 using AutoMapper;
-using OpenBreweryDB.API.GraphQL.InputTypes;
 using OpenBreweryDB.API.GraphQL.Types;
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
@@ -22,21 +23,21 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
         {
             descriptor
                 .Field("createBrewery")
-                .Type<CreateBreweryPayloadType>()
+                .Type<CreateBreweryPayload>()
                 .Argument("input", a => a.Type<NonNullType<CreateBreweryInputType>>())
                 .Resolver(CreateBrewery);
 
-            // descriptor
-            //     .Field("updateBrewery")
-            //     .Type<BreweryType>()
-            //     .Argument("brewery", a => a.Type<NonNullType<BreweryInputType>>())
-            //     .Resolver(UpdateBrewery);
+            descriptor
+                .Field("updateBrewery")
+                .Type<BreweryType>()
+                .Argument("brewery", a => a.Type<NonNullType<BreweryInputType>>())
+                .Resolver(UpdateBrewery);
 
-            // descriptor
-            //     .Field("deleteBrewery")
-            //     .Type<StringType>()
-            //     .Argument("id", a => a.Type<NonNullType<IdType>>())
-            //     .Resolver(DeleteBrewery);
+            descriptor
+                .Field("deleteBrewery")
+                .Type<StringType>()
+                .Argument("id", a => a.Type<NonNullType<IdType>>())
+                .Resolver(DeleteBrewery);
         }
 
         private BreweryMutation CreateBrewery(IResolverContext context)
@@ -87,77 +88,79 @@ namespace OpenBreweryDB.API.GraphQL.Mutations
             return null;
         }
 
-        // private DTO.Brewery UpdateBrewery(IResolverContext context)
-        // {
-        //     var dto                 = context.Argument<DTO.Brewery>("brewery");
-        //     var validationConductor = context.Service<IBreweryValidationConductor>();
-        //     var breweryConductor    = context.Service<IBreweryConductor>();
-        //     var mapper              = context.Service<IMapper>();
+        private DTO.Brewery UpdateBrewery(IResolverContext context)
+        {
+            var dto                 = context.Argument<DTO.Brewery>("brewery");
+            var validationConductor = context.Service<IBreweryValidationConductor>();
+            var breweryConductor    = context.Service<IBreweryConductor>();
+            var mapper              = context.Service<IMapper>();
 
-        //     if (!validationConductor.CanUpdate(dto.Id ?? default, dto, out var errors))
-        //     {
-        //         foreach (var (key, message) in errors)
-        //         {
-        //             context.ReportError(
-        //                 ErrorBuilder.New()
-        //                     .SetCode(key)
-        //                     .SetPath(context.Path)
-        //                     .AddLocation(context.FieldSelection)
-        //                     .SetMessage(message)
-        //                     .Build()
-        //             );
-        //         }
+            if (!validationConductor.CanUpdate(dto.Id ?? default, dto, out var errors))
+            {
+                foreach (var (key, message) in errors)
+                {
+                    context.ReportError(
+                        ErrorBuilder.New()
+                            .SetCode(key)
+                            .SetPath(context.Path)
+                            .AddLocation(context.FieldSelection)
+                            .SetMessage(message)
+                            .Build()
+                    );
+                }
 
-        //         return null;
-        //     }
+                return null;
+            }
 
-        //     var brewery = breweryConductor.Update(mapper.Map<Entity.Brewery>(dto));
+            var brewery = breweryConductor.Update(mapper.Map<Entity.Brewery>(dto));
 
-        //     if (!brewery.HasErrors && !(brewery.ResultObject is null))
-        //     {
-        //         return mapper.Map<DTO.Brewery>(brewery.ResultObject);
-        //     }
+            if (!brewery.HasErrors && !(brewery.ResultObject is null))
+            {
+                return mapper.Map<DTO.Brewery>(brewery.ResultObject);
+            }
 
-        //     foreach (var err in brewery.Errors)
-        //     {
-        //         context.ReportError(
-        //             ErrorBuilder.New()
-        //                 .SetCode(err.Key)
-        //                 .SetPath(context.Path)
-        //                 .AddLocation(context.FieldSelection)
-        //                 .SetMessage(err.Message)
-        //                 .Build()
-        //         );
-        //     }
+            foreach (var err in brewery.Errors)
+            {
+                context.ReportError(
+                    ErrorBuilder.New()
+                        .SetCode(err.Key)
+                        .SetPath(context.Path)
+                        .AddLocation(context.FieldSelection)
+                        .SetMessage(err.Message)
+                        .Build()
+                );
+            }
 
-        //     return null;
-        // }
+            return null;
+        }
 
-        // private string DeleteBrewery(IResolverContext context)
-        // {
-        //     var breweryId        = context.Argument<long>("id");
-        //     var breweryConductor = context.Service<IBreweryConductor>();
+        private string DeleteBrewery(IResolverContext context)
+        {
+            var breweryId        = context.Argument<long>("id");
+            var breweryConductor = context.Service<IBreweryConductor>();
 
-        //     var deleteResult = breweryConductor.Delete(breweryId);
+            var deleteResult = breweryConductor.Delete(breweryId);
 
-        //     if (!deleteResult.HasErrors && deleteResult.ResultObject)
-        //     {
-        //         return $"The brewery with the id: {breweryId} has been successfully deleted.";
-        //     }
+            if (!deleteResult.HasErrors && deleteResult.ResultObject)
+            {
+                return $"The brewery with the id: {breweryId} has been successfully deleted.";
+            }
 
-        //     foreach (var err in deleteResult.Errors)
-        //     {
-        //         context.ReportError(
-        //             ErrorBuilder.New()
-        //                 .SetCode(err.Key)
-        //                 .SetPath(context.Path)
-        //                 .AddLocation(context.FieldSelection)
-        //                 .SetMessage(err.Message)
-        //                 .Build()
-        //         );
-        //     }
+            foreach (var err in deleteResult.Errors)
+            {
+                context.ReportError(
+                    ErrorBuilder.New()
+                        .SetCode(err.Key)
+                        .SetPath(context.Path)
+                        .AddLocation(context.FieldSelection)
+                        .SetMessage(err.Message)
+                        .Build()
+                );
+            }
 
-        //     return null;
-        // }
+            return null;
+        }
     }
 }
+
+*/
