@@ -11,6 +11,7 @@ namespace OpenBreweryDB.API.GraphQL.Breweries
         {
             // From: CreateBreweryInput
             CreateMap<CreateBreweryInput, DTO.Brewery>();
+            CreateMap<UpdateBreweryInput, DTO.Brewery>();
         }
     }
 }
