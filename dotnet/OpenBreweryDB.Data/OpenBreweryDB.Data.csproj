@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="AndcultureCode.CSharp.Core" Version="0.4.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.6" />
   </ItemGroup>
 
 </Project>

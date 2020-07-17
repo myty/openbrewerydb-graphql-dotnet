@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="FlatFiles" Version="4.7.0" />
     <PackageReference Include="automapper" Version="10.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="HotChocolate" Version="10.4.3" />
     <PackageReference Include="HotChocolate.AspNetCore" Version="10.4.3" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="10.4.3" />
@@ -15,13 +15,13 @@
     <PackageReference Include="HotChocolate.AspNetCore.Voyager" Version="10.4.3" />
     <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="10.4.3" />
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.6" />
   </ItemGroup>
 
   <ItemGroup>

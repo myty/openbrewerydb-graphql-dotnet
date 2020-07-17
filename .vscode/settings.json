@@ -1,6 +1,7 @@
 {
     "omnisharp.defaultLaunchSolution": "./dotnet/openbrewerydb-graphql-sharp.sln",
     "omnisharp.enableEditorConfigSupport": true,
+    "omnisharp.enableRoslynAnalyzers": true,
     "[csharp]": {
         "editor.formatOnType": true,
         "editor.codeActionsOnSave": {
@@ -19,6 +20,7 @@
         "dotnet/**/bin/**": true,
         "dotnet/**/obj/**": true,
         "dotnet/.idea/**": true,
-        "frontend/build/**": true
+        "frontend/build/**": true,
+        "frontend/src/tailwind.output.css": true
     }
 }

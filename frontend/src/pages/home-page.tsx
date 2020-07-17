@@ -1,14 +1,14 @@
-import React, { PropsWithChildren } from "react";
-import { RouteComponentProps, navigate } from "@reach/router";
-import { Heading, Box, Badge } from "@chakra-ui/core";
+import React from "react";
 import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
 import { useQuery } from "react-query";
 import { request } from "graphql-request";
+import { HeadingOne } from "../components/heading-1";
+import { useNavigate } from "react-router-dom";
 
 const BREWERIES_QUERY = `
     query Breweries {
-        breweries(first: 25, state: "Pennsylvania", sort: ["city"]) {
+        breweries(first: 100, state: "Pennsylvania", sort: ["city"]) {
             totalCount
             pageInfo {
                 startCursor
@@ -21,6 +21,7 @@ const BREWERIES_QUERY = `
                 node {
                     name
                     id
+                    brewery_id
                     street
                     city
                     state
@@ -55,7 +56,9 @@ interface BreweriesQuery {
     };
 }
 
-export const HomePage = (props: PropsWithChildren<RouteComponentProps>) => {
+export const HomePage = () => {
+    const navigate = useNavigate();
+
     const { data, status } = useQuery<BreweriesQuery, string>(
         "breweries",
         async (key) => {
@@ -71,37 +74,27 @@ export const HomePage = (props: PropsWithChildren<RouteComponentProps>) => {
     if (status === "loading") return <Loading />;
     if (status === "error") return <p>Error :(</p>;
 
+    const breweries =
+        data?.breweries.edges.map((b: Edge<Brewery>) => b.node) ?? [];
+
+    if (breweries.length === 0) {
+        return <HeadingOne>There are no breweries to display.</HeadingOne>;
+    }
+
     return (
         <>
-            {data?.breweries.edges.map((b: Edge<Brewery>) => (
-                <Box
-                    as="button"
-                    p={5}
-                    m={5}
-                    w="400px"
-                    shadow="md"
-                    borderWidth="1px"
-                    rounded="md"
-                    onClick={() => navigate(`/breweries/${b.node.id}`)}
-                    textAlign="left">
-                    <Heading fontSize="xl" isTruncated pb={2}>
-                        {b.node.name}
-                    </Heading>
-                    <Box d="flex" alignItems="baseline">
-                        <Badge rounded="full" px="2" variantColor="teal">
-                            {b.node.brewery_type}
-                        </Badge>
-                        <Box
-                            color="gray.500"
-                            fontWeight="semibold"
-                            letterSpacing="wide"
-                            fontSize="xs"
-                            textTransform="uppercase"
-                            ml="2">
-                            {b.node.city}, {b.node.state}
-                        </Box>
-                    </Box>
-                </Box>
+            {breweries.map((b: Brewery) => (
+                <button
+                    key={b.id}
+                    className="group bg-white bg-blue-200 hover:bg-blue-500 w-64 h-32 m-4"
+                    onClick={() => navigate(`/breweries/${b.brewery_id}`)}>
+                    <p className="text-gray-900 group-hover:text-white">
+                        {b.name}
+                    </p>
+                    <p className="text-gray-700 group-hover:text-white">
+                        {b.city}, {b.state}
+                    </p>
+                </button>
             ))}
         </>
     );
