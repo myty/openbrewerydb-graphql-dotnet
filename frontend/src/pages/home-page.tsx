@@ -86,9 +86,9 @@ export const HomePage = () => {
             {breweries.map((b: Brewery) => (
                 <button
                     key={b.id}
-                    className="group bg-white bg-blue-200 hover:bg-blue-500 w-64 h-32 m-4"
+                    className="group bg-blue-200 hover:bg-blue-500 w-64 h-32 m-4"
                     onClick={() => navigate(`/breweries/${b.brewery_id}`)}>
-                    <p className="text-gray-900 group-hover:text-white">
+                    <p className="text-gray-900 group-hover:text-white truncate w-full px-3 font-semibold">
                         {b.name}
                     </p>
                     <p className="text-gray-700 group-hover:text-white">
