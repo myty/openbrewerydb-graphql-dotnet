@@ -6,8 +6,8 @@ interface MarkerComponentInterface extends Partial<Coords> {
 }
 
 const MarkerComponent = ({ text }: MarkerComponentInterface) => (
-    <div>
-        <p className="font-medium">{text}</p>
+    <div className="-ml-8 font-semibold text-base w-64 p-2 bg-blue-700 bg-opacity-75 text-white rounded text-center lef">
+        <p className="truncate w-full">{text}</p>
     </div>
 );
 

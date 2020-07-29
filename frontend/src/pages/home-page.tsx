@@ -86,14 +86,14 @@ export const HomePage = () => {
             {breweries.map((b: Brewery) => (
                 <button
                     key={b.id}
-                    className="group bg-blue-200 hover:bg-blue-500 w-64 h-32 m-4"
+                    className="bg-blue-500 hover:bg-blue-700 text-white w-64 h-32 m-4"
                     onClick={() => navigate(`/breweries/${b.brewery_id}`)}>
-                    <p className="text-gray-900 group-hover:text-white truncate w-full px-3 font-semibold">
+                    <span className="truncate w-full px-3 font-bold tracking-tighter block">
                         {b.name}
-                    </p>
-                    <p className="text-gray-700 group-hover:text-white">
+                    </span>
+                    <span className="text-opacity-50 subpixel-antialiased text-xs uppercase block">
                         {b.city}, {b.state}
-                    </p>
+                    </span>
                 </button>
             ))}
         </>
