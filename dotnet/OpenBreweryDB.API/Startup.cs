@@ -2,7 +2,7 @@ using AutoMapper;
 using HotChocolate;
 using HotChocolate.AspNetCore;
 using HotChocolate.AspNetCore.Voyager;
-using HotChocolate.Execution;
+using HotChocolate.Execution.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -40,18 +40,24 @@ namespace OpenBreweryDB.API
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
-            services.AddGraphQL(
-                services =>
-                    SchemaBuilder.New()
-                        .AddServices(services)
-                        .AddQueryType<BreweriesQuery>()
-                            .AddType<BreweryType>()
-                        .AddMutationType(d => d.Name("Mutation"))
-                            .AddType<BreweryMutations>()
-                        .EnableRelaySupport()
-                        .Create(),
-                (IQueryExecutionBuilder builder) =>
-                    builder.UsePersistedQueryPipeline());
+            services.AddGraphQL(sp => SchemaBuilder.New()
+                .EnableRelaySupport()
+                .AddServices(sp)
+
+                // Adds the authorize directive and
+                // enable the authorization middleware.
+                .AddAuthorizeDirectiveType()
+
+                .AddQueryType<BreweriesQuery>()
+                .AddType<BreweryType>()
+                .AddMutationType(d => d.Name("Mutation"))
+                .AddType<BreweryMutations>()
+                .Create(),
+                new QueryExecutionOptions
+                {
+                    IncludeExceptionDetails = true,
+                    TracingPreference = TracingPreference.Always
+                });
 
             services.Configure<KestrelServerOptions>(options =>
             {
@@ -80,16 +86,17 @@ namespace OpenBreweryDB.API
 
             app.UseWebSockets();
             app.UseRouting();
-            app.UseGraphQL();
 
-            app.UsePlayground();
-            app.UseVoyager();
+            app.UseGraphQL("/graphql");
+            app.UsePlayground("/graphql");
+            app.UseVoyager("/graphql");
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapGet("/", context =>
                 {
-                    context.Response.Redirect("/playground");
+                    context.Response.Redirect("/graphql/playground");
                     return Task.CompletedTask;
                 });
             });
