@@ -1,6 +1,0 @@
-**/node_modules
-**/.vs/
-**/build
-.dockerignore
-Dockerfile
-Dockerfile.prod

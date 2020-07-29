@@ -7,21 +7,19 @@ import "./tailwind.output.css";
 
 function App() {
     return (
-        <React.Fragment>
+        <Router>
             <Header title="OpenBreweryDB" />
             <div id="main" style={{ padding: 24 }}>
-                <Router>
-                    <Routes>
-                        <Route path="/">
-                            <HomePage />
-                        </Route>
-                        <Route path="breweries/:brewery_id">
-                            <BreweryPage />
-                        </Route>
-                    </Routes>
-                </Router>
+                <Routes>
+                    <Route path="/">
+                        <HomePage />
+                    </Route>
+                    <Route path="breweries/:brewery_id">
+                        <BreweryPage />
+                    </Route>
+                </Routes>
             </div>
-        </React.Fragment>
+        </Router>
     );
 }
 

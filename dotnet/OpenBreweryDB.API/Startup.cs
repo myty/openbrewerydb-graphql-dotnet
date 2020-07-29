@@ -68,7 +68,6 @@ namespace OpenBreweryDB.API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    // TODO: Build based upon the Tye params
                     builder.WithOrigins("http://localhost:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
@@ -84,6 +83,7 @@ namespace OpenBreweryDB.API
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors();
             app.UseWebSockets();
             app.UseRouting();
 
@@ -103,8 +103,6 @@ namespace OpenBreweryDB.API
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
-            app.UseCors();
 
             // Parse and seed the db
             app.SeedDatabase("https://github.com/openbrewerydb/openbrewerydb/raw/master/breweries.csv");
