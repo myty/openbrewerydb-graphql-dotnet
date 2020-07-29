@@ -8,12 +8,12 @@
     <PackageReference Include="FlatFiles" Version="4.7.0" />
     <PackageReference Include="automapper" Version="10.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="HotChocolate" Version="10.4.3" />
-    <PackageReference Include="HotChocolate.AspNetCore" Version="10.4.3" />
-    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="10.4.3" />
-    <PackageReference Include="HotChocolate.AspNetCore.Playground" Version="10.4.3" />
-    <PackageReference Include="HotChocolate.AspNetCore.Voyager" Version="10.4.3" />
-    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="10.4.3" />
+    <PackageReference Include="HotChocolate" Version="10.5.2" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="10.5.2" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="10.5.2" />
+    <PackageReference Include="HotChocolate.AspNetCore.Playground" Version="10.5.2" />
+    <PackageReference Include="HotChocolate.AspNetCore.Voyager" Version="10.5.2" />
+    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="10.5.2" />
 
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

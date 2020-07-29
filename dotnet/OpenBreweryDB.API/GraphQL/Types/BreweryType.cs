@@ -1,5 +1,6 @@
-using HotChocolate;
+using HotChocolate.Resolvers;
 using HotChocolate.Types;
+using HotChocolate.Types.Relay;
 using OpenBreweryDB.API.GraphQL.Resolvers;
 using OpenBreweryDB.Data.Models;
 using System;
