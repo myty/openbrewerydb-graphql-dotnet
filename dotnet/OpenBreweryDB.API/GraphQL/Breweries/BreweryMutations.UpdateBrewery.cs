@@ -4,7 +4,8 @@ using Entity = OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using HotChocolate;
 using System.Threading;
-using HotChocolate.Execution;
+using System.Linq;
+using OpenBreweryDB.API.GraphQL.Common;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
@@ -20,42 +21,21 @@ namespace OpenBreweryDB.API.GraphQL.Breweries
             var dto = mapper.Map<DTO.Brewery>(input);
             if (!validationConductor.CanUpdate(dto.Id ?? default, dto, out var errors))
             {
-                foreach (var (key, message) in errors)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetCode(key)
-                            .SetMessage(message)
-                            .Build()
-                    );
-                }
-
-                return null;
+                return new UpdateBreweryPayload(
+                    errors.Select(err => new UserError(err.message, err.key)).ToList(),
+                    input.ClientMutationId);
             }
 
             var brewery = breweryConductor.Update(mapper.Map<Entity.Brewery>(dto));
 
             if (!brewery.HasErrors && !(brewery.ResultObject is null))
             {
-                return new UpdateBreweryPayload
-                {
-                    Brewery = brewery.ResultObject,
-                    ClientMutationId = input.ClientMutationId
-                };
+                return new UpdateBreweryPayload(brewery.ResultObject, input.ClientMutationId);
             }
 
-            foreach (var err in brewery.Errors)
-            {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetCode(err.Key)
-                        .SetMessage(err.Message)
-                        .Build()
-                );
-            }
-
-            return null;
+            return new UpdateBreweryPayload(
+                brewery.Errors.Select(err => new UserError(err.Message, err.Key)).ToList(),
+                input.ClientMutationId);
         }
-
     }
 }

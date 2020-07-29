@@ -1,16 +1,24 @@
-using HotChocolate;
-using HotChocolate.Types;
-using OpenBreweryDB.API.GraphQL.Resolvers;
-using OpenBreweryDB.Data.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using OpenBreweryDB.API.GraphQL.Common;
+using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
-    public class UpdateBreweryPayload
+    public class UpdateBreweryPayload : BreweryPayloadBase
     {
-        public string ClientMutationId { get; set; }
-        public Brewery Brewery { get; set; }
+        public UpdateBreweryPayload(Brewery brewery, string clientMutationId)
+            : base(brewery, clientMutationId)
+        {
+        }
+
+        public UpdateBreweryPayload(UserError error, string clientMutationId)
+            : base(new[] { error }, clientMutationId)
+        {
+        }
+
+        public UpdateBreweryPayload(IReadOnlyList<UserError> errors, string clientMutationId)
+            : base(errors, clientMutationId)
+        {
+        }
     }
 }

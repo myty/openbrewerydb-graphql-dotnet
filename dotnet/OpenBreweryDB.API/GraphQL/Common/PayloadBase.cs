@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
+using HotChocolate;
 
 namespace OpenBreweryDB.API.GraphQL.Common
 {
     public class PayloadBase
     {
-        protected PayloadBase(string? clientMutationId)
+        protected PayloadBase(string clientMutationId)
         {
-            Errors = Array.Empty<UserError>();;
+            Errors = Array.Empty<UserError>();
             ClientMutationId = clientMutationId;
         }
 
-        protected PayloadBase(IReadOnlyList<UserError> errors, string? clientMutationId)
+        protected PayloadBase(IReadOnlyList<UserError> errors, string clientMutationId)
         {
             Errors = errors;
             ClientMutationId = clientMutationId;
@@ -19,6 +20,8 @@ namespace OpenBreweryDB.API.GraphQL.Common
 
         public IReadOnlyList<UserError> Errors { get; }
 
-        public string? ClientMutationId { get; }
+        [GraphQLDescription("Relay Client Mutation Id")]
+        [GraphQLNonNullType]
+        public string ClientMutationId { get; }
     }
 }

@@ -13,12 +13,6 @@
       "commands": [
         "dotnet-aspnet-codegenerator"
       ]
-    },
-    "microsoft.tye": {
-      "version": "0.4.0-alpha.20371.1",
-      "commands": [
-        "tye"
-      ]
     }
   }
 }

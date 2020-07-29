@@ -1,24 +1,23 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using OpenBreweryDB.Core.Conductors.Breweries;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.API.GraphQL.Queries;
-using OpenBreweryDB.API.GraphQL.Types;
-using OpenBreweryDB.Data;
-using Microsoft.EntityFrameworkCore;
-using OpenBreweryDB.API.Extensions;
 using HotChocolate;
 using HotChocolate.AspNetCore;
 using HotChocolate.AspNetCore.Voyager;
-using OpenBreweryDB.API.GraphQL.Breweries;
 using HotChocolate.Execution;
-using OpenBreweryDB.API.GraphQL;
-using HotChocolate.Execution.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OpenBreweryDB.API.Extensions;
+using OpenBreweryDB.API.GraphQL.Breweries;
+using OpenBreweryDB.API.GraphQL.Queries;
+using OpenBreweryDB.API.GraphQL.Types;
+using OpenBreweryDB.Core.Conductors.Breweries;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Data;
+using System.Threading.Tasks;
 
 namespace OpenBreweryDB.API
 {
@@ -41,24 +40,18 @@ namespace OpenBreweryDB.API
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
-            services.AddGraphQL(sp => SchemaBuilder.New()
-                .EnableRelaySupport()
-                .AddServices(sp)
-
-                // Adds the authorize directive and
-                // enable the authorization middleware.
-                .AddAuthorizeDirectiveType()
-
-                .AddQueryType<BreweriesQuery>()
-                .AddType<BreweryType>()
-                .AddMutationType(d => d.Name("Mutation"))
-                .AddType<BreweryMutations>()
-                .Create(),
-                new QueryExecutionOptions
-                {
-                    IncludeExceptionDetails = true,
-                    TracingPreference = TracingPreference.Always
-                });
+            services.AddGraphQL(
+                services =>
+                    SchemaBuilder.New()
+                        .AddServices(services)
+                        .AddQueryType<BreweriesQuery>()
+                            .AddType<BreweryType>()
+                        .AddMutationType(d => d.Name("Mutation"))
+                            .AddType<BreweryMutations>()
+                        .EnableRelaySupport()
+                        .Create(),
+                (IQueryExecutionBuilder builder) =>
+                    builder.UsePersistedQueryPipeline());
 
             services.Configure<KestrelServerOptions>(options =>
             {
@@ -85,26 +78,26 @@ namespace OpenBreweryDB.API
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
-
+            app.UseWebSockets();
             app.UseRouting();
+            app.UseGraphQL();
 
-            //app.UseAuthorization();
+            app.UsePlayground();
+            app.UseVoyager();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/playground");
+                    return Task.CompletedTask;
+                });
             });
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseCors();
-
-            app.UseWebSockets()
-                .UseGraphQL("/graphql")
-                .UsePlayground("/graphql")
-                .UseVoyager("/graphql");
 
             // Parse and seed the db
             app.SeedDatabase("https://github.com/openbrewerydb/openbrewerydb/raw/master/breweries.csv");

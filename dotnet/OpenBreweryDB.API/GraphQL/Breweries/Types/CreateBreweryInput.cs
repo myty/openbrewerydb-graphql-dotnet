@@ -1,22 +1,29 @@
 using HotChocolate;
+using OpenBreweryDB.API.GraphQL.Common;
 using System.Collections.Generic;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
-    public class CreateBreweryInput
+    public class CreateBreweryInput : InputBase
     {
-        [GraphQLDescription("Relay Client Mutation Id")]
-        [GraphQLNonNullType]
-        public string ClientMutationId { get; set; }
+        public CreateBreweryInput(
+            string name,
+            string breweryType,
+            string clientMutationId)
+            : base(clientMutationId)
+        {
+            Name = name;
+            BreweryType = breweryType;
+        }
 
         [GraphQLDescription("Name of brewery")]
         [GraphQLNonNullType]
-        public string Name { get; set; }
+        public string Name { get; }
 
         [GraphQLName("brewery_type")]
         [GraphQLDescription("Type of Brewery")]
         [GraphQLNonNullType]
-        public string BreweryType { get; set; }
+        public string BreweryType { get; }
 
         [GraphQLName("brewery_id")]
         [GraphQLNonNullType]
