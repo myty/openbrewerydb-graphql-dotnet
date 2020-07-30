@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
 import { useQuery } from "react-query";
 import { request } from "graphql-request";
 import { HeadingOne } from "../components/heading-1";
+import InfiniteScroll from 'react-infinite-scroller';
 
 const BREWERIES_QUERY = `
     query Breweries {
@@ -56,6 +57,7 @@ interface BreweriesQuery {
 }
 
 export const HomePage = () => {
+    const [ hasMore, setHasMore ] = useState<boolean>();
     const { data, status } = useQuery<BreweriesQuery, string>(
         "breweries",
         async (key) => {
@@ -78,21 +80,29 @@ export const HomePage = () => {
         return <HeadingOne>There are no breweries to display.</HeadingOne>;
     }
 
+    const loadMore = (_page: number) => {
+
+    };
+
     return (
-        <>
+        <InfiniteScroll
+            loadMore={loadMore}
+            hasMore={hasMore}
+            loader={<div className="loader" key={0}>Loading ...</div>}
+>
             {breweries.map((b: Brewery) => (
                 <a
                     key={b.id}
                     href={`/breweries/${b.brewery_id}`}
-                    className="outline-none focus:shadow-outline focus:bg-gray-100 block overflow-hidden border border-gray-300 shadow rounded-md p-4 max-w-xl w-full mx-auto my-4">
+                    className="block w-full max-w-xl p-4 mx-auto my-4 overflow-hidden border border-gray-300 rounded-md shadow outline-none focus:shadow-outline focus:bg-gray-100">
                     <div className="flex space-x-4">
-                        <div className="rounded-full bg-gray-400 h-12 w-12"></div>
-                        <div className="flex-1 space-y-4 py-1">
-                            <div className="px-3 w-3/4">
-                                <div className="truncate text-md w-full font-bold tracking-tighter block">
+                        <div className="w-12 h-12 bg-gray-400 rounded-full"></div>
+                        <div className="flex-1 py-1 space-y-4">
+                            <div className="w-3/4 px-3">
+                                <div className="block w-full font-bold tracking-tighter truncate text-md">
                                     {b.name}
                                 </div>
-                                <div className="text-opacity-50 subpixel-antialiased text-xs uppercase block">
+                                <div className="block text-xs subpixel-antialiased text-opacity-50 uppercase">
                                     {b.city}, {b.state}
                                 </div>
                             </div>
@@ -100,6 +110,6 @@ export const HomePage = () => {
                     </div>
                 </a>
             ))}
-        </>
+            </InfiniteScroll>
     );
 };

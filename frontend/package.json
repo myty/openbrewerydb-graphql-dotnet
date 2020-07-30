@@ -6,11 +6,12 @@
     "google-map-react": "^1.1.7",
     "graphql-request": "^2.0.0",
     "history": "^5.0.0",
+    "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-infinite-scroller": "^1.2.4",
     "react-query": "^2.5.8",
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "3.4.1",
-    "react": "^16.13.1",
     "tailwindcss": "^1.6.0"
   },
   "scripts": {
@@ -42,9 +43,10 @@
     "@types/google-map-react": "^1.1.8",
     "@types/jest": "26.0.4",
     "@types/node": "14.0.23",
-    "@types/react-dom": "16.9.8",
-    "@types/react-query": "^1.1.2",
     "@types/react": "16.9.43",
+    "@types/react-dom": "16.9.8",
+    "@types/react-infinite-scroller":"^1.2.1",
+    "@types/react-query": "^1.1.2",
     "chokidar-cli": "^2.1.0",
     "npm-run-all": "^4.1.5",
     "typescript": "3.9.7"

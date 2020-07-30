@@ -22,5 +22,9 @@
         "dotnet/.idea/**": true,
         "frontend/build/**": true,
         "frontend/src/tailwind.output.css": true
-    }
+    },
+    "cSpell.words": [
+        "scroller",
+        "semibold"
+    ]
 }

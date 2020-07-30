@@ -62,7 +62,7 @@ export const BreweryPage = () => {
 
     if (breweries.length === 0) {
         return (
-            <h1 className="text-2xl text-blue-700 leading-tight">
+            <h1 className="text-2xl font-semibold leading-tight text-yellow-900">
                 Brewery Not Found
             </h1>
         );
@@ -73,7 +73,7 @@ export const BreweryPage = () => {
     return (
         <React.Fragment>
             <HeadingOne>{brewery.name}</HeadingOne>
-            <p className="text-base text-gray-700 leading-normal">{`${brewery.city}, ${brewery.state}`}</p>
+            <p className="text-base font-semibold leading-normal text-yellow-700">{`${brewery.city}, ${brewery.state}`}</p>
             <BreweryMap
                 lng={brewery.longitude}
                 lat={brewery.latitude}
