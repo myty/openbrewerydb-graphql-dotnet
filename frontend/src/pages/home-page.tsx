@@ -4,7 +4,6 @@ import { Loading } from "../components/loading";
 import { useQuery } from "react-query";
 import { request } from "graphql-request";
 import { HeadingOne } from "../components/heading-1";
-import { useNavigate } from "react-router-dom";
 
 const BREWERIES_QUERY = `
     query Breweries {
@@ -57,8 +56,6 @@ interface BreweriesQuery {
 }
 
 export const HomePage = () => {
-    const navigate = useNavigate();
-
     const { data, status } = useQuery<BreweriesQuery, string>(
         "breweries",
         async (key) => {
@@ -84,17 +81,24 @@ export const HomePage = () => {
     return (
         <>
             {breweries.map((b: Brewery) => (
-                <button
+                <a
                     key={b.id}
-                    className="bg-blue-500 hover:bg-blue-700 text-white w-64 h-32 m-4"
-                    onClick={() => navigate(`/breweries/${b.brewery_id}`)}>
-                    <span className="truncate w-full px-3 font-bold tracking-tighter block">
-                        {b.name}
-                    </span>
-                    <span className="text-opacity-50 subpixel-antialiased text-xs uppercase block">
-                        {b.city}, {b.state}
-                    </span>
-                </button>
+                    href={`/breweries/${b.brewery_id}`}
+                    className="outline-none focus:shadow-outline focus:bg-gray-100 block overflow-hidden border border-gray-300 shadow rounded-md p-4 max-w-xl w-full mx-auto my-4">
+                    <div className="flex space-x-4">
+                        <div className="rounded-full bg-gray-400 h-12 w-12"></div>
+                        <div className="flex-1 space-y-4 py-1">
+                            <div className="px-3 w-3/4">
+                                <div className="truncate text-md w-full font-bold tracking-tighter block">
+                                    {b.name}
+                                </div>
+                                <div className="text-opacity-50 subpixel-antialiased text-xs uppercase block">
+                                    {b.city}, {b.state}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             ))}
         </>
     );

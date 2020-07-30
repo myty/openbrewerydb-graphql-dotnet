@@ -7,11 +7,11 @@
     "graphql-request": "^2.0.0",
     "history": "^5.0.0",
     "react-dom": "^16.13.1",
-    "react-query": "^2.5.5",
+    "react-query": "^2.5.8",
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "3.4.1",
     "react": "^16.13.1",
-    "tailwindcss": "^1.5.2"
+    "tailwindcss": "^1.6.0"
   },
   "scripts": {
     "build:tailwind": "tailwind build src/tailwind.css -o src/tailwind.output.css",

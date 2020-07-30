@@ -8918,10 +8918,10 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-query@^2.4.21:
-  version "2.4.21"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.4.21.tgz#5c59dd591e6a4061283aeb6b0ed95179e5070331"
-  integrity sha512-QFtZOvB0XXrAUFARMC6C5Ar4aCzHRgR8ezMcLfYNfeZA1eGzISa9y9afbueoiA2aqstbg8i7LLPtWJ1UecA/WQ==
+react-query@^2.5.8:
+  version "2.5.8"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.5.8.tgz#c2aad3acb363386ba449f23677792591dad287c9"
+  integrity sha512-VXQzOokL21uqEpZDiemm2TFR+s0y1RWn+O+SgZW/tGfnbekEf6/DSw0N72hsjVz+MIFGchK2BgXtfXAy4XHKgQ==
   dependencies:
     ts-toolbelt "^6.9.4"
 
@@ -10266,10 +10266,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tailwindcss@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.5.1.tgz#a3eb10024f8e10786b8b6badcf9665b013bd03ee"
-  integrity sha512-mBOxIk+U+9xECC6wllWiupPVfLuwTDvHb4d+8XTdZ8oYrZEH+NpFSlbATF5xWuCJQxDOZ1Dz7C0KN5tylcFhFg==
+tailwindcss@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.6.0.tgz#cdad8cdd225129ad41bff6aa607aa39ad6524593"
+  integrity sha512-UZEex5ebsQlCTIBjI0oZITL67HBjOrzMgA4ceLOf8mrBGquLSn7LsO92do1nBSBZBV2Qqpivz9QUwT3zMSQkMA==
   dependencies:
     "@fullhuman/postcss-purgecss" "^2.1.2"
     autoprefixer "^9.4.5"

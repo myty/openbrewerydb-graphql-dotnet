@@ -5,12 +5,21 @@ interface HeaderProps {
     title: string;
 }
 
+const MenuLink = ({ to, text }: { to: string; text: string }) => (
+    <NavLink
+        activeClassName="underline font-bold"
+        className="block mt-4 lg:inline-block lg:mt-0 text-gray-900 hover:font-bold mr-4"
+        to={to}>
+        {text}
+    </NavLink>
+);
+
 const Header = ({ title }: HeaderProps) => {
     return (
         <nav className="flex items-center justify-between flex-wrap bg-yellow-400 p-6 shadow-md">
             <div className="flex items-center flex-shrink-0 text-gray-900 mr-6">
                 <NavLink
-                    className="font-semibold text-xl tracking-tight"
+                    className="font-semibold text-xl tracking-tight hover:font-bold"
                     to="/">
                     {title}
                 </NavLink>
@@ -28,18 +37,8 @@ const Header = ({ title }: HeaderProps) => {
             </div>
             <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
                 <div className="text-sm lg:flex-grow">
-                    <NavLink
-                        activeClassName="underline font-bold"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-gray-900 hover:text-gray-700 mr-4"
-                        to="nearby">
-                        Nearby
-                    </NavLink>
-                    <NavLink
-                        activeClassName="underline font-bold"
-                        className="block mt-4 lg:inline-block lg:mt-0 text-gray-900 hover:text-gray-700 mr-4"
-                        to="favorites">
-                        Favorites
-                    </NavLink>
+                    <MenuLink to="nearby" text="Nearby" />
+                    <MenuLink to="favorites" text="Favorites" />
                 </div>
                 <div>
                     <button className="inline-block text-sm px-4 py-2 leading-none border rounded text-gray-900 border-gray-900 hover:border-transparent hover:text-yellow-400 hover:bg-gray-900 mt-4 lg:mt-0">
