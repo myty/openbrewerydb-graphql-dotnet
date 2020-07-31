@@ -1,15 +1,14 @@
 import React from "react";
 import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
-import { useQuery } from "react-query";
-import { request } from "graphql-request";
 import { BreweryMap } from "../components/map";
 import { HeadingOne } from "../components/heading-1";
 import { useParams } from "react-router-dom";
+import { useQuery, gql } from "@apollo/client";
 
-const BREWERY_QUERY = `
+const BREWERY_QUERY = gql`
     query Brewery($brewery_id: String!) {
-        breweries(first: 1, brewery_id: $brewery_id) {
+        breweries(first: 1, brewery_id: $brewery_id) @connection(key: "brewery", filter: ["brewery_id"]) {
             edges {
                 node {
                     id
@@ -41,21 +40,12 @@ interface BreweryQuery {
 export const BreweryPage = () => {
     const { brewery_id } = useParams();
 
-    const { data, status } = useQuery<BreweryQuery, [string, string?]>(
-        ["brewery", brewery_id],
-        async (key, brewery_id) => {
-            const results = await request(
-                "https://localhost:5001/graphql",
-                BREWERY_QUERY,
-                { brewery_id }
-            );
+    const { loading, error, data } = useQuery(BREWERY_QUERY, {
+        variables: { brewery_id }
+    });
 
-            return results;
-        }
-    );
-
-    if (status === "loading") return <Loading />;
-    if (status === "error") return <p>Error :(</p>;
+    if (loading) return <Loading />;
+    if (error) return <p>Error :(</p>;
 
     const breweries =
         data?.breweries?.edges?.map((b: Edge<Brewery>) => b.node) ?? [];

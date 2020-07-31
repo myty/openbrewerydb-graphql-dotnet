@@ -6,8 +6,8 @@ interface LoadingProps {
 
 export const Loading = ({ loadingText }: LoadingProps) => {
     return (
-        <div className="container mx-auto">
-            <p className="text-base text-gray-700 leading-normal">{loadingText ?? "Loading..."}</p>
+        <div className="block w-full max-w-xl p-4 mx-auto font-semibold text-center">
+            {loadingText ?? "Loading..."}
         </div>
     );
 };
