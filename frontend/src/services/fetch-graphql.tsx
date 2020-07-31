@@ -1,5 +1,5 @@
 async function fetchGraphQL(text: string, variables: any) {
-    // Fetch data from GitHub's GraphQL API:
+    // Fetch data from OpenBreweryDB GraphQL API:
     const response = await fetch("https://localhost:5001/graphql", {
         method: "POST",
         headers: {

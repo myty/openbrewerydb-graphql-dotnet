@@ -1,9 +1,9 @@
 import { Brewery } from "../types/brewery";
-import { useQuery, gql } from "@apollo/client";
+import { useGraphqlQuery } from "../hooks/use-graphql-query";
 
-const BREWERIES_QUERY = gql`
+const BREWERIES_QUERY = `
     query Breweries($cursor: String) {
-        breweries(first: 25, after: $cursor) @connection(key: "breweries") {
+        breweries(first: 25, after: $cursor) {
             totalCount
             pageInfo {
                 startCursor
@@ -39,63 +39,71 @@ interface Edge<T> {
 }
 
 interface BreweriesQuery {
-    breweries: {
-        __typename: string;
-        totalCount: number;
-        pageInfo: {
-            startCursor: string;
-            hasNextPage: boolean;
-            hasPreviousPage: boolean;
-            endCursor: string;
+    data: {
+        breweries: {
+            __typename: string;
+            totalCount: number;
+            pageInfo: {
+                startCursor: string;
+                hasNextPage: boolean;
+                hasPreviousPage: boolean;
+                endCursor: string;
+            };
+            edges: Array<Edge<Brewery>>;
         };
-        edges: Array<Edge<Brewery>>;
     };
 }
 
 export const useBreweriesQuery = () => {
-    const { data, loading, error, fetchMore } = useQuery<BreweriesQuery>(
+    const { data, loading, error, fetchMore } = useGraphqlQuery<BreweriesQuery>(
         BREWERIES_QUERY
     );
 
     const breweries =
-        data?.breweries.edges.map((b: Edge<Brewery>) => b.node) ?? [];
+        data?.data?.breweries.edges.map((b: Edge<Brewery>) => b.node) ?? [];
 
     const loadMore = () =>
-        fetchMore({
-            variables: {
-                cursor: data?.breweries.pageInfo.endCursor,
+        fetchMore(
+            {
+                cursor: data?.data?.breweries.pageInfo.endCursor,
             },
-            updateQuery: (
-                previousResult,
-                { fetchMoreResult }
-            ): BreweriesQuery => {
-                const newEdges = fetchMoreResult?.breweries.edges ?? [];
+            (previousResult, fetchMoreResult): BreweriesQuery => {
+                const newEdges = fetchMoreResult?.data?.breweries.edges ?? [];
                 const pageInfo = {
-                    ...previousResult.breweries.pageInfo,
-                    ...fetchMoreResult?.breweries.pageInfo,
-                    hasPreviousPage: previousResult.breweries.pageInfo.hasPreviousPage,
-                    startCursor: previousResult.breweries.pageInfo.startCursor,
+                    ...previousResult.data?.breweries.pageInfo,
+                    ...fetchMoreResult?.data?.breweries.pageInfo,
+                    hasPreviousPage:
+                        previousResult.data?.breweries.pageInfo.hasPreviousPage,
+                    startCursor:
+                        previousResult.data?.breweries.pageInfo.startCursor,
                 };
-                const totalCount = fetchMoreResult?.breweries.totalCount ?? 0;
+                const totalCount =
+                    fetchMoreResult?.data?.breweries.totalCount ?? 0;
 
                 if (newEdges.length === 0) {
                     return previousResult;
                 }
 
                 return {
-                    // Put the new breweries at the end of the list and update `pageInfo`
-                    // so we have the new `endCursor` and `hasNextPage` values
-                    breweries: {
-                        __typename: previousResult.breweries.__typename,
-                        totalCount,
-                        edges: [...previousResult.breweries.edges, ...newEdges],
-                        pageInfo,
+                    data: {
+                        // Put the new breweries at the end of the list and update `pageInfo`
+                        // so we have the new `endCursor` and `hasNextPage` values
+                        breweries: {
+                            __typename:
+                                previousResult.data?.breweries.__typename,
+                            totalCount,
+                            edges: [
+                                ...previousResult.data?.breweries.edges,
+                                ...newEdges,
+                            ],
+                            pageInfo,
+                        },
                     },
                 };
-            },
-        });
+            }
+        );
 
-    const hasMore = data?.breweries?.pageInfo?.hasNextPage ?? false;
+    const hasMore = data?.data?.breweries?.pageInfo?.hasNextPage ?? false;
 
     return {
         breweries,
