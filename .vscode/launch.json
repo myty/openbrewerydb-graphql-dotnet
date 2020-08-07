@@ -2,6 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "pwa-msedge",
+            "url": "http://localhost:3000/",
+            "pathMapping": {
+                "/": "${workspaceRoot}/frontend/public/",
+                "/app/src/": "${workspaceRoot}/frontend/src/",
+            },
+        },
+        {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
@@ -20,17 +30,6 @@
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }
-        },
-        {
-            "name": "Frontend (Attach - Chrome)",
-            "type": "chrome",
-            "request": "attach",
-            "port": 9222,
-            "url": "http://localhost:3000/",
-            "pathMapping": {
-                "/": "${workspaceRoot}/frontend/public/",
-                "/app/src/": "${workspaceRoot}/frontend/src/",
-            },
         },
         {
             "name": ".NET Core Attach",

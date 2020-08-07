@@ -1,59 +1,21 @@
 import React from "react";
-import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
 import { BreweryMap } from "../components/map";
 import { HeadingOne } from "../components/heading-1";
 import { useParams } from "react-router-dom";
-import { useGraphqlQuery } from "../hooks/use-graphql-query";
-
-const BREWERY_QUERY = `
-    query Brewery($brewery_id: String!) {
-        breweries(first: 1, brewery_id: $brewery_id) {
-            edges {
-                node {
-                    id
-                    ... on Brewery {
-                        id
-                        name
-                        city
-                        state
-                        latitude
-                        longitude
-                    }
-                }
-            }
-        }
-    }
-`;
-
-interface Edge<T> {
-    cursor: string;
-    node: T;
-}
-
-interface BreweryQuery {
-    data: {
-        breweries: {
-            edges: Array<Edge<Brewery>>;
-        };
-    };
-}
+import { useBreweryQuery } from "../queries/autogenerate/hooks";
 
 export const BreweryPage = () => {
-    const { brewery_id } = useParams();
+    const { id } = useParams();
 
-    const { loading, error, data } = useGraphqlQuery<BreweryQuery>(
-        BREWERY_QUERY,
-        { brewery_id }
-    );
+    const { loading, error, data } = useBreweryQuery({
+        variables: { id },
+    });
 
     if (loading) return <Loading />;
     if (error) return <p>Error :(</p>;
 
-    const breweries =
-        data?.data?.breweries?.edges?.map((b: Edge<Brewery>) => b.node) ?? [];
-
-    if (breweries.length === 0) {
+    if (!data?.brewery) {
         return (
             <h1 className="text-2xl font-semibold leading-tight text-yellow-900">
                 Brewery Not Found
@@ -61,7 +23,7 @@ export const BreweryPage = () => {
         );
     }
 
-    const brewery = breweries[0];
+    const brewery = data?.brewery;
 
     return (
         <React.Fragment>

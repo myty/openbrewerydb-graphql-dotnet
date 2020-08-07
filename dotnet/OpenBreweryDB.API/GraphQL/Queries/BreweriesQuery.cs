@@ -20,6 +20,57 @@ namespace OpenBreweryDB.API.GraphQL.Queries
         protected override void Configure(IObjectTypeDescriptor descriptor)
         {
             descriptor
+                .Field("breweryById")
+                .Argument(
+                    "brewery_id",
+                    a => a
+                        .Type<NonNullType<StringType>>()
+                        .Description("filter by brewery id")
+                )
+                .Resolver(
+                    ctx =>
+                    {
+                        // Arguments
+                        var brewery_id = ctx.Argument<string>("brewery_id");
+
+                        // Dependencies
+                        var breweryConductor = ctx.Service<IBreweryConductor>();
+
+                        Expression<Func<Brewery, bool>> filter;
+
+                        if (!string.IsNullOrEmpty(brewery_id?.Trim()))
+                        {
+                            filter = (b) => b.BreweryId == brewery_id;
+                        }
+                        else
+                        {
+                            filter = (b) => false;
+                        }
+
+                        var result = breweryConductor.FindAllQueryable(filter: filter);
+
+                        if (!result.HasErrorsOrResultIsNull())
+                        {
+                            return result.ResultObject.FirstOrDefault();
+                        }
+
+                        foreach (var err in result.Errors)
+                        {
+                            ctx.ReportError(
+                                ErrorBuilder.New()
+                                    .SetCode(err.Key)
+                                    .SetPath(ctx.Path)
+                                    .AddLocation(ctx.FieldSelection)
+                                    .SetMessage(err.Message)
+                                    .Build()
+                            );
+                        }
+
+                        return null;
+                    }
+                );
+
+            descriptor
                 .Field("breweries")
                 .UsePaging<BreweryType>()
                 .Argument(

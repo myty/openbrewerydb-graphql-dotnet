@@ -3,25 +3,28 @@
   "version": "0.3.0",
   "private": true,
   "dependencies": {
-    "google-map-react": "^1.1.7",
+    "@apollo/react-hooks": "^4.0.0",
+    "google-map-react": "^2.0.4",
     "history": "^5.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-infinite-scroller": "^1.2.4",
-    "react-relay": "^10.0.1",
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "3.4.1",
-    "tailwindcss": "^1.6.0"
+    "tailwindcss": "^1.6.2"
   },
   "scripts": {
     "build:tailwind": "tailwind build src/tailwind.css -o src/tailwind.output.css",
     "watch:tailwind": "chokidar 'src/**/*.css' 'src/**/*.scss' --ignore src/tailwind.output.css -c 'npm run build:tailwind'",
-    "start": "npm-run-all build:tailwind --parallel watch:tailwind start:react",
+    "start": "npm-run-all build:tailwind --parallel schemas:watch watch:tailwind start:react",
     "start:react": "react-scripts start",
-    "prebuild": "run-s build:tailwind",
+    "prebuild": "npm-run-all build:tailwind schemas",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "schemas": "graphql-codegen --config codegen.yml",
+    "schemas:watch": "yarn schemas --watch",
+    "prestart": "yarn schemas"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -39,17 +42,22 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.17.7",
+    "@graphql-codegen/import-types-preset": "^1.17.8",
+    "@graphql-codegen/introspection": "1.17.7",
+    "@graphql-codegen/typescript": "^1.17.7",
+    "@graphql-codegen/typescript-operations": "^1.17.7",
+    "@graphql-codegen/typescript-react-apollo": "^2.0.5",
+    "@graphql-codegen/typescript-resolvers": "1.17.7",
     "@types/google-map-react": "^1.1.8",
     "@types/jest": "26.0.4",
     "@types/node": "14.0.23",
     "@types/react": "16.9.43",
     "@types/react-dom": "16.9.8",
     "@types/react-infinite-scroller": "^1.2.1",
-    "babel-plugin-relay": "^10.0.1",
     "chokidar-cli": "^2.1.0",
     "graphql": "^15.3.0",
     "npm-run-all": "^4.1.5",
-    "relay-config": "^10.0.1",
     "typescript": "3.9.7"
   }
 }

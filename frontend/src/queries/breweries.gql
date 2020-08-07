@@ -1,0 +1,40 @@
+query Breweries($cursor: String) {
+    breweries(first: 25, after: $cursor) @connection(key: "default_breweries") {
+        totalCount
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        edges {
+            cursor
+            node {
+                id
+                ...BreweryFields
+            }
+        }
+    }
+}
+
+query Brewery($id: ID!) {
+    brewery: node(id: $id) {
+        id
+        ...BreweryFields
+    }
+}
+
+fragment BreweryFields on Brewery {
+    name
+    brewery_id
+    street
+    city
+    state
+    country
+    website_url
+    brewery_type
+    tag_list
+    phone
+    latitude
+    longitude
+}
