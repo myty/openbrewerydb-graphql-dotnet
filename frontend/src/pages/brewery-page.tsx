@@ -3,13 +3,13 @@ import { Loading } from "../components/loading";
 import { BreweryMap } from "../components/map";
 import { HeadingOne } from "../components/heading-1";
 import { useParams } from "react-router-dom";
-import { useBreweryQuery } from "../queries/autogenerate/hooks";
+import { useBreweryByIdQuery } from "../queries/autogenerate/hooks";
 
 export const BreweryPage = () => {
-    const { id } = useParams();
+    const { brewery_id } = useParams();
 
-    const { loading, error, data } = useBreweryQuery({
-        variables: { id },
+    const { loading, error, data } = useBreweryByIdQuery({
+        variables: { brewery_id },
     });
 
     if (loading) return <Loading />;

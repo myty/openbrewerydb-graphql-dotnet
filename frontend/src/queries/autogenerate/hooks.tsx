@@ -142,3 +142,59 @@ export type BreweryQueryResult = Apollo.QueryResult<
     Types.BreweryQuery,
     Types.BreweryQueryVariables
 >;
+export const BreweryByIdDocument = gql`
+    query BreweryById($brewery_id: String!) {
+        brewery: breweryById(brewery_id: $brewery_id) {
+            id
+            ...BreweryFields
+        }
+    }
+    ${BreweryFieldsFragmentDoc}
+`;
+
+/**
+ * __useBreweryByIdQuery__
+ *
+ * To run a query within a React component, call `useBreweryByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBreweryByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBreweryByIdQuery({
+ *   variables: {
+ *      brewery_id: // value for 'brewery_id'
+ *   },
+ * });
+ */
+export function useBreweryByIdQuery(
+    baseOptions?: Apollo.QueryHookOptions<
+        Types.BreweryByIdQuery,
+        Types.BreweryByIdQueryVariables
+    >
+) {
+    return Apollo.useQuery<
+        Types.BreweryByIdQuery,
+        Types.BreweryByIdQueryVariables
+    >(BreweryByIdDocument, baseOptions);
+}
+export function useBreweryByIdLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<
+        Types.BreweryByIdQuery,
+        Types.BreweryByIdQueryVariables
+    >
+) {
+    return Apollo.useLazyQuery<
+        Types.BreweryByIdQuery,
+        Types.BreweryByIdQueryVariables
+    >(BreweryByIdDocument, baseOptions);
+}
+export type BreweryByIdQueryHookResult = ReturnType<typeof useBreweryByIdQuery>;
+export type BreweryByIdLazyQueryHookResult = ReturnType<
+    typeof useBreweryByIdLazyQuery
+>;
+export type BreweryByIdQueryResult = Apollo.QueryResult<
+    Types.BreweryByIdQuery,
+    Types.BreweryByIdQueryVariables
+>;

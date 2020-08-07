@@ -48,6 +48,17 @@ export type BreweryQuery = { __typename?: "BreweriesQuery" } & {
     >;
 };
 
+export type BreweryByIdQueryVariables = Types.Exact<{
+    brewery_id: Types.Scalars["String"];
+}>;
+
+export type BreweryByIdQuery = { __typename?: "BreweriesQuery" } & {
+    brewery?: Types.Maybe<
+        { __typename?: "Brewery" } & Pick<Types.Brewery, "id"> &
+            BreweryFieldsFragment
+    >;
+};
+
 export type BreweryFieldsFragment = { __typename?: "Brewery" } & Pick<
     Types.Brewery,
     | "name"

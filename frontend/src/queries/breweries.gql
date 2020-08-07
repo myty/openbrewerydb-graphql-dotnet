@@ -1,3 +1,4 @@
+# List breweries
 query Breweries($cursor: String) {
     breweries(first: 25, after: $cursor) @connection(key: "default_breweries") {
         totalCount
@@ -17,8 +18,17 @@ query Breweries($cursor: String) {
     }
 }
 
+# Get Brewery by the id
 query Brewery($id: ID!) {
     brewery: node(id: $id) {
+        id
+        ...BreweryFields
+    }
+}
+
+# Get Brewery by the brewery_id
+query BreweryById($brewery_id: String!) {
+    brewery: breweryById(brewery_id: $brewery_id) {
         id
         ...BreweryFields
     }
