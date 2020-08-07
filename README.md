@@ -6,8 +6,8 @@ I've since added a frontend to make exploring the brewery data.
 
 Some things I am planning to add:
 
-- Pull in Google reviews api data if any is available for breweries (Schema Stiching)
-- Nearby breweries (Dataloader)
+- Pull in Google reviews api data if any is available for breweries (Schema Stitching)
+- Nearby breweries (DataLoader)
 
 ## Prerequisites
 
@@ -16,13 +16,13 @@ Some things I am planning to add:
 
 ## Getting Started
 
-Run this from your favorite commandline (The first time this runs, it will download seed data so it may take a few minutes more to get things spun up):
+Run this from your favorite command-line (The first time this runs, it will download seed data so it may take a few minutes more to get things spun up):
 
     yarn dotnet
 
 Once you see `Application started. Press Ctrl+C to shut down.`, go to this url, https://localhost:5001/graphql/playground/ and play around.
 
-If you'd like to run a working frontend React sample applicatyion, in a separate terminal, you will need to do a few things:
+If you'd like to run a working frontend React sample application, in a separate terminal, you will need to do a few things:
 
 1. You will need to get your own Google Maps API key. Here are instructions to do so: https://developers.google.com/maps/documentation/javascript/get-api-key
 
