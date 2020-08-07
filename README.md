@@ -1,6 +1,8 @@
 # OpenBreweryDB - GraphQL (.NET Core)
 
-This is an exercise in learning GraphQL in .NET Core by taking an API like, https://www.openbrewerydb.org/ and transforming that into a GraphQL schema.  I initially started with [graphql-dotnet](https://github.com/graphql-dotnet/graphql-dotnet) as the backend server, but have since moved everything over to use [Hot Chocolate](https://hotchocolate.io/). In it's current state I am attempting to have it follow as close as possible to GraphQL schema standards such as the [GraphQL Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm) that came out of the [Relay](https://relay.dev/) team at Facebook.
+This project started off as an exercise in learning GraphQL in .NET Core by taking an API like, https://www.openbrewerydb.org/ and transforming that into a GraphQL schema.  I initially started with [graphql-dotnet](https://github.com/graphql-dotnet/graphql-dotnet) as the backend server, but have since moved everything over to use [Hot Chocolate](https://hotchocolate.io/). In it's current state I am attempting to have it follow as close as possible to GraphQL schema standards such as the [GraphQL Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm) that came out of the [Relay](https://relay.dev/) team at Facebook.
+
+I've since added a frontend to make exploring the brewery data.
 
 Some things I am planning to add:
 
@@ -14,9 +16,16 @@ Some things I am planning to add:
 
 ## Getting Started
 
-Run this from your favorit commandline:
-```bash
-yarn dotnet
-```
+Run this from your favorite commandline (The first time this runs, it will download seed data so it may take a few minutes more to get things spun up):
+
+    yarn dotnet
 
 Once you see `Application started. Press Ctrl+C to shut down.`, go to this url, https://localhost:5001/graphql/playground/ and play around.
+
+If you'd like to checkout the sample frontend React app, in a separate terminal, run:
+
+    yarn install
+
+and then
+
+    yarn frontend
