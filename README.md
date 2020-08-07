@@ -22,10 +22,18 @@ Run this from your favorite commandline (The first time this runs, it will downl
 
 Once you see `Application started. Press Ctrl+C to shut down.`, go to this url, https://localhost:5001/graphql/playground/ and play around.
 
-If you'd like to checkout the sample frontend React app, in a separate terminal, run:
+If you'd like to run a working frontend React sample applicatyion, in a separate terminal, you will need to do a few things:
 
-    yarn install
+1. You will need to get your own Google Maps API key. Here are instructions to do so: https://developers.google.com/maps/documentation/javascript/get-api-key
 
-and then
+2. Once you have the key, you'll need to create a local environment file in the `frontend` folder.  Name it `.env.local` and update the contents of the file to be something like this, but replacing the `xxxxxxxxx-xxxxxxxxx-xxxxxxxxx` with the actual API key:
 
-    yarn frontend
+        REACT_APP_GOOGLE_MAPS_API_KEY=xxxxxxxxx-xxxxxxxxx-xxxxxxxxx
+
+3. Finally, before you can run the application, you'll need to install your npm packages
+
+        yarn install
+
+4. Once that is all finished you should be good to go, run:
+
+        yarn frontend
