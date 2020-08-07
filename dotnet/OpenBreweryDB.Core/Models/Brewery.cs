@@ -13,6 +13,9 @@ namespace OpenBreweryDB.Core.Models
         [JsonPropertyName("brewery_type")]
         public string BreweryType { get; set; }
 
+        [JsonPropertyName("brewery_id")]
+        public string BreweryId { get; set; }
+
         [JsonPropertyName("street")]
         public string Street { get; set; }
 
@@ -32,7 +35,7 @@ namespace OpenBreweryDB.Core.Models
         public string Phone { get; set; }
 
         [JsonPropertyName("updated_at")]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         [JsonPropertyName("country")]
         public string Country { get; set; }

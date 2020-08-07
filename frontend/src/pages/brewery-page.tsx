@@ -1,58 +1,39 @@
 import React from "react";
-import { RouteComponentProps } from "@reach/router";
-import { Text, Heading } from "@chakra-ui/core";
-import { Brewery } from "../types/brewery";
 import { Loading } from "../components/loading";
-import { useQuery } from "react-query";
-import { request } from "graphql-request";
+import { BreweryMap } from "../components/map";
+import { HeadingOne } from "../components/heading-1";
+import { useParams } from "react-router-dom";
+import { useBreweryByIdQuery } from "../queries/autogenerate/hooks";
 
-const BREWERY_QUERY = `
-    query Brewery($breweryId: ID!) {
-        brewery: node(id: $breweryId) {
-            id
-            ... on Brewery {
-                id
-                name
-                city
-                state
-            }
-        }
+export const BreweryPage = () => {
+    const { brewery_id } = useParams();
+
+    const { loading, error, data } = useBreweryByIdQuery({
+        variables: { brewery_id },
+    });
+
+    if (loading) return <Loading />;
+    if (error) return <p>Error :(</p>;
+
+    if (!data?.brewery) {
+        return (
+            <h1 className="text-2xl font-semibold leading-tight text-yellow-900">
+                Brewery Not Found
+            </h1>
+        );
     }
-`;
 
-interface BreweryQuery {
-    brewery: Brewery;
-}
-
-interface BreweryPageProps extends RouteComponentProps {
-    breweryId?: string;
-}
-
-export const BreweryPage = (props: BreweryPageProps) => {
-    const { breweryId } = props;
-
-    const { data, status } = useQuery<BreweryQuery, [string, string?]>(
-        ["brewery", breweryId],
-        async (key, breweryId) => {
-            const results = await request(
-                "https://localhost:5001/graphql",
-                BREWERY_QUERY,
-                { breweryId }
-            );
-
-            return results;
-        }
-    );
-
-    if (status === "loading") return <Loading />;
-    if (status === "error") return <p>Error :(</p>;
+    const brewery = data?.brewery;
 
     return (
         <React.Fragment>
-            <Heading as="h1" size="2xl" letterSpacing={"-.1rem"}>
-                {data?.brewery.name}
-            </Heading>
-            <Text>{`${data?.brewery.city}, ${data?.brewery.state}`}</Text>
+            <HeadingOne>{brewery.name}</HeadingOne>
+            <p className="text-base font-semibold leading-normal text-yellow-700">{`${brewery.city}, ${brewery.state}`}</p>
+            <BreweryMap
+                lng={brewery.longitude}
+                lat={brewery.latitude}
+                text={brewery.name}
+            />
         </React.Fragment>
     );
 };

@@ -6,6 +6,7 @@ namespace OpenBreweryDB.Data.Models
 {
     public class Brewery : Entity
     {
+        public string BreweryId { get; set; }
         public string Name { get; set; }
         public string BreweryType { get; set; }
         public string Street { get; set; }

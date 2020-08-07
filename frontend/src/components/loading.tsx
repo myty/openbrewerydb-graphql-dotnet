@@ -1,5 +1,4 @@
 import React from "react";
-import { Spinner, Text, Box } from "@chakra-ui/core";
 
 interface LoadingProps {
     loadingText?: string;
@@ -7,9 +6,8 @@ interface LoadingProps {
 
 export const Loading = ({ loadingText }: LoadingProps) => {
     return (
-        <Box w="100%" textAlign="center">
-            <Spinner size="xl" />
-            <Text>{loadingText ?? "Loading..."}</Text>
-        </Box>
+        <div className="block w-full max-w-xl p-4 mx-auto font-semibold text-center">
+            {loadingText ?? "Loading..."}
+        </div>
     );
 };

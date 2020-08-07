@@ -1,5 +1,5 @@
-using HotChocolate;
 using HotChocolate.Types;
+using HotChocolate.Types.Relay;
 using OpenBreweryDB.API.GraphQL.Resolvers;
 using OpenBreweryDB.Data.Models;
 using System;
@@ -11,18 +11,20 @@ namespace OpenBreweryDB.API.GraphQL.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Brewery> descriptor)
         {
-            descriptor.AsNode()
-                .IdField(t => t.Id)
-                .NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
-
             descriptor
                 .Name("Brewery")
-                .Description("A brewery of beer");
+                .Description("A brewery of beer")
+                .AsNode().IdField(t => t.Id).NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
 
             descriptor.Field(t => t.BreweryType)
                 .Type<NonNullType<StringType>>()
                 .Name("brewery_type")
                 .Description("Type of Brewery");
+
+            descriptor.Field(t => t.BreweryId)
+                .Type<NonNullType<StringType>>()
+                .Name("brewery_id")
+                .Description("Friendly id for Brewery");
 
             descriptor.Field(t => t.City)
                 .Type<StringType>()
