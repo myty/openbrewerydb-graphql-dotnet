@@ -3,8 +3,20 @@ import * as Types from "./operations";
 import * as Apollo from "@apollo/client";
 const gql = Apollo.gql;
 
-export const BreweryFieldsFragmentDoc = gql`
-    fragment BreweryFields on Brewery {
+export const BreweryBaseFieldsFragmentDoc = gql`
+    fragment BreweryBaseFields on Brewery {
+        name
+        brewery_id
+        street
+        city
+        state
+        country
+        website_url
+        brewery_type
+    }
+`;
+export const BreweryDetailFieldsFragmentDoc = gql`
+    fragment BreweryDetailFields on Brewery {
         name
         brewery_id
         street
@@ -17,7 +29,12 @@ export const BreweryFieldsFragmentDoc = gql`
         phone
         latitude
         longitude
+        nearby(first: 5) {
+            id
+            ...BreweryBaseFields
+        }
     }
+    ${BreweryBaseFieldsFragmentDoc}
 `;
 export const BreweriesDocument = gql`
     query Breweries($cursor: String) {
@@ -34,12 +51,12 @@ export const BreweriesDocument = gql`
                 cursor
                 node {
                     id
-                    ...BreweryFields
+                    ...BreweryBaseFields
                 }
             }
         }
     }
-    ${BreweryFieldsFragmentDoc}
+    ${BreweryBaseFieldsFragmentDoc}
 `;
 
 /**
@@ -92,10 +109,10 @@ export const BreweryDocument = gql`
     query Brewery($id: ID!) {
         brewery: node(id: $id) {
             id
-            ...BreweryFields
+            ...BreweryDetailFields
         }
     }
-    ${BreweryFieldsFragmentDoc}
+    ${BreweryDetailFieldsFragmentDoc}
 `;
 
 /**
@@ -146,10 +163,10 @@ export const BreweryByIdDocument = gql`
     query BreweryById($brewery_id: String!) {
         brewery: breweryById(brewery_id: $brewery_id) {
             id
-            ...BreweryFields
+            ...BreweryDetailFields
         }
     }
-    ${BreweryFieldsFragmentDoc}
+    ${BreweryDetailFieldsFragmentDoc}
 `;
 
 /**

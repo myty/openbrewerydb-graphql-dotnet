@@ -16,6 +16,15 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Description("A brewery of beer")
                 .AsNode().IdField(t => t.Id).NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
 
+            descriptor.Field("nearby")
+                .Argument(
+                    "first",
+                    a => a
+                        .Type<IntType>()
+                        .Description("limit the number of nearby breweries to return, defaults to 5")
+                )
+                .Resolver(BreweryResolvers.NearbyBreweriesResolver);
+
             descriptor.Field(t => t.BreweryType)
                 .Type<NonNullType<StringType>>()
                 .Name("brewery_type")

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import GoogleMapReact, { Coords } from "google-map-react";
 
 interface MarkerComponentInterface extends Partial<Coords> {
@@ -12,8 +12,43 @@ const MarkerComponent = ({ text }: MarkerComponentInterface) => (
 );
 
 export const BreweryMap = ({ lat, lng, text }: MarkerComponentInterface) => {
+    const [warningDismissed, setWarningDismissed] = useState(false);
+
     if (!lat || !lng) {
         return <p className="mt-6">Location Not Found</p>;
+    }
+
+    if (
+        process.env.REACT_APP_GOOGLE_MAPS_API_KEY ===
+        process.env.REACT_APP_DEFAULT_API_KEY
+    ) {
+        if (warningDismissed) {
+            return null;
+        }
+
+        return (
+            <div
+                className="relative px-4 py-3 text-red-700 bg-red-100 border border-red-400 rounded"
+                role="alert">
+                <strong className="font-bold">Google Maps</strong>
+                <span className="block sm:inline">
+                    Update your Google Maps API key in order to have the map be
+                    visible.
+                </span>
+                <button
+                    className="absolute top-0 bottom-0 right-0 inline px-4 py-3"
+                    onClick={() => setWarningDismissed(true)}>
+                    <svg
+                        className="w-6 h-6 text-red-500 fill-current"
+                        role="button"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20">
+                        <title>Close</title>
+                        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                    </svg>
+                </button>
+            </div>
+        );
     }
 
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? "";
@@ -22,8 +57,7 @@ export const BreweryMap = ({ lat, lng, text }: MarkerComponentInterface) => {
         // Important! Always set the container height explicitly
         <div
             style={{
-                marginTop: "15px",
-                height: "calc(100vh - 15rem)",
+                height: "calc(100vh - 8rem)",
                 width: "100%",
             }}>
             <GoogleMapReact

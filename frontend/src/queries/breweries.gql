@@ -12,7 +12,7 @@ query Breweries($cursor: String) {
             cursor
             node {
                 id
-                ...BreweryFields
+                ...BreweryBaseFields
             }
         }
     }
@@ -22,7 +22,7 @@ query Breweries($cursor: String) {
 query Brewery($id: ID!) {
     brewery: node(id: $id) {
         id
-        ...BreweryFields
+        ...BreweryDetailFields
     }
 }
 
@@ -30,11 +30,22 @@ query Brewery($id: ID!) {
 query BreweryById($brewery_id: String!) {
     brewery: breweryById(brewery_id: $brewery_id) {
         id
-        ...BreweryFields
+        ...BreweryDetailFields
     }
 }
 
-fragment BreweryFields on Brewery {
+fragment BreweryBaseFields on Brewery {
+    name
+    brewery_id
+    street
+    city
+    state
+    country
+    website_url
+    brewery_type
+}
+
+fragment BreweryDetailFields on Brewery {
     name
     brewery_id
     street
@@ -47,4 +58,8 @@ fragment BreweryFields on Brewery {
     phone
     latitude
     longitude
+    nearby(first: 5) {
+        id
+        ...BreweryBaseFields
+    }
 }

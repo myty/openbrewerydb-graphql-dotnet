@@ -23,8 +23,5 @@
         "frontend/build/**": true,
         "frontend/src/tailwind.output.css": true
     },
-    "cSpell.words": [
-        "scroller",
-        "semibold"
-    ]
+    "typescript.tsdk": "./frontend/node_modules/typescript/lib"
 }

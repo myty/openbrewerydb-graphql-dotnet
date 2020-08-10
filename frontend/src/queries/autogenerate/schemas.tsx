@@ -86,6 +86,7 @@ export type Brewery = Node & {
     longitude?: Maybe<Scalars["Decimal"]>;
     /** Name of brewery */
     name: Scalars["String"];
+    nearby?: Maybe<Array<Maybe<Brewery>>>;
     /** The phone number for the brewery */
     phone?: Maybe<Scalars["String"]>;
     /** The state of the brewery */
@@ -100,6 +101,11 @@ export type Brewery = Node & {
     updated_at: Scalars["DateTime"];
     /** Website address for the brewery */
     website_url?: Maybe<Scalars["String"]>;
+};
+
+/** A brewery of beer */
+export type BreweryNearbyArgs = {
+    first?: Maybe<Scalars["Int"]>;
 };
 
 /** A connection to a list of items. */

@@ -28,7 +28,7 @@ export type BreweriesQuery = { __typename?: "BreweriesQuery" } & {
                                         Types.Brewery,
                                         "id"
                                     > &
-                                        BreweryFieldsFragment
+                                        BreweryBaseFieldsFragment
                                 >;
                             }
                     >
@@ -44,7 +44,7 @@ export type BreweryQueryVariables = Types.Exact<{
 export type BreweryQuery = { __typename?: "BreweriesQuery" } & {
     brewery?: Types.Maybe<
         { __typename?: "Brewery" } & Pick<Types.Brewery, "id"> &
-            BreweryFieldsFragment
+            BreweryDetailFieldsFragment
     >;
 };
 
@@ -55,11 +55,23 @@ export type BreweryByIdQueryVariables = Types.Exact<{
 export type BreweryByIdQuery = { __typename?: "BreweriesQuery" } & {
     brewery?: Types.Maybe<
         { __typename?: "Brewery" } & Pick<Types.Brewery, "id"> &
-            BreweryFieldsFragment
+            BreweryDetailFieldsFragment
     >;
 };
 
-export type BreweryFieldsFragment = { __typename?: "Brewery" } & Pick<
+export type BreweryBaseFieldsFragment = { __typename?: "Brewery" } & Pick<
+    Types.Brewery,
+    | "name"
+    | "brewery_id"
+    | "street"
+    | "city"
+    | "state"
+    | "country"
+    | "website_url"
+    | "brewery_type"
+>;
+
+export type BreweryDetailFieldsFragment = { __typename?: "Brewery" } & Pick<
     Types.Brewery,
     | "name"
     | "brewery_id"
@@ -73,4 +85,13 @@ export type BreweryFieldsFragment = { __typename?: "Brewery" } & Pick<
     | "phone"
     | "latitude"
     | "longitude"
->;
+> & {
+        nearby?: Types.Maybe<
+            Array<
+                Types.Maybe<
+                    { __typename?: "Brewery" } & Pick<Types.Brewery, "id"> &
+                        BreweryBaseFieldsFragment
+                >
+            >
+        >;
+    };
