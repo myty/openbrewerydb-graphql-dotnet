@@ -65,7 +65,7 @@ const NearbyBreweries = ({ breweries }: { breweries?: Brewery[] }) => {
                 {breweries?.map((b) => (
                     <a
                         key={`${b.id}`}
-                        className="inline-block px-3 py-1 mb-2 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full hover:bg-yellow-600 hover:text-yellow-100"
+                        className="inline-block px-3 py-1 mb-2 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full hover:bg-yellow-600 hover:text-yellow-100 truncate max-w-full"
                         href={b.brewery_id}>
                         {b.name}
                     </a>
@@ -85,7 +85,7 @@ export const BreweryPage = () => {
     if (loading) return <Loading />;
     if (error) return <p>Error :(</p>;
 
-    const brewery = data?.brewery;
+    const brewery: Brewery = data?.brewery as Brewery;
 
     if (!brewery) {
         return (
@@ -98,16 +98,12 @@ export const BreweryPage = () => {
     return (
         <div className="flex">
             <div className="flex-none pr-4 lg:w-1/4 xl:w-1/5">
-                <BreweryCard brewery={brewery as Brewery} />
+                <BreweryCard brewery={brewery} />
                 <BreweryReviews brewery_id={brewery_id} />
                 <NearbyBreweries breweries={brewery.nearby as Brewery[]} />
             </div>
             <div className="flex-grow">
-                <BreweryMap
-                    lng={brewery.longitude}
-                    lat={brewery.latitude}
-                    text={brewery.name}
-                />
+                <BreweryMap brewery={brewery} />
             </div>
         </div>
     );

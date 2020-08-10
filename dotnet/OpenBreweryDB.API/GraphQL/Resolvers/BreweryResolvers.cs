@@ -60,16 +60,26 @@ namespace OpenBreweryDB.API.GraphQL.Resolvers
                 breweryLimit = 5;
             }
 
+            var mileageRadius = ctx.Argument<int?>("within") ?? 25;
+
             var currentCoordinates = new GeoCoordinate(Convert.ToDouble(brewery.Latitude), Convert.ToDouble(brewery.Longitude));
 
-            var breweryResult = breweryConductor.FindAll(b => b.Latitude.HasValue && b.Longitude.HasValue);
+            var breweryResult = breweryConductor.FindAll(b => b.Latitude.HasValue
+                && b.Longitude.HasValue
+                && b.Id != brewery.Id);
 
             if (!breweryResult.HasErrorsOrResultIsNull())
             {
                 var nearbyBreweries = breweryResult.ResultObject
-                    .AsEnumerable()
-                    .OrderBy(b => new GeoCoordinate(Convert.ToDouble(b.Latitude), Convert.ToDouble(b.Longitude)).GetDistanceTo(currentCoordinates))
-                    .Take(breweryLimit);
+                    .Select(b => new
+                    {
+                        Brewery = b,
+                        DistanceFrom = Math.Abs(new GeoCoordinate(Convert.ToDouble(b.Latitude), Convert.ToDouble(b.Longitude)).GetDistanceTo(currentCoordinates)),
+                    })
+                    .Where(b => (0.00062137 * b.DistanceFrom) <= mileageRadius)
+                    .OrderBy(b => b.DistanceFrom)
+                    // .Take(breweryLimit)
+                    .Select(b => b.Brewery);
 
                 return await Task.FromResult(nearbyBreweries);
             }

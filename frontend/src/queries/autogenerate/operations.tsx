@@ -89,7 +89,10 @@ export type BreweryDetailFieldsFragment = { __typename?: "Brewery" } & Pick<
         nearby?: Types.Maybe<
             Array<
                 Types.Maybe<
-                    { __typename?: "Brewery" } & Pick<Types.Brewery, "id"> &
+                    { __typename?: "Brewery" } & Pick<
+                        Types.Brewery,
+                        "id" | "latitude" | "longitude"
+                    > &
                         BreweryBaseFieldsFragment
                 >
             >

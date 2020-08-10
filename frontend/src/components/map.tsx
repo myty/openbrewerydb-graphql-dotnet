@@ -1,20 +1,32 @@
 import React, { useState } from "react";
 import GoogleMapReact, { Coords } from "google-map-react";
+import { Brewery } from "../queries/autogenerate/schemas";
+
+interface BreweryMapProps {
+    brewery: Brewery;
+}
 
 interface MarkerComponentInterface extends Partial<Coords> {
     text: string;
+    primary: boolean;
 }
 
-const MarkerComponent = ({ text }: MarkerComponentInterface) => (
-    <div className="w-64 p-2 -ml-8 text-base font-semibold text-center text-white bg-blue-700 bg-opacity-75 rounded lef">
-        <p className="w-full truncate">{text}</p>
-    </div>
-);
+const MarkerComponent = ({ text, primary }: MarkerComponentInterface) => {
+    const className = `${
+        primary ? "bg-blue-700" : "bg-gray-500"
+    } w-64 p-2 -ml-8 text-base font-semibold text-center text-white bg-opacity-75 rounded left`;
 
-export const BreweryMap = ({ lat, lng, text }: MarkerComponentInterface) => {
+    return (
+        <div className={className}>
+            <p className="w-full truncate">{text}</p>
+        </div>
+    );
+};
+
+export const BreweryMap = ({ brewery }: BreweryMapProps) => {
     const [warningDismissed, setWarningDismissed] = useState(false);
 
-    if (!lat || !lng) {
+    if (!brewery.latitude || !brewery.longitude) {
         return <p className="mt-6">Location Not Found</p>;
     }
 
@@ -52,6 +64,18 @@ export const BreweryMap = ({ lat, lng, text }: MarkerComponentInterface) => {
     }
 
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? "";
+    const { latitude: lat, longitude: lng, name: text } = brewery;
+
+    const nearbyBreweries = !brewery.nearby
+        ? []
+        : brewery.nearby?.map((nb) => (
+              <MarkerComponent
+                  lat={nb?.latitude}
+                  lng={nb?.longitude}
+                  text={nb?.name!}
+                  primary={false}
+              />
+          ));
 
     return (
         // Important! Always set the container height explicitly
@@ -64,7 +88,13 @@ export const BreweryMap = ({ lat, lng, text }: MarkerComponentInterface) => {
                 bootstrapURLKeys={{ key: apiKey }}
                 defaultCenter={{ lat, lng }}
                 defaultZoom={15}>
-                <MarkerComponent lat={lat} lng={lng} text={text} />
+                <MarkerComponent
+                    lat={lat}
+                    lng={lng}
+                    text={text}
+                    primary={true}
+                />
+                {nearbyBreweries}
             </GoogleMapReact>
         </div>
     );

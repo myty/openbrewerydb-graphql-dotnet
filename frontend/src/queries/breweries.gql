@@ -61,5 +61,7 @@ fragment BreweryDetailFields on Brewery {
     nearby(first: 5) {
         id
         ...BreweryBaseFields
+        latitude
+        longitude
     }
 }

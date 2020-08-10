@@ -32,6 +32,8 @@ export const BreweryDetailFieldsFragmentDoc = gql`
         nearby(first: 5) {
             id
             ...BreweryBaseFields
+            latitude
+            longitude
         }
     }
     ${BreweryBaseFieldsFragmentDoc}
