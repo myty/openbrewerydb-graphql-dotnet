@@ -1,13 +1,8 @@
-import React, {
-    useState,
-    useRef,
-    useEffect,
-    useCallback,
-    RefObject,
-} from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { useAutocompleteLazyQuery } from "../graphql/autogenerate/hooks";
+import { AutocompleteTextbox } from "./autocomplete-textbox";
 
 interface HeaderProps {
     title: string;
@@ -21,102 +16,6 @@ const MenuLink = ({ to, text }: { to: string; text: string }) => (
         {text}
     </NavLink>
 );
-
-interface AutocompleteTextboxProps<T = any> {
-    className?: string;
-    onTextChange: (text: string) => void;
-    results: T[];
-    renderResultOption: (option: T) => React.ReactNode;
-}
-
-type UseHasFocusObserverFunction = (
-    callback: (hasFocus: boolean) => void,
-    elementRef: RefObject<HTMLElement>
-) => void;
-
-const useHasFocusObserver: UseHasFocusObserverFunction = (
-    callback,
-    elementRef
-) => {
-    const onChange = useCallback(
-        (e: FocusEvent | MouseEvent) => {
-            if (elementRef.current == null) {
-                callback(false);
-                return;
-            }
-
-            for (
-                let el = e.target as (Node & ParentNode) | null;
-                el;
-                el = el.parentNode
-            ) {
-                if (el === elementRef.current) {
-                    callback(true);
-                    return;
-                }
-            }
-
-            callback(false);
-            return;
-        },
-        [callback, elementRef]
-    );
-
-    useEffect(() => {
-        document.addEventListener("focusin", onChange);
-        document.addEventListener("click", onChange);
-
-        return () => {
-            document.removeEventListener("focusin", onChange);
-            document.removeEventListener("click", onChange);
-        };
-    }, [callback, onChange]);
-};
-
-const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<Brewery>> = ({
-    className,
-    onTextChange,
-    results,
-    renderResultOption,
-}) => {
-    const [searchText, setSearchText] = useState("");
-    const outsideDivRef = useRef<HTMLDivElement>(null);
-
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-        changeText(e.target.value);
-
-    const changeText = (value?: string) => {
-        setSearchText(value ?? "");
-        onTextChange(value ?? "");
-    };
-
-    useHasFocusObserver((hasFocus) => {
-        if (!hasFocus) {
-            changeText();
-        }
-    }, outsideDivRef);
-
-    return (
-        <div
-            ref={outsideDivRef}
-            className={`h-0 overflow-visible lg:inline-block relative`}
-            style={{ top: "-1.25rem", zIndex: 999 }}>
-            <div
-                className={`${className} rounded-lg border border-gray-200 shadow bg-white absolute`}>
-                <input
-                    type="text"
-                    className={`w-full px-3 py-1 rounded-lg outline-none`}
-                    placeholder="Search"
-                    value={searchText}
-                    onChange={onChange}
-                />
-                <div className="w-full bg-white rounded-lg">
-                    {results.map((b) => renderResultOption(b))}
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const Header = ({ title }: HeaderProps) => {
     const [searchText, setSearchText] = useState("");
