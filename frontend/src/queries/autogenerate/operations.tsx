@@ -37,6 +37,45 @@ export type BreweriesQuery = { __typename?: "BreweriesQuery" } & {
     >;
 };
 
+export type NearbyBreweriesQueryVariables = Types.Exact<{
+    cursor?: Types.Maybe<Types.Scalars["String"]>;
+    latitude: Types.Scalars["Decimal"];
+    longitude: Types.Scalars["Decimal"];
+}>;
+
+export type NearbyBreweriesQuery = { __typename?: "BreweriesQuery" } & {
+    breweries?: Types.Maybe<
+        { __typename?: "BreweryConnection" } & Pick<
+            Types.BreweryConnection,
+            "totalCount"
+        > & {
+                pageInfo: { __typename?: "PageInfo" } & Pick<
+                    Types.PageInfo,
+                    | "startCursor"
+                    | "hasNextPage"
+                    | "hasPreviousPage"
+                    | "endCursor"
+                >;
+                edges?: Types.Maybe<
+                    Array<
+                        { __typename?: "BreweryEdge" } & Pick<
+                            Types.BreweryEdge,
+                            "cursor"
+                        > & {
+                                node?: Types.Maybe<
+                                    { __typename?: "Brewery" } & Pick<
+                                        Types.Brewery,
+                                        "id"
+                                    > &
+                                        BreweryBaseFieldsFragment
+                                >;
+                            }
+                    >
+                >;
+            }
+    >;
+};
+
 export type BreweryQueryVariables = Types.Exact<{
     id: Types.Scalars["ID"];
 }>;

@@ -18,10 +18,10 @@ namespace OpenBreweryDB.API.GraphQL.Types
 
             descriptor.Field("nearby")
                 .Argument(
-                    "first",
+                    "within",
                     a => a
                         .Type<IntType>()
-                        .Description("limit the number of nearby breweries to return, defaults to 5")
+                        .Description("limit the nearby breweries to search radius, defaults to 25 milles")
                 )
                 .Resolver(BreweryResolvers.NearbyBreweriesResolver);
 

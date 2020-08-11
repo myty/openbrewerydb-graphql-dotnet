@@ -13,7 +13,8 @@
     "react-infinite-scroller": "^1.2.4",
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "3.4.1",
-    "tailwindcss": "^1.6.2"
+    "tailwindcss": "^1.6.2",
+    "heroicons-react": "^1.1.0"
   },
   "scripts": {
     "build:tailwind": "tailwind build src/tailwind.css -o src/tailwind.output.css",

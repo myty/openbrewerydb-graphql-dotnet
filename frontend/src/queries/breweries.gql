@@ -18,6 +18,34 @@ query Breweries($cursor: String) {
     }
 }
 
+query NearbyBreweries(
+    $cursor: String
+    $latitude: Decimal!
+    $longitude: Decimal!
+) @connection(key: "nearby_breweries") {
+    breweries: nearbyBreweries(
+        first: 25
+        after: $cursor
+        latitude: $latitude
+        longitude: $longitude
+    ) {
+        totalCount
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        edges {
+            cursor
+            node {
+                id
+                ...BreweryBaseFields
+            }
+        }
+    }
+}
+
 # Get Brewery by the id
 query Brewery($id: ID!) {
     brewery: node(id: $id) {
@@ -58,7 +86,7 @@ fragment BreweryDetailFields on Brewery {
     phone
     latitude
     longitude
-    nearby(first: 5) {
+    nearby(within: 15) {
         id
         ...BreweryBaseFields
         latitude

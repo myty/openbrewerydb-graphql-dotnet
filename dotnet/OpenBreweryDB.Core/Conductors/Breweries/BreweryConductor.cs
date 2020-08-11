@@ -1,6 +1,7 @@
 using AndcultureCode.CSharp.Core;
 using AndcultureCode.CSharp.Core.Extensions;
 using AndcultureCode.CSharp.Core.Interfaces;
+using GeoCoordinatePortable;
 using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data;
@@ -80,13 +81,40 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
             if (query.HasErrorsOrResultIsNull())
             {
-                r.AddError("Error", $"Results for the brewery query could not be retreived.");
+                r.AddError("Error", $"Results for the brewery query could not be retrieved.");
             }
 
             return query.ResultObject
                 .Skip(skip)
                 .Take(take);
         }).Result;
+
+        public IResult<IQueryable<Brewery>> FindAllByLocation(
+            double latitude,
+            double longitude,
+            int? mileRadius = null) => Do<IQueryable<Brewery>>.Try((r) =>
+        {
+            var breweryResult = FindAllQueryable(b => b.Latitude.HasValue && b.Longitude.HasValue);
+            var currentCoordinates = new GeoCoordinate(Convert.ToDouble(latitude), Convert.ToDouble(longitude));
+
+            if (breweryResult.HasErrorsOrResultIsNull())
+            {
+                return r.AddErrorsAndReturnDefault(breweryResult);
+            }
+
+            return breweryResult.ResultObject
+                .AsEnumerable()
+                .Select(b => new
+                {
+                    Brewery = b,
+                    DistanceFrom = Math.Abs(new GeoCoordinate(Convert.ToDouble(b.Latitude), Convert.ToDouble(b.Longitude)).GetDistanceTo(currentCoordinates)),
+                })
+                .OrderBy(b => b.DistanceFrom)
+                .Where(b => !mileRadius.HasValue || (0.00062137 * b.DistanceFrom) <= mileRadius)
+                .Select(b => b.Brewery)
+                .AsQueryable();
+        }).Result;
+
 
         public IResult<IQueryable<Brewery>> FindAllQueryable(
             Expression<Func<Brewery, bool>> filter = null,

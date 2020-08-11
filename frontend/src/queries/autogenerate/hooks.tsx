@@ -29,7 +29,7 @@ export const BreweryDetailFieldsFragmentDoc = gql`
         phone
         latitude
         longitude
-        nearby(first: 5) {
+        nearby(within: 15) {
             id
             ...BreweryBaseFields
             latitude
@@ -106,6 +106,87 @@ export type BreweriesLazyQueryHookResult = ReturnType<
 export type BreweriesQueryResult = Apollo.QueryResult<
     Types.BreweriesQuery,
     Types.BreweriesQueryVariables
+>;
+export const NearbyBreweriesDocument = gql`
+    query NearbyBreweries(
+        $cursor: String
+        $latitude: Decimal!
+        $longitude: Decimal!
+    ) @connection(key: "nearby_breweries") {
+        breweries: nearbyBreweries(
+            first: 25
+            after: $cursor
+            latitude: $latitude
+            longitude: $longitude
+        ) {
+            totalCount
+            pageInfo {
+                startCursor
+                hasNextPage
+                hasPreviousPage
+                endCursor
+            }
+            edges {
+                cursor
+                node {
+                    id
+                    ...BreweryBaseFields
+                }
+            }
+        }
+    }
+    ${BreweryBaseFieldsFragmentDoc}
+`;
+
+/**
+ * __useNearbyBreweriesQuery__
+ *
+ * To run a query within a React component, call `useNearbyBreweriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNearbyBreweriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNearbyBreweriesQuery({
+ *   variables: {
+ *      cursor: // value for 'cursor'
+ *      latitude: // value for 'latitude'
+ *      longitude: // value for 'longitude'
+ *   },
+ * });
+ */
+export function useNearbyBreweriesQuery(
+    baseOptions?: Apollo.QueryHookOptions<
+        Types.NearbyBreweriesQuery,
+        Types.NearbyBreweriesQueryVariables
+    >
+) {
+    return Apollo.useQuery<
+        Types.NearbyBreweriesQuery,
+        Types.NearbyBreweriesQueryVariables
+    >(NearbyBreweriesDocument, baseOptions);
+}
+export function useNearbyBreweriesLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<
+        Types.NearbyBreweriesQuery,
+        Types.NearbyBreweriesQueryVariables
+    >
+) {
+    return Apollo.useLazyQuery<
+        Types.NearbyBreweriesQuery,
+        Types.NearbyBreweriesQueryVariables
+    >(NearbyBreweriesDocument, baseOptions);
+}
+export type NearbyBreweriesQueryHookResult = ReturnType<
+    typeof useNearbyBreweriesQuery
+>;
+export type NearbyBreweriesLazyQueryHookResult = ReturnType<
+    typeof useNearbyBreweriesLazyQuery
+>;
+export type NearbyBreweriesQueryResult = Apollo.QueryResult<
+    Types.NearbyBreweriesQuery,
+    Types.NearbyBreweriesQueryVariables
 >;
 export const BreweryDocument = gql`
     query Brewery($id: ID!) {

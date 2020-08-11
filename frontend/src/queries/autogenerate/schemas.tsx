@@ -41,6 +41,7 @@ export type BreweriesQuery = {
     __typename?: "BreweriesQuery";
     breweries?: Maybe<BreweryConnection>;
     breweryById?: Maybe<Brewery>;
+    nearbyBreweries?: Maybe<BreweryConnection>;
     node?: Maybe<Node>;
 };
 
@@ -61,6 +62,15 @@ export type BreweriesQueryBreweriesArgs = {
 
 export type BreweriesQueryBreweryByIdArgs = {
     brewery_id: Scalars["String"];
+};
+
+export type BreweriesQueryNearbyBreweriesArgs = {
+    after?: Maybe<Scalars["String"]>;
+    before?: Maybe<Scalars["String"]>;
+    first?: Maybe<Scalars["PaginationAmount"]>;
+    last?: Maybe<Scalars["PaginationAmount"]>;
+    latitude: Scalars["Decimal"];
+    longitude: Scalars["Decimal"];
 };
 
 export type BreweriesQueryNodeArgs = {
@@ -105,7 +115,7 @@ export type Brewery = Node & {
 
 /** A brewery of beer */
 export type BreweryNearbyArgs = {
-    first?: Maybe<Scalars["Int"]>;
+    within?: Maybe<Scalars["Int"]>;
 };
 
 /** A connection to a list of items. */

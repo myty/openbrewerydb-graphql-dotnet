@@ -70,6 +70,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
         ? []
         : brewery.nearby?.map((nb) => (
               <MarkerComponent
+                  key={`marker_${nb?.id}`}
                   lat={nb?.latitude}
                   lng={nb?.longitude}
                   text={nb?.name!}

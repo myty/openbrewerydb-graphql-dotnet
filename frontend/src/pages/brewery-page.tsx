@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useBreweryByIdQuery } from "../queries/autogenerate/hooks";
 import { Brewery } from "../queries/autogenerate/schemas";
 import { Card } from "../components/card";
+import { ExternalLink } from "heroicons-react";
 
 const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
     const breweryAddress = [brewery.street, brewery.city, brewery.state]
@@ -12,20 +13,32 @@ const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
         .join(", ");
 
     return (
-        <Card>
-            <div className="px-6 py-4">
+        <Card className="py-4">
+            <div className="px-6">
                 <div className="mb-2 text-xl font-bold">{brewery.name}</div>
+                {brewery.website_url && (
+                    <a
+                        className="block text-base text-yellow-700"
+                        href={brewery.website_url}
+                        rel="noopener noreferrer"
+                        target="_blank">
+                        {`${brewery.website_url}`}
+                        <ExternalLink size={14} className="inline" />
+                    </a>
+                )}
                 <p className="text-base text-gray-700">{`${breweryAddress}`}</p>
             </div>
-            <div className="px-6 py-4">
-                {brewery.tag_list.map((tag) => (
-                    <span
-                        key={`tag_${tag}`}
-                        className="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">
-                        {tag}
-                    </span>
-                ))}
-            </div>
+            {(brewery?.tag_list?.length ?? 0) >= 1 && (
+                <div className="px-6 pt-4">
+                    {brewery.tag_list.map((tag) => (
+                        <span
+                            key={`tag_${tag}`}
+                            className="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            )}
         </Card>
     );
 };
@@ -65,7 +78,7 @@ const NearbyBreweries = ({ breweries }: { breweries?: Brewery[] }) => {
                 {breweries?.map((b) => (
                     <a
                         key={`${b.id}`}
-                        className="inline-block px-3 py-1 mb-2 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full hover:bg-yellow-600 hover:text-yellow-100 truncate max-w-full"
+                        className="inline-block max-w-full px-3 py-1 mb-2 mr-2 text-sm font-semibold text-gray-700 truncate bg-gray-200 rounded-full hover:bg-yellow-600 hover:text-yellow-100"
                         href={b.brewery_id}>
                         {b.name}
                     </a>

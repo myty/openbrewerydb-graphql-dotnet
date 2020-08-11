@@ -15,6 +15,10 @@ namespace OpenBreweryDB.Core.Conductors.Breweries.Interfaces
             Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null,
             int skip = default,
             int take = 100);
+        IResult<IQueryable<Brewery>> FindAllByLocation(
+            double latitude,
+            double longitude,
+            int? mileRadius = null);
         IResult<IQueryable<Brewery>> FindAllQueryable(
             Expression<Func<Brewery, bool>> filter = null,
             Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null);

@@ -49,39 +49,16 @@ namespace OpenBreweryDB.API.GraphQL.Resolvers
             }
 
             var breweryConductor = ctx.Service<IBreweryConductor>();
-
-            var breweryLimit = ctx.Argument<int?>("first") ?? 5;
-            if (breweryLimit > 10)
-            {
-                breweryLimit = 10;
-            }
-            else if (breweryLimit <= 0)
-            {
-                breweryLimit = 5;
-            }
-
-            var mileageRadius = ctx.Argument<int?>("within") ?? 25;
-
-            var currentCoordinates = new GeoCoordinate(Convert.ToDouble(brewery.Latitude), Convert.ToDouble(brewery.Longitude));
-
-            var breweryResult = breweryConductor.FindAll(b => b.Latitude.HasValue
-                && b.Longitude.HasValue
-                && b.Id != brewery.Id);
+            var mileRadius = ctx.Argument<int?>("within") ?? 25;
+            var breweryResult = breweryConductor
+                .FindAllByLocation(
+                    Convert.ToDouble(brewery.Latitude),
+                    Convert.ToDouble(brewery.Longitude),
+                    mileRadius);
 
             if (!breweryResult.HasErrorsOrResultIsNull())
             {
-                var nearbyBreweries = breweryResult.ResultObject
-                    .Select(b => new
-                    {
-                        Brewery = b,
-                        DistanceFrom = Math.Abs(new GeoCoordinate(Convert.ToDouble(b.Latitude), Convert.ToDouble(b.Longitude)).GetDistanceTo(currentCoordinates)),
-                    })
-                    .Where(b => (0.00062137 * b.DistanceFrom) <= mileageRadius)
-                    .OrderBy(b => b.DistanceFrom)
-                    // .Take(breweryLimit)
-                    .Select(b => b.Brewery);
-
-                return await Task.FromResult(nearbyBreweries);
+                return await Task.FromResult(breweryResult.ResultObject.Where(b => b.Id != brewery.Id));
             }
 
             foreach (var err in breweryResult.Errors)

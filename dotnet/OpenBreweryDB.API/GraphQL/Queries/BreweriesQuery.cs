@@ -70,6 +70,49 @@ namespace OpenBreweryDB.API.GraphQL.Queries
                     }
                 );
 
+
+            descriptor
+                .Field("nearbyBreweries")
+                .UsePaging<BreweryType>()
+                .Argument(
+                    "latitude",
+                    a => a.Type<NonNullType<DecimalType>>()
+                )
+                .Argument(
+                    "longitude",
+                    a => a.Type<NonNullType<DecimalType>>()
+                )
+                .Resolver(ctx =>
+                {
+                    // Arguments
+                    var latitude = ctx.Argument<double>("latitude");
+                    var longitude = ctx.Argument<double>("longitude");
+
+                    // Dependencies
+                    var breweryConductor = ctx.Service<IBreweryConductor>();
+
+                    var result = breweryConductor.FindAllByLocation(latitude, longitude);
+
+                    if (!result.HasErrorsOrResultIsNull())
+                    {
+                        return result.ResultObject;
+                    }
+
+                    foreach (var err in result.Errors)
+                    {
+                        ctx.ReportError(
+                            ErrorBuilder.New()
+                                .SetCode(err.Key)
+                                .SetPath(ctx.Path)
+                                .AddLocation(ctx.FieldSelection)
+                                .SetMessage(err.Message)
+                                .Build()
+                        );
+                    }
+
+                    return null;
+                });
+
             descriptor
                 .Field("breweries")
                 .UsePaging<BreweryType>()
