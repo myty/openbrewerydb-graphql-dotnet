@@ -131,6 +131,8 @@ export const NearbyBreweriesDocument = gql`
                 node {
                     id
                     ...BreweryBaseFields
+                    latitude
+                    longitude
                 }
             }
         }

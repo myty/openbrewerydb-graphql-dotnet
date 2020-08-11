@@ -65,7 +65,7 @@ export type NearbyBreweriesQuery = { __typename?: "BreweriesQuery" } & {
                                 node?: Types.Maybe<
                                     { __typename?: "Brewery" } & Pick<
                                         Types.Brewery,
-                                        "id"
+                                        "id" | "latitude" | "longitude"
                                     > &
                                         BreweryBaseFieldsFragment
                                 >;

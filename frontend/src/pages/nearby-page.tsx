@@ -37,7 +37,12 @@ export const NearbyPage = () => {
             hasMore={hasMore}
             loader={<Loading key={0} />}>
             {breweries.map((b: Brewery) => (
-                <BreweryNavCard key={b.id} brewery={b} />
+                <BreweryNavCard
+                    key={b.id}
+                    brewery={b}
+                    showDistanceFromPosition={true}
+                    currentPosition={position}
+                />
             ))}
         </InfiniteScroll>
     );

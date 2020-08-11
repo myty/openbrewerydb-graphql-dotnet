@@ -41,6 +41,8 @@ query NearbyBreweries(
             node {
                 id
                 ...BreweryBaseFields
+                latitude
+                longitude
             }
         }
     }
