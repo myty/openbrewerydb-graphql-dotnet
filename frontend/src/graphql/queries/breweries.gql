@@ -18,7 +18,11 @@ query Breweries($cursor: String) {
     }
 }
 
-query NearbyBreweries($cursor: String, $latitude: Decimal!, $longitude: Decimal!) {
+query NearbyBreweries(
+    $cursor: String
+    $latitude: Decimal!
+    $longitude: Decimal!
+) {
     breweries: nearbyBreweries(
         first: 25
         after: $cursor
@@ -39,6 +43,22 @@ query NearbyBreweries($cursor: String, $latitude: Decimal!, $longitude: Decimal!
                 ...BreweryBaseFields
                 latitude
                 longitude
+            }
+        }
+    }
+}
+
+query Autocomplete($search: String) {
+    breweries(first: 10, search: $search) {
+        totalCount
+        edges {
+            cursor
+            node {
+                name
+                id
+                brewery_id
+                city
+                state
             }
         }
     }

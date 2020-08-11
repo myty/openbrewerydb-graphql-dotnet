@@ -1,35 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Loading } from "../components/loading";
-import { HeadingOne } from "../components/heading-1";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useNearbyBreweriesQuery } from "../services/nearby-breweries-query";
+import { useNearbyBreweriesLazyQuery } from "../services/nearby-breweries-query";
 
 export const NearbyPage = () => {
     const [position, setPosition] = useState<Position>();
 
+    const [
+        getNearbyBreweries,
+        { breweries, error, loading, hasMore, loadMore },
+    ] = useNearbyBreweriesLazyQuery();
+
     useEffect(() => {
-        navigator.geolocation.getCurrentPosition(setPosition);
-    }, []);
+        navigator.geolocation.getCurrentPosition((p) => {
+            getNearbyBreweries(p.coords.latitude, p.coords.longitude);
+            setPosition(p);
+        });
+    }, [getNearbyBreweries]);
 
-    const {
-        breweries,
-        error,
-        loading,
-        hasMore,
-        loadMore,
-    } = useNearbyBreweriesQuery(
-        position?.coords?.latitude ?? 0,
-        position?.coords?.longitude ?? 0
-    );
-
-    if (!position || loading) return <Loading />;
+    if (loading || breweries.length === 0) return <Loading />;
     if (error) return <p>Error :(</p>;
-
-    if (breweries.length === 0) {
-        return <HeadingOne>There are no breweries to display.</HeadingOne>;
-    }
 
     return (
         <InfiniteScroll

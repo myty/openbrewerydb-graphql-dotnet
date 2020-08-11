@@ -1,18 +1,28 @@
 import { isBreweryNode } from "../validation/isBreweryNode";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useNearbyBreweriesQuery as _useNearbyBreweriesQuery } from "../graphql/autogenerate/hooks";
+import { useNearbyBreweriesLazyQuery as _useNearbyBreweriesLazyQuery } from "../graphql/autogenerate/hooks";
 import { Utils } from "./breweries-query-helper-utils";
+import { useRef } from "react";
 
-export const useNearbyBreweriesQuery = (
-    latitude: number,
-    longitude: number
-) => {
-    const { data, loading, error, fetchMore } = _useNearbyBreweriesQuery({
-        variables: {
-            latitude,
-            longitude,
-        },
-    });
+type NearbyBreweriesLazyQueryReturnType = [
+    (latitude: number, longitude: number) => void,
+    {
+        breweries: Brewery[];
+        error?: Error;
+        hasMore: boolean;
+        loading: boolean;
+        loadMore: () => void;
+    }
+];
+
+export const useNearbyBreweriesLazyQuery = (): NearbyBreweriesLazyQueryReturnType => {
+    const latitudeRef = useRef<number>();
+    const longitudeRef = useRef<number>();
+
+    const [
+        getBreweries,
+        { data, loading, error, fetchMore },
+    ] = _useNearbyBreweriesLazyQuery();
 
     const breweries: Brewery[] =
         data?.breweries?.edges
@@ -20,22 +30,38 @@ export const useNearbyBreweriesQuery = (
             ?.map(({ node }) => node as Brewery) ?? [];
 
     const loadMore = () =>
-        fetchMore({
-            variables: {
-                cursor: data?.breweries?.pageInfo.endCursor,
-                latitude,
-                longitude,
-            },
-            updateQuery: Utils.fetchMoreBreweriesUpdateQuery,
-        });
+        !!fetchMore
+            ? fetchMore({
+                  variables: {
+                      cursor: data?.breweries?.pageInfo.endCursor,
+                      latitude: latitudeRef.current,
+                      longitude: longitudeRef.current,
+                  },
+                  updateQuery: Utils.fetchMoreBreweriesUpdateQuery,
+              })
+            : {};
 
     const hasMore = data?.breweries?.pageInfo?.hasNextPage ?? false;
 
-    return {
-        breweries,
-        error,
-        hasMore,
-        loading,
-        loadMore,
+    const _getBreweries = (latitude: number, longitude: number) => {
+        latitudeRef.current = latitude;
+        longitudeRef.current = longitude;
+        getBreweries({
+            variables: {
+                latitude,
+                longitude,
+            },
+        });
     };
+
+    return [
+        _getBreweries,
+        {
+            breweries,
+            error,
+            hasMore,
+            loading,
+            loadMore,
+        },
+    ];
 };
