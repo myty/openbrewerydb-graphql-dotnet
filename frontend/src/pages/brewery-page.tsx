@@ -2,8 +2,8 @@ import React from "react";
 import { Loading } from "../components/loading";
 import { BreweryMap } from "../components/map";
 import { useParams } from "react-router-dom";
-import { useBreweryByIdQuery } from "../queries/autogenerate/hooks";
-import { Brewery } from "../queries/autogenerate/schemas";
+import { useBreweryByIdQuery } from "../graphql/autogenerate/hooks";
+import { Brewery } from "../graphql/autogenerate/schemas";
 import { Card } from "../components/card";
 import { ExternalLink } from "heroicons-react";
 

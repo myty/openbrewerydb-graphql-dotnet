@@ -7,13 +7,13 @@ hooks:
     - prettier --write
 generates:
   # Get schemas from server
-  src/queries/autogenerate/schemas.tsx:
-    documents: 'src/queries/**/**.gql'
+  src/graphql/autogenerate/schemas.tsx:
+    documents: 'src/graphql/**/**.gql'
     plugins:
       - typescript
   # Create operations based on queries
-  src/queries/autogenerate/operations.tsx:
-    documents: 'src/queries/**/**.gql'
+  src/graphql/autogenerate/operations.tsx:
+    documents: 'src/graphql/**/**.gql'
     preset: import-types
     presetConfig:
       typesPath: ./schemas
@@ -21,8 +21,8 @@ generates:
       - typescript-operations
   # 1. Export GraphQL documents
   # 2. React interface
-  src/queries/autogenerate/hooks.tsx:
-    documents: 'src/queries/**/**.gql'
+  src/graphql/autogenerate/hooks.tsx:
+    documents: 'src/graphql/**/**.gql'
     preset: import-types
     presetConfig:
       typesPath: ./operations

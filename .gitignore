@@ -438,3 +438,5 @@ frontend/src/styles/index.css
 
 .tye/*
 frontend/src/tailwind.output.css
+
+frontend/src/graphql/autogenerate/

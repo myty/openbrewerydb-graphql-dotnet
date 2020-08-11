@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import GoogleMapReact, { Coords } from "google-map-react";
-import { Brewery } from "../queries/autogenerate/schemas";
+import { Brewery } from "../graphql/autogenerate/schemas";
 
 interface BreweryMapProps {
     brewery: Brewery;

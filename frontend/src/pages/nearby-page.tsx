@@ -3,8 +3,8 @@ import { Loading } from "../components/loading";
 import { HeadingOne } from "../components/heading-1";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
-import { Services } from "../services/breweries-query";
-import { Brewery } from "../queries/autogenerate/schemas";
+import { Brewery } from "../graphql/autogenerate/schemas";
+import { useNearbyBreweriesQuery } from "../services/nearby-breweries-query";
 
 export const NearbyPage = () => {
     const [position, setPosition] = useState<Position>();
@@ -19,7 +19,7 @@ export const NearbyPage = () => {
         loading,
         hasMore,
         loadMore,
-    } = Services.useNearbyBreweriesQuery(
+    } = useNearbyBreweriesQuery(
         position?.coords?.latitude ?? 0,
         position?.coords?.longitude ?? 0
     );

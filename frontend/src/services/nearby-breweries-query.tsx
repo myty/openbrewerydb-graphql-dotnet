@@ -1,10 +1,18 @@
 import { isBreweryNode } from "../validation/isBreweryNode";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useBreweriesQuery as _useBreweriesQuery } from "../graphql/autogenerate/hooks";
+import { useNearbyBreweriesQuery as _useNearbyBreweriesQuery } from "../graphql/autogenerate/hooks";
 import { Utils } from "./breweries-query-helper-utils";
 
-export const useBreweriesQuery = () => {
-    const { data, loading, error, fetchMore } = _useBreweriesQuery();
+export const useNearbyBreweriesQuery = (
+    latitude: number,
+    longitude: number
+) => {
+    const { data, loading, error, fetchMore } = _useNearbyBreweriesQuery({
+        variables: {
+            latitude,
+            longitude,
+        },
+    });
 
     const breweries: Brewery[] =
         data?.breweries?.edges
@@ -15,6 +23,8 @@ export const useBreweriesQuery = () => {
         fetchMore({
             variables: {
                 cursor: data?.breweries?.pageInfo.endCursor,
+                latitude,
+                longitude,
             },
             updateQuery: Utils.fetchMoreBreweriesUpdateQuery,
         });

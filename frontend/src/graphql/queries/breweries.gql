@@ -18,11 +18,7 @@ query Breweries($cursor: String) {
     }
 }
 
-query NearbyBreweries(
-    $cursor: String
-    $latitude: Decimal!
-    $longitude: Decimal!
-) @connection(key: "nearby_breweries") {
+query NearbyBreweries($cursor: String, $latitude: Decimal!, $longitude: Decimal!) {
     breweries: nearbyBreweries(
         first: 25
         after: $cursor

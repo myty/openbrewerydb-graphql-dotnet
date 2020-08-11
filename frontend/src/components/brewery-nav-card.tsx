@@ -1,5 +1,5 @@
 import React from "react";
-import { Brewery } from "../queries/autogenerate/schemas";
+import { Brewery } from "../graphql/autogenerate/schemas";
 import { getDistance } from "geolib";
 
 interface BreweryNavCardProps {
