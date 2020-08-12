@@ -4,6 +4,7 @@ import { useHasFocusObserver } from "../hooks/use-has-focus-observer";
 
 interface AutocompleteTextboxProps<T = any> {
     className?: string;
+    onEnter?: (text: string) => void;
     onTextChange: (text: string) => void;
     results: T[];
     renderResultOption: (option: T) => React.ReactNode;
@@ -11,7 +12,13 @@ interface AutocompleteTextboxProps<T = any> {
 
 export const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<
     Brewery
->> = ({ className, onTextChange, results, renderResultOption }) => {
+>> = ({
+    className,
+    onEnter = () => {},
+    onTextChange,
+    results,
+    renderResultOption,
+}) => {
     const [searchText, setSearchText] = useState("");
     const outsideDivRef = useRef<HTMLDivElement>(null);
 
@@ -29,11 +36,19 @@ export const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<
         }
     }, outsideDivRef);
 
+    const onKeyPressCapture = (evt: React.KeyboardEvent<HTMLElement>) => {
+        if (evt.key === "Enter") {
+            onEnter(searchText);
+            changeText();
+        }
+    };
+
     return (
         <div
             ref={outsideDivRef}
             className={`h-0 overflow-visible lg:inline-block relative`}
-            style={{ top: "-1.25rem", zIndex: 999 }}>
+            style={{ top: "-1.25rem", zIndex: 999 }}
+            onKeyPressCapture={onKeyPressCapture}>
             <div
                 className={`${className} rounded-lg border border-gray-200 shadow bg-white absolute`}>
                 <input
@@ -43,9 +58,16 @@ export const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<
                     value={searchText}
                     onChange={onChange}
                 />
-                <div className="w-full bg-white rounded-lg">
-                    {results.map((b) => renderResultOption(b))}
-                </div>
+                {results.length > 0 && (
+                    <React.Fragment>
+                        <div className="px-2 text-xs italic font-semibold bg-gray-100 border-t">
+                            Suggestions
+                        </div>
+                        <div className="w-full bg-white rounded-lg">
+                            {results.map((b) => renderResultOption(b))}
+                        </div>
+                    </React.Fragment>
+                )}
             </div>
         </div>
     );

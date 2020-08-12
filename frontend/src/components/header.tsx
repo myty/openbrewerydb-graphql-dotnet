@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { useAutocompleteLazyQuery } from "../graphql/autogenerate/hooks";
 import { AutocompleteTextbox } from "./autocomplete-textbox";
@@ -18,6 +18,8 @@ const MenuLink = ({ to, text }: { to: string; text: string }) => (
 );
 
 const Header = ({ title }: HeaderProps) => {
+    const navigate = useNavigate();
+
     const [searchText, setSearchText] = useState("");
     const [
         getAutocompleteResults,
@@ -42,7 +44,7 @@ const Header = ({ title }: HeaderProps) => {
     const renderAutocompleteResult = (brewery: Brewery) => {
         return (
             <a
-                className="block w-full px-3 py-1 text-left"
+                className="block w-full px-3 py-1 text-left border-t"
                 href={`/breweries/${brewery.brewery_id}`}>
                 <div className="font-bold">{brewery.name}</div>
                 <div className="text-xs italic text-gray-700">
@@ -78,6 +80,9 @@ const Header = ({ title }: HeaderProps) => {
                     <MenuLink to="favorites" text="Favorites" />
                     <AutocompleteTextbox
                         className="w-64"
+                        onEnter={(text) =>
+                            navigate(`/search?q=${encodeURIComponent(text)}`)
+                        }
                         onTextChange={onAutocompleteTextChange}
                         results={autoCompleteResults}
                         renderResultOption={renderAutocompleteResult}

@@ -7,6 +7,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client";
 import { NearbyPage } from "./pages/nearby-page";
 import "./tailwind.output.css";
+import { SearchPage } from "./pages/search-page";
 
 const client = new ApolloClient({
     uri: "https://localhost:5001/graphql",
@@ -25,6 +26,9 @@ function App() {
                         </Route>
                         <Route path="nearby">
                             <NearbyPage />
+                        </Route>
+                        <Route path="search">
+                            <SearchPage />
                         </Route>
                         <Route path="breweries/:brewery_id">
                             <BreweryPage />

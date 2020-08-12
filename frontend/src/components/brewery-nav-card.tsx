@@ -41,7 +41,7 @@ const DistanceFromPosition = ({
     );
 
     return (
-        <div className="flex-1 text-xl text-gray-500 font-semibold w-4 text-right">{`${distance} mi`}</div>
+        <div className="flex-1 w-4 pt-2 text-xl font-semibold text-right text-yellow-800">{`${distance} mi`}</div>
     );
 };
 

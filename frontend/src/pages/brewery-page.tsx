@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Loading } from "../components/loading";
 import { BreweryMap } from "../components/map";
 import { useParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useBreweryByIdQuery } from "../graphql/autogenerate/hooks";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { Card } from "../components/card";
 import { ExternalLink } from "heroicons-react";
+import { Modal } from "../components/modal";
 
 const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
     const breweryAddress = [brewery.street, brewery.city, brewery.state]
@@ -50,17 +51,28 @@ const BreweryReviews = ({
     brewery_id: string;
     reviews?: string[];
 }) => {
+    const [showModal, setShowModal] = useState(false);
+
     return (
-        <Card className="mt-4">
-            <div className="px-6 py-4">
-                <div className="mb-2 text-xl font-bold">Reviews</div>
-                <a
-                    className="text-base text-gray-700 hover:text-orange-600"
-                    href={`${brewery_id}/add-review`}>
-                    Be the first to leave a review!
-                </a>
-            </div>
-        </Card>
+        <React.Fragment>
+            <Card className="mt-4">
+                <div className="px-6 py-4">
+                    <div className="mb-2 text-xl font-bold">Reviews</div>
+                    <button
+                        className="text-base text-gray-700 hover:text-orange-600"
+                        onClick={() => setShowModal(true)}>
+                        Be the first to leave a review!
+                    </button>
+                </div>
+            </Card>
+            <Modal
+                title="Add a Review!!!"
+                showModal={showModal}
+                onAction={() => setShowModal(false)}
+                onClose={() => setShowModal(false)}>
+                <div>Add a review</div>
+            </Modal>
+        </React.Fragment>
     );
 };
 

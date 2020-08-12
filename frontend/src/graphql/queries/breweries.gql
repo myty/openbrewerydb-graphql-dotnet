@@ -64,6 +64,25 @@ query Autocomplete($search: String) {
     }
 }
 
+query Search($cursor: String, $search: String) {
+    breweries(first: 25, after: $cursor, search: $search) {
+        totalCount
+        pageInfo {
+            startCursor
+            hasNextPage
+            hasPreviousPage
+            endCursor
+        }
+        edges {
+            cursor
+            node {
+                id
+                ...BreweryBaseFields
+            }
+        }
+    }
+}
+
 # Get Brewery by the id
 query Brewery($id: ID!) {
     brewery: node(id: $id) {
