@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenBreweryDB.Data.Models;
+using OpenBreweryDB.Data.Models.Favorites;
+using OpenBreweryDB.Data.Models.Users;
 
 namespace OpenBreweryDB.Data
 {
@@ -10,7 +11,9 @@ namespace OpenBreweryDB.Data
 
         public DbSet<Brewery> Breweries { get; set; }
         public DbSet<BreweryTag> BreweryTags { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,11 +36,27 @@ namespace OpenBreweryDB.Data
                 .HasForeignKey(bt => bt.TagId);
 
             // Entity: Tag
-            var tagEnityBuilder = modelBuilder.Entity<Tag>()
+            var tagEntityBuilder = modelBuilder.Entity<Tag>()
                 .ToTable("tags");
-            tagEnityBuilder
+            tagEntityBuilder
                 .HasIndex(b => b.Name)
                 .HasName("Index_Tags_On_Name");
+
+            // Entity: User
+            modelBuilder.Entity<User>()
+                .ToTable("users");
+
+            // Entity: Favorite
+            modelBuilder.Entity<Favorite>()
+                .HasKey(f => new { f.BreweryId, f.UserId });
+            modelBuilder.Entity<Favorite>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.Favorites)
+                .HasForeignKey(u => u.UserId);
+            modelBuilder.Entity<Favorite>()
+                .HasOne(f => f.Brewery)
+                .WithMany(u => u.FavoriteUsers)
+                .HasForeignKey(u => u.BreweryId);
         }
     }
 }

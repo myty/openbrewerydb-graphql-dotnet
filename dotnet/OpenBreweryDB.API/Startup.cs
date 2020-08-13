@@ -1,3 +1,4 @@
+using System.Threading;
 using AutoMapper;
 using HotChocolate;
 using HotChocolate.AspNetCore;
@@ -16,12 +17,17 @@ using OpenBreweryDB.API.GraphQL.Queries;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Core.Models;
 using OpenBreweryDB.Data;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using OpenBreweryDB.Data.Models.Users;
+using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 
 namespace OpenBreweryDB.API
 {
-    public class Startup
+    public partial class Startup
     {
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -29,6 +35,7 @@ namespace OpenBreweryDB.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IBreweryConductor, BreweryConductor>();
+            services.AddScoped<IUserConductor, UserConductor>();
             services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
             services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
             services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
@@ -59,10 +66,30 @@ namespace OpenBreweryDB.API
                     TracingPreference = TracingPreference.Always
                 });
 
+            services.AddQueryRequestInterceptor(async (context, builder, ct) =>
+            {
+                if (context.User.Identity.IsAuthenticated)
+                {
+                    var userId =
+                        Guid.Parse(context.User.FindFirst(WellKnownClaimTypes.UserId).Value);
+
+                    builder.AddProperty(
+                        "currentUserId",
+                        userId);
+                    builder.AddProperty(
+                        "currentUserEmail",
+                        context.User.FindFirst(ClaimTypes.Email).Value);
+
+                    await Task.Yield();
+                }
+            });
+
             services.Configure<KestrelServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
+
+            ConfigureAuthenticationServices(services);
 
             services.AddCors(options =>
             {
@@ -86,6 +113,8 @@ namespace OpenBreweryDB.API
             app.UseCors();
             app.UseWebSockets();
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseGraphQL("/graphql");
             app.UsePlayground("/graphql");

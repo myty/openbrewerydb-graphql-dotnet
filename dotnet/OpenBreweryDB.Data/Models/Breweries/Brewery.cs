@@ -1,10 +1,12 @@
 using AndcultureCode.CSharp.Core.Models.Entities;
+using HotChocolate;
+using OpenBreweryDB.Data.Models.Favorites;
 using System;
 using System.Collections.Generic;
 
 namespace OpenBreweryDB.Data.Models
 {
-    public class Brewery : Entity
+    public class Brewery : Entity, IKeyedEntity
     {
         public string BreweryId { get; set; }
         public string Name { get; set; }
@@ -22,5 +24,8 @@ namespace OpenBreweryDB.Data.Models
         public decimal? Latitude { get; set; }
 
         public List<BreweryTag> BreweryTags { get; set; }
+
+        [GraphQLIgnore]
+        public List<Favorite> FavoriteUsers { get; set; }
     }
 }

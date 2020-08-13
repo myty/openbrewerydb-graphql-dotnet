@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using AndcultureCode.CSharp.Core.Interfaces.Conductors;
 using FlatFiles.TypeMapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +15,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
-
+using OpenBreweryDB.Data.Models.Users;
 using Entity = OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.Extensions
@@ -48,12 +52,23 @@ namespace OpenBreweryDB.API.Extensions
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
                 var dbContext = serviceScope.ServiceProvider.GetService<BreweryDbContext>();
                 var breweryConductor = serviceScope.ServiceProvider.GetService<IBreweryConductor>();
+                var userConductor = serviceScope.ServiceProvider.GetService<IUserConductor>();
 
                 if (!dbContext.AllMigrationsApplied())
                 {
                     logger.LogInformation($"Initializing Database");
 
                     dbContext.Database.Migrate();
+                }
+
+                if (dbContext.Users.LongCount() < 1)
+                {
+                    _ = userConductor.Create(new User
+                    {
+                        FirstName = "Michael",
+                        LastName = "Tyson",
+                        Email = "michaeltyson@outlook.com"
+                    }, "Passw0rd!");
                 }
 
                 dbContext.EnsureSeeded(() =>
