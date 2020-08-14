@@ -1,8 +1,10 @@
 subscription OnReviewAdded {
     onReviewReceived {
+        id
         subject
         body
         brewery {
+            id
             name
         }
     }

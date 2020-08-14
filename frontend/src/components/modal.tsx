@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo } from "react";
 
-interface ModalProps {
+export interface ModalProps {
     actionButtonText?: string;
     onAction?: () => void;
     onClose?: () => void;

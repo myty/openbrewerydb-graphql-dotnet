@@ -77,7 +77,7 @@ const Header = ({ title }: HeaderProps) => {
             <div className="flex-grow block w-full lg:flex lg:items-center lg:w-auto">
                 <div className="text-sm lg:flex-grow">
                     <MenuLink to="nearby" text="Nearby" />
-                    <MenuLink to="favorites" text="Favorites" />
+                    <MenuLink to="reviews" text="Reviews" />
                     <AutocompleteTextbox
                         className="w-64"
                         onEnter={(text) =>

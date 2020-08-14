@@ -1,12 +1,16 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Loading } from "../components/loading";
 import { BreweryMap } from "../components/map";
 import { useParams } from "react-router-dom";
-import { useBreweryByIdQuery } from "../graphql/autogenerate/hooks";
+import {
+    useBreweryByIdQuery,
+    useCreateReviewMutation,
+} from "../graphql/autogenerate/hooks";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { Card } from "../components/card";
 import { ExternalLink } from "heroicons-react";
-import { Modal } from "../components/modal";
+import { Modal, ModalProps } from "../components/modal";
+import { uuid } from "uuidv4";
 
 const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
     const [markedAsFavorite, setMarkedAsFavorite] = useState(false);
@@ -69,10 +73,68 @@ const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
     );
 };
 
+type ReviewModalProps = Omit<ModalProps, "title"> & { breweryId: string };
+
+const ReviewModal = (props: ReviewModalProps) => {
+    const [title, setTitle] = useState<string>("");
+    const [review, setReview] = useState<string>("");
+    const [createReview] = useCreateReviewMutation();
+
+    const handleSubmitAction = useCallback(async () => {
+        await createReview({
+            variables: {
+                createReviewInput: {
+                    clientMutationId: uuid(),
+                    subject: title,
+                    body: review,
+                    breweryId: props.breweryId,
+                },
+            },
+        });
+
+        setTitle("");
+        setReview("");
+    }, [createReview, props.breweryId, title, review, setTitle, setReview]);
+
+    const newProps = {
+        ...props,
+        onAction: async () => {
+            await handleSubmitAction();
+
+            if (props.onAction) {
+                props.onAction();
+            }
+        },
+    };
+
+    return (
+        <Modal title="Add a Review!!!" {...newProps}>
+            <div className="mb-4">
+                <label className="block text-sm font-bold">Title</label>
+                <input
+                    className="block w-full p-1 border border-gray-400 rounded-md shadow-inner"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+
+                <label className="block mt-2 text-sm font-bold">Review</label>
+                <textarea
+                    value={review}
+                    className="block w-full h-12 p-1 border border-gray-400 rounded-md shadow-inner"
+                    onChange={(e) => setReview(e.target.value)}
+                />
+            </div>
+        </Modal>
+    );
+};
+
 const BreweryReviews = ({
+    id,
     brewery_id,
     reviews,
 }: {
+    id: string;
     brewery_id: string;
     reviews?: string[];
 }) => {
@@ -90,13 +152,12 @@ const BreweryReviews = ({
                     </button>
                 </div>
             </Card>
-            <Modal
-                title="Add a Review!!!"
+            <ReviewModal
+                breweryId={id}
                 showModal={showModal}
                 onAction={() => setShowModal(false)}
-                onClose={() => setShowModal(false)}>
-                <div>Add a review</div>
-            </Modal>
+                onClose={() => setShowModal(false)}
+            />
         </React.Fragment>
     );
 };
@@ -149,7 +210,7 @@ export const BreweryPage = () => {
         <div className="flex">
             <div className="flex-none pr-4 lg:w-1/4 xl:w-1/5">
                 <BreweryCard brewery={brewery} />
-                <BreweryReviews brewery_id={brewery_id} />
+                <BreweryReviews id={brewery.id} brewery_id={brewery_id} />
                 <NearbyBreweries breweries={brewery.nearby as Brewery[]} />
             </div>
             <div className="flex-grow">
