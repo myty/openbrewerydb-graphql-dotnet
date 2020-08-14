@@ -129,4 +129,8 @@ fragment BreweryDetailFields on Brewery {
         latitude
         longitude
     }
+    reviews: breweryReviews {
+        subject
+        body
+    }
 }

@@ -23,6 +23,10 @@ namespace OpenBreweryDB.Data
             modelBuilder.Entity<Brewery>()
                 .ToTable("breweries");
 
+            modelBuilder.Entity<Brewery>()
+                .HasMany(b => b.BreweryReviews)
+                .WithOne(r => r.Brewery);
+
             // Entity: BreweryTag
             modelBuilder.Entity<BreweryTag>()
                 .HasKey(t => new { t.BreweryId, t.TagId });
@@ -62,19 +66,7 @@ namespace OpenBreweryDB.Data
 
             // Entity: Review
             modelBuilder.Entity<Review>()
-                .ToTable("reviews")
-                .HasKey(f => new { f.BreweryId, f.UserId });
-            modelBuilder.Entity<Review>()
-                .Property(r => r.CreatedOn)
-                .HasDefaultValueSql("GETDATE()");
-            modelBuilder.Entity<Review>()
-                .HasOne(f => f.User)
-                .WithMany(u => u.UserReviews)
-                .HasForeignKey(u => u.UserId);
-            modelBuilder.Entity<Review>()
-                .HasOne(f => f.Brewery)
-                .WithMany(u => u.BreweryReviews)
-                .HasForeignKey(u => u.BreweryId);
+                .ToTable("reviews");
         }
     }
 }

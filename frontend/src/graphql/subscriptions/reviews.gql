@@ -1,0 +1,9 @@
+subscription OnReviewAdded {
+    onReviewReceived {
+        subject
+        body
+        brewery {
+            name
+        }
+    }
+}

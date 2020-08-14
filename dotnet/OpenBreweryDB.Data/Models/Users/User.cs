@@ -29,8 +29,6 @@ namespace OpenBreweryDB.Data.Models.Users
         [GraphQLIgnore]
         public List<Favorite> Favorites { get; set; }
 
-        public List<Review> UserReviews { get; set; }
-
         // Computed Property
         public string FullName => string.Join(" ",
             new string[] { FirstName, LastName }

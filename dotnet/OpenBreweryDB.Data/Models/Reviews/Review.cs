@@ -13,11 +13,6 @@ namespace OpenBreweryDB.Data.Models.Reviews
         [GraphQLNonNullType]
         public Brewery Brewery { get; set; }
 
-        [GraphQLIgnore]
-        public long? UserId { get; set; }
-
-        public User User { get; set; }
-
         [GraphQLNonNullType]
         public string Subject { get; set; }
 

@@ -9,8 +9,8 @@ using OpenBreweryDB.Data;
 namespace OpenBreweryDB.Data.Migrations
 {
     [DbContext(typeof(BreweryDbContext))]
-    [Migration("20200814014715_AddReviews")]
-    partial class AddReviews
+    [Migration("20200814033038_InitialDatabaseSchema")]
+    partial class InitialDatabaseSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,29 +109,25 @@ namespace OpenBreweryDB.Data.Migrations
 
             modelBuilder.Entity("OpenBreweryDB.Data.Models.Reviews.Review", b =>
                 {
-                    b.Property<long>("BreweryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("UserId")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Body")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<long>("Id")
+                    b.Property<long>("BreweryId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Subject")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("BreweryId", "UserId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("BreweryId");
 
                     b.ToTable("reviews");
                 });
@@ -214,12 +210,6 @@ namespace OpenBreweryDB.Data.Migrations
                     b.HasOne("OpenBreweryDB.Data.Models.Brewery", "Brewery")
                         .WithMany("BreweryReviews")
                         .HasForeignKey("BreweryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OpenBreweryDB.Data.Models.Users.User", "User")
-                        .WithMany("UserReviews")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -25,6 +25,8 @@ using System.Threading.Tasks;
 using OpenBreweryDB.Data.Models.Users;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.API.GraphQL.Users;
+using OpenBreweryDB.API.GraphQL.Reviews;
+using HotChocolate.Subscriptions;
 
 namespace OpenBreweryDB.API
 {
@@ -48,7 +50,9 @@ namespace OpenBreweryDB.API
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
-            services.AddGraphQL(sp => SchemaBuilder.New()
+            services
+                .AddInMemorySubscriptions()
+                .AddGraphQL(sp => SchemaBuilder.New()
                 .EnableRelaySupport()
                 .AddServices(sp)
 
@@ -61,9 +65,13 @@ namespace OpenBreweryDB.API
                 .AddMutationType(d => d.Name("Mutation"))
                 .AddType<UserMutations>()
                 .AddType<BreweryMutations>()
+                .AddType<ReviewMutations>()
+                .AddSubscriptionType(d => d.Name("Subscription"))
+                .AddType<ReviewSubscriptions>()
                 .Create(),
                 new QueryExecutionOptions
                 {
+                    ForceSerialExecution = true,
                     IncludeExceptionDetails = true,
                     TracingPreference = TracingPreference.Always
                 });
@@ -97,7 +105,7 @@ namespace OpenBreweryDB.API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000")
+                    builder.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -113,14 +121,14 @@ namespace OpenBreweryDB.API
             }
 
             app.UseCors();
-            app.UseWebSockets();
             app.UseRouting();
 
             app.UseAuthentication();
 
-            app.UseGraphQL("/graphql");
-            app.UsePlayground("/graphql");
-            app.UseVoyager("/graphql");
+            app.UseWebSockets()
+                .UseGraphQL("/graphql")
+                .UsePlayground("/graphql")
+                .UseVoyager("/graphql");
 
             app.UseEndpoints(endpoints =>
             {
