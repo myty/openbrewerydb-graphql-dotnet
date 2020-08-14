@@ -24,6 +24,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using OpenBreweryDB.Data.Models.Users;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
+using OpenBreweryDB.API.GraphQL.Users;
 
 namespace OpenBreweryDB.API
 {
@@ -58,6 +59,7 @@ namespace OpenBreweryDB.API
                 .AddQueryType<BreweriesQuery>()
                 .AddType<BreweryType>()
                 .AddMutationType(d => d.Name("Mutation"))
+                .AddType<UserMutations>()
                 .AddType<BreweryMutations>()
                 .Create(),
                 new QueryExecutionOptions

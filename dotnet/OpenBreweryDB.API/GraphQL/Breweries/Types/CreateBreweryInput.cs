@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
-    public class CreateBreweryInput : InputBase
+    public class CreateBreweryInput : ClientMutationBase
     {
         public CreateBreweryInput(
             string name,

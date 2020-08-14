@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
-    public class UpdateBreweryInput : InputBase
+    public class UpdateBreweryInput : ClientMutationBase
     {
         public UpdateBreweryInput(
             long id,

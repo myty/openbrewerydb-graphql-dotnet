@@ -2,9 +2,9 @@ using HotChocolate;
 
 namespace OpenBreweryDB.API.GraphQL.Common
 {
-    public class InputBase
+    public class ClientMutationBase
     {
-        public InputBase(string clientMutationId)
+        public ClientMutationBase(string clientMutationId)
         {
             ClientMutationId = clientMutationId;
         }

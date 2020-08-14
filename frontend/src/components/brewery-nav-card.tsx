@@ -8,8 +8,6 @@ interface BreweryNavCardProps {
     showDistanceFromPosition?: boolean;
 }
 
-type CoordinatesLike = Partial<Pick<Coordinates, "latitude" | "longitude">>;
-
 const DistanceFromPosition = ({
     from,
     to,

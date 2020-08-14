@@ -1,5 +1,3 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 using AndcultureCode.CSharp.Core.Models.Entities;
 using HotChocolate;
 using OpenBreweryDB.Data.Models.Users;
