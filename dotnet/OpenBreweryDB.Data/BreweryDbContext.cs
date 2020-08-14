@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Data.Models.Favorites;
+using OpenBreweryDB.Data.Models.Reviews;
 using OpenBreweryDB.Data.Models.Users;
 
 namespace OpenBreweryDB.Data
@@ -12,6 +13,7 @@ namespace OpenBreweryDB.Data
         public DbSet<Brewery> Breweries { get; set; }
         public DbSet<BreweryTag> BreweryTags { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Review> Reviews { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<User> Users { get; set; }
 
@@ -56,6 +58,22 @@ namespace OpenBreweryDB.Data
             modelBuilder.Entity<Favorite>()
                 .HasOne(f => f.Brewery)
                 .WithMany(u => u.FavoriteUsers)
+                .HasForeignKey(u => u.BreweryId);
+
+            // Entity: Review
+            modelBuilder.Entity<Review>()
+                .ToTable("reviews")
+                .HasKey(f => new { f.BreweryId, f.UserId });
+            modelBuilder.Entity<Review>()
+                .Property(r => r.CreatedOn)
+                .HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Review>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.UserReviews)
+                .HasForeignKey(u => u.UserId);
+            modelBuilder.Entity<Review>()
+                .HasOne(f => f.Brewery)
+                .WithMany(u => u.BreweryReviews)
                 .HasForeignKey(u => u.BreweryId);
         }
     }

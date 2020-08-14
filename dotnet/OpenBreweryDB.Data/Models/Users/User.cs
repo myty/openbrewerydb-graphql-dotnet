@@ -5,6 +5,7 @@ using System.Linq;
 using AndcultureCode.CSharp.Core.Models.Entities;
 using HotChocolate;
 using OpenBreweryDB.Data.Models.Favorites;
+using OpenBreweryDB.Data.Models.Reviews;
 
 namespace OpenBreweryDB.Data.Models.Users
 {
@@ -27,6 +28,8 @@ namespace OpenBreweryDB.Data.Models.Users
 
         [GraphQLIgnore]
         public List<Favorite> Favorites { get; set; }
+
+        public List<Review> UserReviews { get; set; }
 
         // Computed Property
         public string FullName => string.Join(" ",

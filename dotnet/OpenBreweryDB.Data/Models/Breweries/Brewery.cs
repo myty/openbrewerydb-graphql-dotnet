@@ -1,6 +1,7 @@
 using AndcultureCode.CSharp.Core.Models.Entities;
 using HotChocolate;
 using OpenBreweryDB.Data.Models.Favorites;
+using OpenBreweryDB.Data.Models.Reviews;
 using System;
 using System.Collections.Generic;
 
@@ -27,5 +28,7 @@ namespace OpenBreweryDB.Data.Models
 
         [GraphQLIgnore]
         public List<Favorite> FavoriteUsers { get; set; }
+
+        public List<Review> BreweryReviews { get; set; }
     }
 }
