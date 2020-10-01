@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using AndcultureCode.CSharp.Core.Interfaces.Conductors;
+using FlatFiles;
 using FlatFiles.TypeMapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -96,7 +94,7 @@ namespace OpenBreweryDB.API.Extensions
                         static IEnumerable<Entity.Brewery> GetBreweries(StreamReader breweriesStreamReader)
                         {
                             var mapper = SeparatedValueTypeMapper.Define<Entity.Brewery>();
-                            mapper.Property(c => c.BreweryId).ColumnName("id").Preprocessor((string input) =>
+                            mapper.Property(c => c.BreweryId).ColumnName("id").OnParsing((IColumnContext context, string input) =>
                             {
                                 var dashedString = new string(input.Select(i =>
                                     (char.IsLetter(i) || char.IsNumber(i))
@@ -121,7 +119,7 @@ namespace OpenBreweryDB.API.Extensions
                             mapper.Property(c => c.Longitude).ColumnName("longitude");
                             mapper.Property(c => c.Latitude).ColumnName("latitude");
 
-                            var options = new FlatFiles.SeparatedValueOptions() { IsFirstRecordSchema = true };
+                            var options = new SeparatedValueOptions() { IsFirstRecordSchema = true };
 
                             return mapper.Read(breweriesStreamReader, options);
                         }

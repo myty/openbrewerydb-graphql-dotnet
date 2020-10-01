@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AndcultureCode.CSharp.Conductors" Version="1.1.1" />
-    <PackageReference Include="AndcultureCode.CSharp.Core" Version="0.4.7" />
+    <PackageReference Include="AndcultureCode.CSharp.Conductors" Version="1.1.2" />
+    <PackageReference Include="AndcultureCode.CSharp.Core" Version="0.5.15" />
     <PackageReference Include="automapper" Version="10.0.0" />
-    <PackageReference Include="HotChocolate" Version="10.5.2" />
+    <PackageReference Include="HotChocolate" Version="10.5.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 
     <PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
