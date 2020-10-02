@@ -1,5 +1,7 @@
+using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
+using OpenBreweryDB.API.GraphQL.Breweries.Dataloaders;
 using OpenBreweryDB.API.GraphQL.Resolvers;
 using OpenBreweryDB.Data.Models;
 using System;
@@ -14,7 +16,9 @@ namespace OpenBreweryDB.API.GraphQL.Types
             descriptor
                 .Name("Brewery")
                 .Description("A brewery of beer")
-                .AsNode().IdField(t => t.Id).NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
+                .AsNode()
+                .IdField(t => t.Id)
+                .NodeResolver((ctx, id) => ctx.DataLoader<BreweryByIdDataLoader>().LoadAsync(id, ctx.RequestAborted));
 
             descriptor.Field("nearby")
                 .Argument(
@@ -23,7 +27,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
                         .Type<IntType>()
                         .Description("limit the nearby breweries to search radius, defaults to 25 milles")
                 )
-                .Resolver(BreweryResolvers.NearbyBreweriesResolver);
+                .ResolveWith<BreweryResolvers>(r => r.GetNearbyBreweriesAsync(default));
 
             descriptor.Field(t => t.BreweryType)
                 .Type<NonNullType<StringType>>()

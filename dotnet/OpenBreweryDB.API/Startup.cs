@@ -23,6 +23,7 @@ using OpenBreweryDB.Data.Models.Users;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.API.GraphQL.Users;
 using OpenBreweryDB.API.GraphQL.Reviews;
+using OpenBreweryDB.API.GraphQL.Errors;
 
 namespace OpenBreweryDB.API
 {
@@ -48,6 +49,8 @@ namespace OpenBreweryDB.API
 
             services
                 .AddInMemorySubscriptions()
+                .AddErrorFilter<ResultErrorFilter>()
+                .AddDataLoaderRegistry()
                 .AddGraphQL(sp => SchemaBuilder.New()
                 .EnableRelaySupport()
                 .AddServices(sp)
