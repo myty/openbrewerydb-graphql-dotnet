@@ -1,4 +1,3 @@
-using System.Threading;
 using AutoMapper;
 using HotChocolate;
 using HotChocolate.AspNetCore;
@@ -13,11 +12,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.API.GraphQL.Breweries;
-using OpenBreweryDB.API.GraphQL.Queries;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.Models;
 using OpenBreweryDB.Data;
 using System;
 using System.Security.Claims;
@@ -26,7 +23,6 @@ using OpenBreweryDB.Data.Models.Users;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.API.GraphQL.Users;
 using OpenBreweryDB.API.GraphQL.Reviews;
-using HotChocolate.Subscriptions;
 
 namespace OpenBreweryDB.API
 {
@@ -60,7 +56,8 @@ namespace OpenBreweryDB.API
                 // enable the authorization middleware.
                 .AddAuthorizeDirectiveType()
 
-                .AddQueryType<BreweriesQuery>()
+                .AddQueryType(d => d.Name("Query"))
+                .AddType<BreweryQueries>()
                 .AddType<BreweryType>()
                 .AddMutationType(d => d.Name("Mutation"))
                 .AddType<UserMutations>()
