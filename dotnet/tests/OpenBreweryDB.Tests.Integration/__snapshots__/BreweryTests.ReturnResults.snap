@@ -1,0 +1,23 @@
+﻿{
+  "Data": {
+    "breweries": {
+      "edges": [
+        {
+          "cursor": "MA==",
+          "node": {
+            "name": "Test",
+            "brewery_id": "test-id",
+            "id": "QnJld2VyeQpsMQ==",
+            "street": "123 Any St.",
+            "city": "My Town",
+            "state": "PA",
+            "brewery_type": "micro"
+          }
+        }
+      ]
+    }
+  },
+  "Extensions": {},
+  "Errors": [],
+  "ContextData": {}
+}

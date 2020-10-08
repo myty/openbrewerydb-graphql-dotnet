@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FlatFiles" Version="4.9.0" />
+    <PackageReference Include="FlatFiles" Version="4.10.0" />
     <PackageReference Include="automapper" Version="10.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="HotChocolate" Version="10.5.3" />
