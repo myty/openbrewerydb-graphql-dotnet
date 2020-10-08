@@ -18,7 +18,9 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 .Description("A brewery of beer")
                 .AsNode()
                 .IdField(t => t.Id)
-                .NodeResolver((ctx, id) => ctx.DataLoader<BreweryByIdDataLoader>().LoadAsync(id, ctx.RequestAborted));
+                .NodeResolver((ctx, id) => ctx
+                    .DataLoader<BreweryByIdDataLoader>()
+                    .LoadAsync(id, ctx.RequestAborted));
 
             descriptor.Field("nearby")
                 .Argument(

@@ -2,16 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate.DataLoader;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
 using AndcultureCode.CSharp.Core.Extensions;
 using System.Linq;
 using OpenBreweryDB.API.GraphQL.Errors;
+using GreenDonut;
+using ACModels = AndcultureCode.CSharp.Core.Models;
+using AndcultureCode.CSharp.Core.Enumerations;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries.Dataloaders
 {
-    public class BreweryByIdDataLoader : BatchDataLoader<long, Brewery>
+    public class BreweryByIdDataLoader : DataLoaderBase<long, Brewery>
     {
         private readonly IBreweryConductor _breweryConductor;
 
@@ -20,7 +22,7 @@ namespace OpenBreweryDB.API.GraphQL.Breweries.Dataloaders
             _breweryConductor = breweryConductor ?? throw new ArgumentNullException(nameof(breweryConductor));
         }
 
-        protected override async Task<IReadOnlyDictionary<long, Brewery>> LoadBatchAsync(
+        protected override async Task<IReadOnlyList<Result<Brewery>>> FetchAsync(
             IReadOnlyList<long> keys,
             CancellationToken cancellationToken)
         {
@@ -28,15 +30,26 @@ namespace OpenBreweryDB.API.GraphQL.Breweries.Dataloaders
 
             if (!breweryResult.HasErrorsOrResultIsNull())
             {
-                return await Task.FromResult(breweryResult.ResultObject.ToDictionary(t => t.Id));
+                return breweryResult.ResultObject
+                    .Select(Result<Brewery>.Resolve)
+                    .ToList();
             }
 
             if (breweryResult.Errors?.Any() == true)
             {
-                throw new ResultException(breweryResult.Errors);
+                return breweryResult
+                    .Errors
+                    .Select(e => Result<Brewery>.Reject(new ResultException(e)))
+                    .ToList();
             }
 
-            return null;
+            return await Task.FromResult(new List<Result<Brewery>> {
+                Result<Brewery>.Reject(new ResultException(new ACModels.Error {
+                    ErrorType = ErrorType.Error,
+                    Key = "NotFound",
+                    Message = "Resource Not Found"
+                }))
+            });
         }
     }
 }

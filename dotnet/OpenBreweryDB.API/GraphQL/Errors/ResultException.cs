@@ -1,16 +1,15 @@
 using System;
-using System.Collections.Generic;
 using AndcultureCode.CSharp.Core.Interfaces;
 
 namespace OpenBreweryDB.API.GraphQL.Errors
 {
     public class ResultException : Exception
     {
-        public ResultException(List<IError> errors)
+        public ResultException(IError error)
         {
-            Errors = errors;
+            Error = error;
         }
 
-        public List<IError> Errors { get; }
+        public IError Error { get; }
     }
 }
