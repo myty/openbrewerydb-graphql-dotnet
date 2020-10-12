@@ -1,63 +1,109 @@
-import { Application } from "./deps.ts";
+import { Application, Router } from "./deps.ts";
 import { applyGraphQL, gql } from "./deps.ts";
+import type { InputType, PayloadType } from "./types.ts";
 
 const app = new Application();
 
+app.use(async (ctx, next) => {
+    await next();
+    const rt = ctx.response.headers.get("X-Response-Time");
+    console.log(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
+});
+
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    ctx.response.headers.set("X-Response-Time", `${ms}ms`);
+});
+
 const types = gql`
-    type Dino {
-        name: String
-        image: String
+    type Beer {
+        breweryId: ID!
+        id: ID!
+        name: String!
+        type: String!
     }
-    input DinoInput {
-        name: String
-        image: String
+    input CreateBeerInput {
+        clientMutationId: String!
+        name: String!
+        type: String!
+        breweryId: ID!
     }
-    type ResolveType {
-        done: Boolean
+    type CreateBeerPayload {
+        beer: Beer!
+        clientMutationId: String!
     }
     type Query {
-        getDino(name: String): Dino
-        getDinos: [Dino!]!
+        beer(id: ID!): Beer
+        beers: [Beer!]!
     }
     type Mutation {
-        addDino(input: DinoInput!): ResolveType!
+        createBeer(input: CreateBeerInput!): CreateBeerPayload!
     }
 `;
 
-const dinos = [
+type Beer = { id: number; breweryId: number; name: string; type: string };
+
+const beers: Beer[] = [
     {
-        name: "Tyrannosaurus Rex",
-        image: "🦖",
+        id: 1,
+        breweryId: 1,
+        name: "Costumes & Karaoke",
+        type: "IPA",
     },
 ];
 
 const resolvers = {
     Query: {
-        getDino: (_, { name }) => {
-            const dino = dinos.find((dino) => dino.name.includes(name));
-            if (!dino) {
-                throw new Error(`No dino name includes ${name}`);
+        beer: (_: unknown, { id }: Beer) => {
+            const beer = beers.find((beer) => beer.id === id);
+            if (!beer) {
+                throw new Error(
+                    `Beer with the id of '${id}' was not able to be found.`
+                );
             }
-            return dino;
+            return beer;
         },
-        getDinos: () => {
-            return dinos;
+        beers: () => {
+            return beers;
         },
     },
     Mutation: {
-        addDino: (_, { input: { name, image } }) => {
-            dinos.push({
+        createBeer: (
+            _: unknown,
+            {
+                input: { clientMutationId, name, type, breweryId },
+            }: InputType<Beer>
+        ): PayloadType<{ beer: Beer }> => {
+            const id =
+                beers.reduce((prev, current) => {
+                    if (prev > current.id) {
+                        return prev;
+                    }
+
+                    return current.id;
+                }, 0) + 1;
+
+            const beer: Beer = {
+                id,
+                breweryId,
                 name,
-                image,
-            });
+                type,
+            };
+
+            beers.push(beer);
+
             return {
-                done: true,
+                beer,
+                clientMutationId,
             };
         },
     },
 };
 
-const GraphQLService = applyGraphQL({
+const GraphQLService = await applyGraphQL<Router>({
+    Router,
     typeDefs: types,
     resolvers: resolvers,
 });
