@@ -72,7 +72,16 @@ namespace OpenBreweryDB.Tests.Integration
             // Arrange
             var executor = _schema.MakeExecutable();
             var dataContext = _serviceProvider.GetService<BreweryDbContext>();
-            var brewery = dataContext.Breweries.Add(new Data.Models.Brewery
+            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+            _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
                 BreweryId = "test-id",
