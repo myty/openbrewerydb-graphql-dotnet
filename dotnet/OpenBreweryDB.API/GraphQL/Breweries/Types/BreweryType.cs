@@ -1,9 +1,9 @@
-using HotChocolate.Types;
-using HotChocolate.Types.Relay;
-using OpenBreweryDB.API.GraphQL.Resolvers;
-using OpenBreweryDB.Data.Models;
 using System;
 using System.Linq;
+using HotChocolate;
+using HotChocolate.Types;
+using OpenBreweryDB.API.GraphQL.Resolvers;
+using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Types
 {

@@ -1,5 +1,5 @@
-using OpenBreweryDB.Core.Models;
 using System.Text.Json.Serialization;
+using OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.Core.Models
 {

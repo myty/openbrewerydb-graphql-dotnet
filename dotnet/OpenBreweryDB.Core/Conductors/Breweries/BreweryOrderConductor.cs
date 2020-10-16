@@ -11,7 +11,8 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
     {
         public Func<IQueryable<Brewery>, IQueryable<Brewery>> OrderByFields(IDictionary<string, SortDirection> fields)
         {
-            return q => {
+            return q =>
+            {
                 IOrderedQueryable<Brewery> orderBy = null;
 
                 if (fields?.Any() == true)

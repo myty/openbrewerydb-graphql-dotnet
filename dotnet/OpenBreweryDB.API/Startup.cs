@@ -1,8 +1,6 @@
 using AutoMapper;
 using HotChocolate;
-using HotChocolate.AspNetCore;
-using HotChocolate.AspNetCore.Voyager;
-using HotChocolate.Execution.Configuration;
+using HotChocolate.Types.Pagination;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -12,17 +10,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.API.GraphQL.Breweries;
+using OpenBreweryDB.API.GraphQL.Reviews;
 using OpenBreweryDB.API.GraphQL.Types;
+using OpenBreweryDB.API.GraphQL.Users;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Data;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using OpenBreweryDB.Data.Models.Users;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
-using OpenBreweryDB.API.GraphQL.Users;
-using OpenBreweryDB.API.GraphQL.Reviews;
+using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API
 {
@@ -47,15 +41,8 @@ namespace OpenBreweryDB.API
             services.AddControllers();
 
             services
+                .AddGraphQLServer()
                 .AddInMemorySubscriptions()
-                .AddGraphQL(sp => SchemaBuilder.New()
-                .EnableRelaySupport()
-                .AddServices(sp)
-
-                // Adds the authorize directive and
-                // enable the authorization middleware.
-                .AddAuthorizeDirectiveType()
-
                 .AddQueryType(d => d.Name("Query"))
                 .AddType<BreweryQueries>()
                 .AddType<BreweryType>()
@@ -63,33 +50,37 @@ namespace OpenBreweryDB.API
                 .AddType<UserMutations>()
                 .AddType<BreweryMutations>()
                 .AddType<ReviewMutations>()
-                .AddSubscriptionType(d => d.Name("Subscription"))
-                .AddType<ReviewSubscriptions>()
-                .Create(),
-                new QueryExecutionOptions
+
+                // TODO: Get subscriptions working again
+                // .AddSubscriptionType(d => d.Name("Subscription"))
+                // .AddType<ReviewSubscriptions>()
+
+                .EnableRelaySupport()
+                .SetPagingOptions(new PagingOptions
                 {
-                    ForceSerialExecution = true,
-                    IncludeExceptionDetails = true,
-                    TracingPreference = TracingPreference.Always
-                });
+                    IncludeTotalCount = true,
+                    MaxPageSize = 100
+                })
+                .AddAuthorization();
 
-            services.AddQueryRequestInterceptor(async (context, builder, ct) =>
-            {
-                if (context.User.Identity.IsAuthenticated)
-                {
-                    var userId =
-                        Guid.Parse(context.User.FindFirst(WellKnownClaimTypes.UserId).Value);
+            // TODO: Add JWT user authentication and authorization
+            // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
+            // {
+            //     if (context.User.Identity.IsAuthenticated)
+            //     {
+            //         var userId =
+            //             Guid.Parse(context.User.FindFirst(WellKnownClaimTypes.UserId).Value);
 
-                    builder.AddProperty(
-                        "currentUserId",
-                        userId);
-                    builder.AddProperty(
-                        "currentUserEmail",
-                        context.User.FindFirst(ClaimTypes.Email).Value);
+            //         builder.AddProperty(
+            //             "currentUserId",
+            //             userId);
+            //         builder.AddProperty(
+            //             "currentUserEmail",
+            //             context.User.FindFirst(ClaimTypes.Email).Value);
 
-                    await Task.Yield();
-                }
-            });
+            //         await Task.Yield();
+            //     }
+            // });
 
             services.Configure<KestrelServerOptions>(options =>
             {
@@ -122,19 +113,12 @@ namespace OpenBreweryDB.API
 
             app.UseAuthentication();
 
-            app.UseWebSockets()
-                .UseGraphQL("/graphql")
-                .UsePlayground("/graphql")
-                .UseVoyager("/graphql");
+            app.UseWebSockets();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("/graphql/playground");
-                    return Task.CompletedTask;
-                });
+                endpoints.MapGraphQL();
             });
 
             app.UseDefaultFiles();

@@ -5,28 +5,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FlatFiles" Version="4.9.0" />
-    <PackageReference Include="automapper" Version="10.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="HotChocolate" Version="10.5.3" />
-    <PackageReference Include="HotChocolate.AspNetCore" Version="10.5.3" />
-    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="10.5.3" />
-    <PackageReference Include="HotChocolate.AspNetCore.Playground" Version="10.5.3" />
-    <PackageReference Include="HotChocolate.AspNetCore.Voyager" Version="10.5.3" />
-    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="10.5.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
+    <PackageReference Include="FlatFiles" Version="4.11.0" />
+    <PackageReference Include="automapper" Version="10.1.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="HotChocolate" Version="11.0.0-preview.149" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="11.0.0-preview.149" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="11.0.0-preview.149" />
+    <PackageReference Include="HotChocolate.Subscriptions.InMemory" Version="11.0.0-preview.149" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.9" />
 
     <PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
 
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
 
   <ItemGroup>
