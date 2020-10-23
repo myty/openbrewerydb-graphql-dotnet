@@ -63,15 +63,7 @@ namespace OpenBreweryDB.API
                     IncludeTotalCount = true
                 })
                 .AddAuthorization()
-                .AddApolloTracing()
-                .AddErrorFilter((error) =>
-                {
-                    if (error.Exception is NullReferenceException)
-                    {
-                        return error.WithCode("NullRef");
-                    }
-                    return error;
-                });
+                .AddApolloTracing();
 
             // TODO: Add JWT user authentication and authorization
             // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
