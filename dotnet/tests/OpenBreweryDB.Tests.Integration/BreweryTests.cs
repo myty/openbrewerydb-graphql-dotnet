@@ -15,7 +15,6 @@ using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
-using Shouldly;
 using Snapshooter.Xunit;
 using Xunit;
 
@@ -124,7 +123,6 @@ namespace OpenBreweryDB.Tests.Integration
             ");
 
             // Assert
-            //result.Errors.ShouldBeEmpty();
             result.MatchSnapshot();
         }
     }
