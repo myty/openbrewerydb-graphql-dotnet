@@ -16,6 +16,7 @@
         "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
         "install": "cd ./frontend && yarn install",
+        "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
         "frontend": "cd ./frontend && yarn start"
     }
 }
