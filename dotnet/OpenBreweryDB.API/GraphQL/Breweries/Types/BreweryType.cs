@@ -1,9 +1,9 @@
-using HotChocolate.Types;
-using HotChocolate.Types.Relay;
-using OpenBreweryDB.API.GraphQL.Resolvers;
-using OpenBreweryDB.Data.Models;
 using System;
 using System.Linq;
+using HotChocolate;
+using HotChocolate.Types;
+using OpenBreweryDB.API.GraphQL.Resolvers;
+using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Types
 {
@@ -14,7 +14,7 @@ namespace OpenBreweryDB.API.GraphQL.Types
             descriptor
                 .Name("Brewery")
                 .Description("A brewery of beer")
-                .AsNode().IdField(t => t.Id).NodeResolver((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
+                .ImplementsNode().IdField(t => t.Id).ResolveNode((ctx, id) => BreweryResolvers.BreweryNodeResolver(ctx, id));
 
             descriptor.Field("nearby")
                 .Argument(

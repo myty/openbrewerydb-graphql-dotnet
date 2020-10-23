@@ -17,11 +17,11 @@ namespace OpenBreweryDB.Core.Extensions
             Expression<Func<T, bool>> expr2
         )
         {
-            var parameter    = Expression.Parameter(typeof(T));
-            var leftVisitor  = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
-            var left         = leftVisitor.Visit(expr1.Body);
+            var parameter = Expression.Parameter(typeof(T));
+            var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
+            var left = leftVisitor.Visit(expr1.Body);
             var rightVisitor = new ReplaceExpressionVisitor(expr2.Parameters[0], parameter);
-            var right        = rightVisitor.Visit(expr2.Body);
+            var right = rightVisitor.Visit(expr2.Body);
 
             return Expression.Lambda<Func<T, bool>>(Expression.AndAlso(left, right), parameter);
         }
@@ -41,12 +41,12 @@ namespace OpenBreweryDB.Core.Extensions
             Expression<Func<T, TNav>> navigationProperty
         )
         {
-            var parameter       = Expression.Parameter(typeof(T));
-            var leftVisitor     = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
-            var left            = leftVisitor.Visit(expr1.Body);
-            var navVisitor      = new ReplaceExpressionVisitor(navigationProperty.Parameters[0], parameter);
-            var nav             = navVisitor.Visit(navigationProperty.Body);                                    // Reset the navigation prop expression to start from the shared parameter
-            var right           = Expression.Invoke(expr2, nav);                                                // Create an expression that navigates to the property
+            var parameter = Expression.Parameter(typeof(T));
+            var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
+            var left = leftVisitor.Visit(expr1.Body);
+            var navVisitor = new ReplaceExpressionVisitor(navigationProperty.Parameters[0], parameter);
+            var nav = navVisitor.Visit(navigationProperty.Body);                                    // Reset the navigation prop expression to start from the shared parameter
+            var right = Expression.Invoke(expr2, nav);                                                // Create an expression that navigates to the property
 
             return Expression.Lambda<Func<T, bool>>(Expression.AndAlso(left, right), parameter);
         }
@@ -63,11 +63,11 @@ namespace OpenBreweryDB.Core.Extensions
             Expression<Func<T, bool>> expr2
         )
         {
-            var parameter    = Expression.Parameter(typeof(T));
-            var leftVisitor  = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
-            var left         = leftVisitor.Visit(expr1.Body);
+            var parameter = Expression.Parameter(typeof(T));
+            var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
+            var left = leftVisitor.Visit(expr1.Body);
             var rightVisitor = new ReplaceExpressionVisitor(expr2.Parameters[0], parameter);
-            var right        = rightVisitor.Visit(expr2.Body);
+            var right = rightVisitor.Visit(expr2.Body);
 
             return Expression.Lambda<Func<T, bool>>(Expression.Or(left, right), parameter);
         }
@@ -87,12 +87,12 @@ namespace OpenBreweryDB.Core.Extensions
             Expression<Func<T, TNav>> navigationProperty
         )
         {
-            var parameter   = Expression.Parameter(typeof(T));
+            var parameter = Expression.Parameter(typeof(T));
             var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
-            var left        = leftVisitor.Visit(expr1.Body);
-            var navVisitor  = new ReplaceExpressionVisitor(navigationProperty.Parameters[0], parameter);
-            var nav         = navVisitor.Visit(navigationProperty.Body);                                    // Reset the navigation prop expression to start from the shared parameter
-            var right       = Expression.Invoke(expr2, nav);                                                // Create an expression that navigates to the property
+            var left = leftVisitor.Visit(expr1.Body);
+            var navVisitor = new ReplaceExpressionVisitor(navigationProperty.Parameters[0], parameter);
+            var nav = navVisitor.Visit(navigationProperty.Body);                                    // Reset the navigation prop expression to start from the shared parameter
+            var right = Expression.Invoke(expr2, nav);                                                // Create an expression that navigates to the property
 
             return Expression.Lambda<Func<T, bool>>(Expression.Or(left, right), parameter);
         }
@@ -109,11 +109,11 @@ namespace OpenBreweryDB.Core.Extensions
             Expression<Func<T, bool>> expr2
         )
         {
-            var parameter    = Expression.Parameter(typeof(T));
-            var leftVisitor  = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
-            var left         = leftVisitor.Visit(expr1.Body);
+            var parameter = Expression.Parameter(typeof(T));
+            var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
+            var left = leftVisitor.Visit(expr1.Body);
             var rightVisitor = new ReplaceExpressionVisitor(expr2.Parameters[0], parameter);
-            var right        = rightVisitor.Visit(expr2.Body);
+            var right = rightVisitor.Visit(expr2.Body);
 
             return Expression.Lambda<Func<T, bool>>(Expression.OrElse(left, right), parameter);
         }
@@ -133,12 +133,12 @@ namespace OpenBreweryDB.Core.Extensions
             Expression<Func<T, TNav>> navigationProperty
         )
         {
-            var parameter   = Expression.Parameter(typeof(T));
+            var parameter = Expression.Parameter(typeof(T));
             var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
-            var left        = leftVisitor.Visit(expr1.Body);
-            var navVisitor  = new ReplaceExpressionVisitor(navigationProperty.Parameters[0], parameter);
-            var nav         = navVisitor.Visit(navigationProperty.Body);                                    // Reset the navigation prop expression to start from the shared parameter
-            var right       = Expression.Invoke(expr2, nav);                                                // Create an expression that navigates to the property
+            var left = leftVisitor.Visit(expr1.Body);
+            var navVisitor = new ReplaceExpressionVisitor(navigationProperty.Parameters[0], parameter);
+            var nav = navVisitor.Visit(navigationProperty.Body);                                    // Reset the navigation prop expression to start from the shared parameter
+            var right = Expression.Invoke(expr2, nav);                                                // Create an expression that navigates to the property
 
             return Expression.Lambda<Func<T, bool>>(Expression.OrElse(left, right), parameter);
         }

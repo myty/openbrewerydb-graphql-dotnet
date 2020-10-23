@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using HotChocolate;
 using HotChocolate.Types.Relay;
 using OpenBreweryDB.API.GraphQL.Common;
 using OpenBreweryDB.Data.Models;
-using System.Collections.Generic;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {

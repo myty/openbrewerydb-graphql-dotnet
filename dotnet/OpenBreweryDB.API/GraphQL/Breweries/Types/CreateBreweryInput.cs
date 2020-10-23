@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using HotChocolate;
 using OpenBreweryDB.API.GraphQL.Common;
-using System.Collections.Generic;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {

@@ -4,7 +4,7 @@ import { useOnReviewAddedSubscription } from "../graphql/autogenerate/hooks";
 
 interface ReviewInternal {
     id: string;
-    subject: string;
+    subject?: string;
     body: string;
     breweryName: string;
 }
@@ -18,9 +18,9 @@ export const ReviewPage = () => {
 
         const newReview: ReviewInternal = {
             id: data?.onReviewReceived?.id?.toString(),
-            subject: data?.onReviewReceived?.subject,
-            body: data?.onReviewReceived?.body,
-            breweryName: data?.onReviewReceived?.brewery?.name,
+            subject: data?.onReviewReceived?.subject ?? "",
+            body: data?.onReviewReceived?.body ?? "",
+            breweryName: data?.onReviewReceived?.brewery?.name ?? "",
         };
 
         setReviews((r) => [newReview, ...r]);

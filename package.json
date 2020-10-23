@@ -2,7 +2,7 @@
     "author": "Michael Tyson",
     "description": "Demo OpenBreweryDB .NET Core GraphQL Implementation",
     "devDependencies": {
-        "prettier": "^2.0.5"
+        "prettier": "^2.1.2"
     },
     "name": "openbrewerydb-qraphql",
     "private": true,
@@ -15,7 +15,8 @@
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
-        "install": "cd ./frontend && yarn install",
+        "install-all": "cd ./frontend && yarn install",
+        "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
         "frontend": "cd ./frontend && yarn start"
     }
 }
