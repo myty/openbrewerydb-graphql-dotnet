@@ -1,7 +1,7 @@
 using System.Linq;
 using AutoMapper;
-using DTO = OpenBreweryDB.Core.Models;
 using OpenBreweryDB.Data.Models;
+using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {

@@ -1,10 +1,9 @@
 
+using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
-using System.Collections.Generic;
-
 using DTO = OpenBreweryDB.Core.Models;
 
 namespace OpenBreweryDB.API.Controllers

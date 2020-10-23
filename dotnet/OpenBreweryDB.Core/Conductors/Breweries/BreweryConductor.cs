@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using AndcultureCode.CSharp.Core;
 using AndcultureCode.CSharp.Core.Extensions;
 using AndcultureCode.CSharp.Core.Interfaces;
@@ -6,10 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data;
 using OpenBreweryDB.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace OpenBreweryDB.Core.Conductors.Breweries
 {
