@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using AutoMapper;
 using HotChocolate;
-using HotChocolate.Execution.Instrumentation;
-using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.API.GraphQL.Breweries;
+using OpenBreweryDB.API.GraphQL.Breweries.Dataloaders;
+using OpenBreweryDB.API.GraphQL.Errors;
 using OpenBreweryDB.API.GraphQL.Reviews;
 using OpenBreweryDB.API.GraphQL.Types;
 using OpenBreweryDB.API.GraphQL.Users;
@@ -47,6 +46,8 @@ namespace OpenBreweryDB.API
             services
                 .AddGraphQLServer()
                 .AddInMemorySubscriptions()
+                .AddErrorFilter<ResultErrorFilter>()
+                .AddDataLoader<BreweryByIdDataLoader>()
                 .AddQueryType(d => d.Name("Query"))
                     .AddTypeExtension<BreweryQueries>()
                 .AddMutationType(d => d.Name("Mutation"))

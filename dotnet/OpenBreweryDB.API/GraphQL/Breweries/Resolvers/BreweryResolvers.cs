@@ -10,35 +10,9 @@ using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Resolvers
 {
-    public static class BreweryResolvers
+    public class BreweryResolvers
     {
-        public static async Task<Brewery> BreweryNodeResolver(IResolverContext ctx, long id)
-        {
-            var breweryConductor = ctx.Service<IBreweryConductor>();
-
-            var breweryResult = breweryConductor.Find(id);
-
-            if (!breweryResult.HasErrorsOrResultIsNull())
-            {
-                return await Task.FromResult(breweryResult.ResultObject);
-            }
-
-            foreach (var err in breweryResult.Errors)
-            {
-                ctx.ReportError(
-                    ErrorBuilder.New()
-                        .SetCode(err.Key)
-                        .SetPath(ctx.Path)
-                        .AddLocation(ctx.FieldSelection)
-                        .SetMessage(err.Message)
-                        .Build()
-                );
-            }
-
-            return null;
-        }
-
-        public static async Task<IEnumerable<Brewery>> NearbyBreweriesResolver(IResolverContext ctx)
+        public async Task<IEnumerable<Brewery>> GetNearbyBreweriesAsync(IResolverContext ctx)
         {
             var brewery = ctx.Parent<Brewery>();
 
