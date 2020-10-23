@@ -1,12 +1,11 @@
-using AndcultureCode.CSharp.Core.Extensions;
-using HotChocolate;
-using HotChocolate.AspNetCore.Authorization;
-using HotChocolate.Resolvers;
-using HotChocolate.Types.Relay;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Data.Models;
 using System.Linq;
 using System.Threading;
+using AndcultureCode.CSharp.Core.Extensions;
+using HotChocolate;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {

@@ -26,7 +26,8 @@ export const HomePage = () => {
         <InfiniteScroll
             loadMore={loadMore}
             hasMore={hasMore}
-            loader={<Loading key={0} />}>
+            loader={<Loading key={0} />}
+            threshold={500}>
             {breweries.map((b: Brewery) => (
                 <BreweryNavCard key={b.id} brewery={b} />
             ))}

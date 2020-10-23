@@ -1,14 +1,14 @@
-using AndcultureCode.CSharp.Core.Models.Entities;
-using HotChocolate;
-using OpenBreweryDB.Data.Models.Favorites;
-using OpenBreweryDB.Data.Models.Reviews;
 using System;
 using System.Collections.Generic;
+using AndcultureCode.CSharp.Core.Models.Entities;
+using OpenBreweryDB.Data.Models.Favorites;
+using OpenBreweryDB.Data.Models.Reviews;
 
 namespace OpenBreweryDB.Data.Models
 {
     public class Brewery : Entity, IKeyedEntity
     {
+        public new long Id { get; set; }
         public string BreweryId { get; set; }
         public string Name { get; set; }
         public string BreweryType { get; set; }
@@ -26,7 +26,6 @@ namespace OpenBreweryDB.Data.Models
 
         public List<BreweryTag> BreweryTags { get; set; }
 
-        [GraphQLIgnore]
         public List<Favorite> FavoriteUsers { get; set; }
 
         public List<Review> BreweryReviews { get; set; }

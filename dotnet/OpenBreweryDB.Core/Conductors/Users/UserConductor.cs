@@ -3,8 +3,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using AndcultureCode.CSharp.Core;
-using AndcultureCode.CSharp.Core.Extensions;
 using AndcultureCode.CSharp.Core.Enumerations;
+using AndcultureCode.CSharp.Core.Extensions;
 using AndcultureCode.CSharp.Core.Interfaces;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
@@ -79,7 +79,7 @@ public class UserConductor : IUserConductor
     private IResult<(string salt, string hashedPassword)> GetHashedPassword(string password, string salt = null) =>
         Do<(string, string)>.Try((r) =>
         {
-            salt = salt ?? Guid.NewGuid().ToString("N");
+            salt ??= Guid.NewGuid().ToString("N");
 
             using (var sha = SHA512.Create())
             {

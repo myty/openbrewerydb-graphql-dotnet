@@ -1,12 +1,12 @@
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
 using AndcultureCode.CSharp.Core.Extensions;
 using HotChocolate;
 using HotChocolate.Resolvers;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {

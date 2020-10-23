@@ -1,11 +1,11 @@
+using System.Linq;
+using System.Threading;
 using AutoMapper;
+using HotChocolate;
+using OpenBreweryDB.API.GraphQL.Common;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using DTO = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using HotChocolate;
-using System.Threading;
-using System.Linq;
-using OpenBreweryDB.API.GraphQL.Common;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {

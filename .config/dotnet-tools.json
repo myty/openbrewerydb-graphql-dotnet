@@ -1,24 +1,18 @@
 {
-  "version": 1,
-  "isRoot": true,
-  "tools": {
-    "dotnet-ef": {
-      "version": "3.1.8",
-      "commands": [
-        "dotnet-ef"
-      ]
-    },
-    "dotnet-aspnet-codegenerator": {
-      "version": "3.1.4",
-      "commands": [
-        "dotnet-aspnet-codegenerator"
-      ]
-    },
-    "dotnet-outdated": {
-      "version": "2.11.0",
-      "commands": [
-        "dotnet-outdated"
-      ]
+    "version": 1,
+    "isRoot": true,
+    "tools": {
+        "dotnet-ef": {
+            "version": "3.1.6",
+            "commands": ["dotnet-ef"]
+        },
+        "dotnet-aspnet-codegenerator": {
+            "version": "3.1.3",
+            "commands": ["dotnet-aspnet-codegenerator"]
+        },
+        "dotnet-format": {
+            "version": "4.1.131201",
+            "commands": ["dotnet-format"]
+        }
     }
-  }
 }

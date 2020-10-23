@@ -1,10 +1,10 @@
 using System;
-using System.Linq.Expressions;
-using OpenBreweryDB.Core.Extensions;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Core.Extensions;
+using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.Core.Conductors.Breweries
 {

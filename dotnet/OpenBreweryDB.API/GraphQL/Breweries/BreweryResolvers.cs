@@ -1,13 +1,12 @@
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AndcultureCode.CSharp.Core.Extensions;
 using HotChocolate;
 using HotChocolate.Resolvers;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
-using System.Threading.Tasks;
-using GeoCoordinatePortable;
-using System.Collections.Generic;
 
 namespace OpenBreweryDB.API.GraphQL.Resolvers
 {
@@ -49,7 +48,7 @@ namespace OpenBreweryDB.API.GraphQL.Resolvers
             }
 
             var breweryConductor = ctx.Service<IBreweryConductor>();
-            var mileRadius = ctx.Argument<int?>("within") ?? 25;
+            var mileRadius = ctx.ArgumentValue<int?>("within") ?? 25;
             var breweryResult = breweryConductor
                 .FindAllByLocation(
                     Convert.ToDouble(brewery.Latitude),

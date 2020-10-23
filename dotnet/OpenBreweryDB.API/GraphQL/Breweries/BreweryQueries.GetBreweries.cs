@@ -1,17 +1,17 @@
-using AndcultureCode.CSharp.Core.Extensions;
-using AutoMapper;
-using HotChocolate;
-using HotChocolate.Resolvers;
-using HotChocolate.Types.Relay;
-using OpenBreweryDB.Core.Conductors;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.Extensions;
-using OpenBreweryDB.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using AndcultureCode.CSharp.Core.Extensions;
+using AutoMapper;
+using HotChocolate;
+using HotChocolate.Resolvers;
+using HotChocolate.Types;
+using OpenBreweryDB.Core.Conductors;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
+using OpenBreweryDB.Core.Extensions;
+using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
