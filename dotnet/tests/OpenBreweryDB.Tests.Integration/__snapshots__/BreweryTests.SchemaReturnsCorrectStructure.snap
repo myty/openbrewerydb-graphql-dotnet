@@ -11,24 +11,22 @@ interface Node {
 
 "A brewery of beer"
 type Brewery implements Node {
-  breweryReviews: [Review]
-  "Friendly id for Brewery"
-  brewery_id: String!
+  id: ID!
+  nearby("limit the nearby breweries to search radius, defaults to 25 milles" within: Int): [Brewery]
   "Type of Brewery"
   brewery_type: String!
+  "Friendly id for Brewery"
+  brewery_id: String!
   "The city of the brewery"
   city: String
   "The country of origin for the brewery"
   country: String
-  createdAt: DateTime!
-  id: ID!
-  "Latitude portion of lat\/long coordinates"
-  latitude: Decimal
   "Longitude portion of lat\/long coordinates"
   longitude: Decimal
+  "Latitude portion of lat\/long coordinates"
+  latitude: Decimal
   "Name of brewery"
   name: String!
-  nearby("limit the nearby breweries to search radius, defaults to 25 milles" within: Int): [Brewery]
   "The phone number for the brewery"
   phone: String
   "The state of the brewery"
@@ -43,16 +41,19 @@ type Brewery implements Node {
   updated_at: DateTime!
   "Website address for the brewery"
   website_url: String
+  createdAt: DateTime!
+  favoriteUsers: [Favorite]
+  breweryReviews: [Review]
 }
 
 "A connection to a list of items."
 type BreweryConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
   "A list of edges."
   edges: [BreweryEdge!]
   "A flattened list of the nodes."
   nodes: [Brewery]
-  "Information to aid in pagination."
-  pageInfo: PageInfo!
   totalCount: Int!
 }
 
@@ -66,64 +67,73 @@ type BreweryEdge {
 
 type CreateBreweryPayload {
   brewery: Brewery
+  errors: [UserError]
   "Relay Client Mutation Id"
   clientMutationId: String!
-  errors: [UserError]
 }
 
 type CreateUserPayload {
+  user: User
   "Relay Client Mutation Id"
   clientMutationId: String!
+}
+
+type Favorite {
+  id: Long!
+  breweryId: Long!
+  brewery: Brewery
+  userId: Long!
   user: User
 }
 
 type LoginPayload {
+  me: User
+  token: String
+  scheme: String
   "Relay Client Mutation Id"
   clientMutationId: String!
-  me: User
-  scheme: String
-  token: String
 }
 
 type Mutation {
-  createBrewery(input: CreateBreweryInput): CreateBreweryPayload
-  createReview(input: ReviewInput): ReviewPayload
   createUser(input: CreateUserInput): CreateUserPayload
   login(input: LoginInput): LoginPayload
+  createBrewery(input: CreateBreweryInput): CreateBreweryPayload
   updateBrewery(input: UpdateBreweryInput): UpdateBreweryPayload
+  createReview(input: ReviewInput): ReviewPayload
 }
 
 "Information about pagination in a connection."
 type PageInfo {
-  "When paginating forwards, the cursor to continue."
-  endCursor: String
   "Indicates whether more edges exist following the set defined by the clients arguments."
   hasNextPage: Boolean!
   "Indicates whether more edges exist prior the set defined by the clients arguments."
   hasPreviousPage: Boolean!
   "When paginating backwards, the cursor to continue."
   startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
 }
 
 type Query {
-  breweries(after: String before: String "filter by brewery id" brewery_id: String "search by city name" city: String first: PaginationAmount last: PaginationAmount "search by brewery name" name: String "general search" search: String "sort by" sort: [String] "filter by state" state: String "filter by tags" tags: [String] "filter by type" type: String): BreweryConnection
-  breweryById("filter by brewery id" brewery_id: String): Brewery
-  nearbyBreweries(after: String before: String first: PaginationAmount last: PaginationAmount latitude: Float! longitude: Float!): BreweryConnection
   node(id: ID!): Node
+  breweries(first: Int after: String last: Int before: String "filter by brewery id" brewery_id: String "filter by state" state: String "filter by type" type: String "search by city name" city: String "search by brewery name" name: String "general search" search: String "sort by" sort: [String] "filter by tags" tags: [String]): BreweryConnection
+  breweryById("filter by brewery id" brewery_id: String): Brewery
+  nearbyBreweries(first: Int after: String last: Int before: String latitude: Float! longitude: Float!): BreweryConnection
 }
 
 type Review {
-  body: String!
-  brewery: Brewery!
-  createdOn: DateTime!
   id: Long!
-  subject: String!
+  breweryId: Long!
+  brewery: Brewery
+  subject: String
+  body: String
+  createdOn: DateTime!
 }
 
 type ReviewPayload {
+  review: Review
   "Relay Client Mutation Id"
   clientMutationId: String!
-  review: Review
 }
 
 type Subscription {
@@ -132,107 +142,110 @@ type Subscription {
 
 type UpdateBreweryPayload {
   brewery: Brewery
+  errors: [UserError]
   "Relay Client Mutation Id"
   clientMutationId: String!
-  errors: [UserError]
 }
 
 type User {
-  email: String!
-  firstName: String!
-  fullName: String
   id: Long!
-  lastName: String!
+  firstName: String
+  lastName: String
+  email: String
+  passwordHash: String
+  salt: String
+  favorites: [Favorite]
+  fullName: String
 }
 
 type UserError {
-  code: String
   message: String
+  code: String
 }
 
 input CreateBreweryInput {
-  brewery_id: String!
-  "Type of Brewery"
-  brewery_type: String!
-  "The city of the brewery"
-  city: String
-  "Relay Client Mutation Id"
-  clientMutationId: String!
-  "The country of origin for the brewery"
-  country: String
-  "Latitude portion of lat\/long coordinates"
-  latitude: Decimal
-  "Longitude portion of lat\/long coordinates"
-  longitude: Decimal
   "Name of brewery"
   name: String!
-  "The phone number for the brewery"
-  phone: String
-  "The postal code of the brewery"
-  postal_code: String
-  "The state of the brewery"
-  state: String!
+  "Type of Brewery"
+  brewery_type: String!
+  brewery_id: String!
   "The street of the brewery"
   street: String
-  "Tags that have been attached to the brewery"
-  tag_list: [String]
+  "The city of the brewery"
+  city: String
+  "The state of the brewery"
+  state: String!
+  "The postal code of the brewery"
+  postal_code: String
   "Website address for the brewery"
   website_url: String
+  "The phone number for the brewery"
+  phone: String
+  "The country of origin for the brewery"
+  country: String
+  "Longitude portion of lat\/long coordinates"
+  longitude: Decimal
+  "Latitude portion of lat\/long coordinates"
+  latitude: Decimal
+  "Tags that have been attached to the brewery"
+  tag_list: [String]
+  "Relay Client Mutation Id"
+  clientMutationId: String!
 }
 
 input CreateUserInput {
-  "Relay Client Mutation Id"
-  clientMutationId: String!
   email: String
   firstName: String
   lastName: String
   password: String
+  "Relay Client Mutation Id"
+  clientMutationId: String!
 }
 
 input LoginInput {
-  "Relay Client Mutation Id"
-  clientMutationId: String!
   email: String
   password: String
+  "Relay Client Mutation Id"
+  clientMutationId: String!
 }
 
 input ReviewInput {
+  subject: String!
   body: String!
   breweryId: ID!
   "Relay Client Mutation Id"
   clientMutationId: String!
-  subject: String!
 }
 
 input UpdateBreweryInput {
-  brewery_id: String!
-  "Type of Brewery"
-  brewery_type: String!
-  "The city of the brewery"
-  city: String
-  "Relay Client Mutation Id"
-  clientMutationId: String!
-  "The country of origin for the brewery"
-  country: String
   id: ID!
-  "Latitude portion of lat\/long coordinates"
-  latitude: Decimal
-  "Longitude portion of lat\/long coordinates"
-  longitude: Decimal
   "Name of brewery"
   name: String!
-  "The phone number for the brewery"
-  phone: String
-  "The postal code of the brewery"
-  postal_code: String
-  "The state of the brewery"
-  state: String!
+  "Type of Brewery"
+  brewery_type: String!
+  brewery_id: String!
   "The street of the brewery"
   street: String
-  "Tags that have been attached to the brewery"
-  tag_list: [String]
+  "The city of the brewery"
+  city: String
+  "The state of the brewery"
+  state: String!
+  "The postal code of the brewery"
+  postal_code: String
   "Website address for the brewery"
   website_url: String
+  "The phone number for the brewery"
+  phone: String
+  "The country of origin for the brewery"
+  country: String
+  "Longitude portion of lat\/long coordinates"
+  longitude: Decimal
+  "Latitude portion of lat\/long coordinates"
+  latitude: Decimal
+  "Tags that have been attached to the brewery"
+  tag_list: [String]
+  "Relay Client Mutation Id"
+  clientMutationId: String!
 }
 
 "The `Boolean` scalar type represents `true` or `false`."
@@ -255,8 +268,6 @@ scalar Int
 
 "The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
 scalar Long
-
-scalar PaginationAmount
 
 "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text."
 scalar String
