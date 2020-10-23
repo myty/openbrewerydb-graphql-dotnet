@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.Core", "OpenB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.Data", "OpenBreweryDB.Data\OpenBreweryDB.Data.csproj", "{9DCCE9E8-A119-483A-8FFC-023A40EC1ABC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4EABD937-6024-4E3B-BCBD-9839EFC6ADD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBreweryDB.Tests.Integration", "tests\OpenBreweryDB.Tests.Integration\OpenBreweryDB.Tests.Integration.csproj", "{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,5 +74,20 @@ Global
 		{9DCCE9E8-A119-483A-8FFC-023A40EC1ABC}.Release|x64.Build.0 = Release|Any CPU
 		{9DCCE9E8-A119-483A-8FFC-023A40EC1ABC}.Release|x86.ActiveCfg = Release|Any CPU
 		{9DCCE9E8-A119-483A-8FFC-023A40EC1ABC}.Release|x86.Build.0 = Release|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Debug|x64.Build.0 = Debug|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Debug|x86.Build.0 = Debug|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Release|x64.ActiveCfg = Release|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Release|x64.Build.0 = Release|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Release|x86.ActiveCfg = Release|Any CPU
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B8D6A2F9-4789-4D58-8D70-AC42B1A52195} = {4EABD937-6024-4E3B-BCBD-9839EFC6ADD4}
 	EndGlobalSection
 EndGlobal
