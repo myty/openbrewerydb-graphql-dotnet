@@ -5,6 +5,8 @@ namespace OpenBreweryDB.Data.Models.Reviews
 {
     public class Review : Entity, IKeyedEntity
     {
+        public new long Id { get; set; }
+
         public long BreweryId { get; set; }
 
         public Brewery Brewery { get; set; }

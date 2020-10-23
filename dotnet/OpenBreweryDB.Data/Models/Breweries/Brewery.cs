@@ -8,6 +8,7 @@ namespace OpenBreweryDB.Data.Models
 {
     public class Brewery : Entity, IKeyedEntity
     {
+        public new long Id { get; set; }
         public string BreweryId { get; set; }
         public string Name { get; set; }
         public string BreweryType { get; set; }

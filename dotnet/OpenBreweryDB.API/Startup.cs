@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using AutoMapper;
 using HotChocolate;
+using HotChocolate.Execution.Instrumentation;
+using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -59,7 +63,15 @@ namespace OpenBreweryDB.API
                     IncludeTotalCount = true
                 })
                 .AddAuthorization()
-                .AddApolloTracing();
+                .AddApolloTracing()
+                .AddErrorFilter((error) =>
+                {
+                    if (error.Exception is NullReferenceException)
+                    {
+                        return error.WithCode("NullRef");
+                    }
+                    return error;
+                });
 
             // TODO: Add JWT user authentication and authorization
             // services.AddQueryRequestInterceptor(async (context, builder, ct) =>

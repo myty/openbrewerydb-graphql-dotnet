@@ -7,6 +7,8 @@ namespace OpenBreweryDB.Data.Models.Users
 {
     public class User : Entity, IKeyedEntity
     {
+        public new long Id { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

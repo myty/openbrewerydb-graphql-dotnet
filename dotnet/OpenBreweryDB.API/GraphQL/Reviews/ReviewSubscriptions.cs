@@ -8,7 +8,7 @@ namespace OpenBreweryDB.API.GraphQL.Reviews
     [ExtendObjectType(Name = "Subscription")]
     public class ReviewSubscriptions
     {
-        [Subscribe(With = "reviews")]
+        [Subscribe]
         public Review OnReview(
             [EventMessage] Review review) =>
             review;

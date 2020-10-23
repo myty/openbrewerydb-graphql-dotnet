@@ -5,6 +5,8 @@ namespace OpenBreweryDB.Data.Models.Favorites
 {
     public class Favorite : Entity, IKeyedEntity
     {
+        public new long Id { get; set; }
+
         public long BreweryId { get; set; }
 
         public Brewery Brewery { get; set; }
