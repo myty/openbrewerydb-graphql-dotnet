@@ -79,7 +79,7 @@ public class UserConductor : IUserConductor
     private IResult<(string salt, string hashedPassword)> GetHashedPassword(string password, string salt = null) =>
         Do<(string, string)>.Try((r) =>
         {
-            salt = salt ?? Guid.NewGuid().ToString("N");
+            salt ??= Guid.NewGuid().ToString("N");
 
             using (var sha = SHA512.Create())
             {
