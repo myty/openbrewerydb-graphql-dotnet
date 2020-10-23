@@ -44,24 +44,22 @@ namespace OpenBreweryDB.API
                 .AddGraphQLServer()
                 .AddInMemorySubscriptions()
                 .AddQueryType(d => d.Name("Query"))
-                .AddType<BreweryQueries>()
-                .AddType<BreweryType>()
+                    .AddTypeExtension<BreweryQueries>()
                 .AddMutationType(d => d.Name("Mutation"))
-                .AddType<UserMutations>()
-                .AddType<BreweryMutations>()
-                .AddType<ReviewMutations>()
-
-                // TODO: Get subscriptions working again
-                // .AddSubscriptionType(d => d.Name("Subscription"))
-                // .AddType<ReviewSubscriptions>()
+                    .AddTypeExtension<UserMutations>()
+                    .AddTypeExtension<BreweryMutations>()
+                    .AddTypeExtension<ReviewMutations>()
+                .AddSubscriptionType(d => d.Name("Subscription"))
+                    .AddTypeExtension<ReviewSubscriptions>()
+                .AddType<BreweryType>()
 
                 .EnableRelaySupport()
                 .SetPagingOptions(new PagingOptions
                 {
-                    IncludeTotalCount = true,
-                    MaxPageSize = 100
+                    IncludeTotalCount = true
                 })
-                .AddAuthorization();
+                .AddAuthorization()
+                .AddApolloTracing();
 
             // TODO: Add JWT user authentication and authorization
             // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
