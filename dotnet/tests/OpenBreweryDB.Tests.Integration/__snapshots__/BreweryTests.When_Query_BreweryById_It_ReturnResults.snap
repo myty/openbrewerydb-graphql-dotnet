@@ -1,0 +1,21 @@
+﻿{
+  "Label": null,
+  "Path": null,
+  "Data": {
+    "brewery": {
+      "id": "QnJld2VyeQpsMQ==",
+      "name": "Test",
+      "brewery_id": "test-id",
+      "street": "123 Any St.",
+      "city": "My Town",
+      "state": "PA",
+      "country": null,
+      "website_url": null,
+      "brewery_type": "micro"
+    }
+  },
+  "Errors": null,
+  "Extensions": null,
+  "ContextData": null,
+  "HasNext": null
+}

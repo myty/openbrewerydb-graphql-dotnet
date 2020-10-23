@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotChocolate;
@@ -64,7 +65,7 @@ namespace OpenBreweryDB.Tests.Integration
         }
 
         [Fact]
-        public async Task SchemaReturnsCorrectStructure()
+        public async Task When_Query_Schema_It_ReturnResults()
         {
             var schema = await GetRequestExecutorBuilder()
                 .BuildSchemaAsync();
@@ -75,7 +76,7 @@ namespace OpenBreweryDB.Tests.Integration
         }
 
         [Fact]
-        public async Task ReturnResults()
+        public async Task When_Query_Breweries_It_ReturnResults()
         {
             // Arrange
             var executor = await GetRequestExecutorBuilder()
@@ -121,6 +122,94 @@ namespace OpenBreweryDB.Tests.Integration
                     }
                 }
             ");
+
+            // Assert
+            result.MatchSnapshot();
+        }
+
+        [Fact]
+        public async Task When_Query_Node_It_ReturnResults()
+        {
+            // Arrange
+            var executor = await GetRequestExecutorBuilder()
+                .BuildRequestExecutorAsync();
+            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+
+            await dataContext.SaveChangesAsync();
+
+            // Act
+            var result = await executor.ExecuteAsync(@"
+                query Brewery($id: ID!) {
+                    brewery: node(id: $id) {
+                        id
+                        ...BreweryBaseFields
+                    }
+                }
+
+                fragment BreweryBaseFields on Brewery {
+                    name
+                    brewery_id
+                    street
+                    city
+                    state
+                    country
+                    website_url
+                    brewery_type
+                }
+            ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" } });
+
+            // Assert
+            result.MatchSnapshot();
+        }
+
+        [Fact]
+        public async Task When_Query_BreweryById_It_ReturnResults()
+        {
+            // Arrange
+            var executor = await GetRequestExecutorBuilder()
+                .BuildRequestExecutorAsync();
+            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+
+            await dataContext.SaveChangesAsync();
+
+            // Act
+            var result = await executor.ExecuteAsync(@"
+                query BreweryById($brewery_id: String!) {
+                    brewery: breweryById(brewery_id: $brewery_id) {
+                        id
+                        ...BreweryBaseFields
+                    }
+                }
+
+                fragment BreweryBaseFields on Brewery {
+                    name
+                    brewery_id
+                    street
+                    city
+                    state
+                    country
+                    website_url
+                    brewery_type
+                }
+            ", new Dictionary<string, object> { { "brewery_id", "test-id" } });
 
             // Assert
             result.MatchSnapshot();
