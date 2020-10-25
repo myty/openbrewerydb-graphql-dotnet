@@ -14,13 +14,13 @@ export const ReviewPage = () => {
     const { data, error, loading } = useOnReviewAddedSubscription();
 
     useEffect(() => {
-        if (data?.onReviewReceived == null) return;
+        if (data?.review == null) return;
 
         const newReview: ReviewInternal = {
-            id: data?.onReviewReceived?.id?.toString(),
-            subject: data?.onReviewReceived?.subject ?? "",
-            body: data?.onReviewReceived?.body ?? "",
-            breweryName: data?.onReviewReceived?.brewery?.name ?? "",
+            id: data?.review?.id?.toString(),
+            subject: data?.review?.subject ?? "",
+            body: data?.review?.body ?? "",
+            breweryName: data?.review?.brewery?.name ?? "",
         };
 
         setReviews((r) => [newReview, ...r]);
