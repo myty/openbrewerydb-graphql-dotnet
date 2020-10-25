@@ -9,6 +9,7 @@ namespace OpenBreweryDB.API.GraphQL.Reviews
     public class ReviewSubscriptions
     {
         [Subscribe]
+        [Topic]
         public Review OnReviewReceived(
             [EventMessage] Review review) =>
             review;

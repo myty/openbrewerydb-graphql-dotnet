@@ -7,6 +7,7 @@ using HotChocolate;
 using HotChocolate.Execution;
 using HotChocolate.Subscriptions;
 using HotChocolate.Types;
+using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.API.GraphQL.Reviews.Types;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data;
@@ -29,20 +30,14 @@ namespace OpenBreweryDB.API.GraphQL.Reviews
         {
             if (string.IsNullOrEmpty(input.Subject))
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(SUBJECT_EMPTY)
-                        .SetCode(nameof(SUBJECT_EMPTY))
-                        .Build());
+                throw ErrorBuilder.New()
+                    .AsGraphQLException(SUBJECT_EMPTY, nameof(SUBJECT_EMPTY));
             }
 
             if (string.IsNullOrEmpty(input.Body))
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(BODY_EMPTY)
-                        .SetCode(nameof(BODY_EMPTY))
-                        .Build());
+                throw ErrorBuilder.New()
+                    .AsGraphQLException(BODY_EMPTY, nameof(BODY_EMPTY));
             }
 
             var review = new Review
@@ -60,18 +55,16 @@ namespace OpenBreweryDB.API.GraphQL.Reviews
 
             if (breweryResult.HasErrorsOrResultIsNull())
             {
-                var error = breweryResult.Errors.First();
-
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(error.Message)
-                        .SetCode(error.Key)
-                        .Build());
+                throw breweryResult.Errors
+                    .AsGraphQLException();
             }
 
             review.Brewery = breweryResult.ResultObject;
 
-            await eventSender.SendAsync("reviews", review, cancellationToken);
+            await eventSender.SendAsync(
+                nameof(ReviewSubscriptions.OnReviewReceived),
+                review,
+                cancellationToken);
 
             return new ReviewPayload(review, input.ClientMutationId);
         }
