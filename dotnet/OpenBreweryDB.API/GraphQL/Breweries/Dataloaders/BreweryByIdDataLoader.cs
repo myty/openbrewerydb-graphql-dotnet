@@ -14,7 +14,7 @@ using ACErrors = AndcultureCode.CSharp.Core.Models.Errors;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries.Dataloaders
 {
-    public class BreweryByIdDataLoader : DataLoaderBase<long, Brewery>
+    public class BreweryByIdDataLoader : BatchDataLoader<long, Brewery>
     {
         private readonly IBreweryConductor _breweryConductor;
 
@@ -26,7 +26,7 @@ namespace OpenBreweryDB.API.GraphQL.Breweries.Dataloaders
             _breweryConductor = breweryConductor ?? throw new ArgumentNullException(nameof(breweryConductor));
         }
 
-        protected override async Task<IReadOnlyList<Result<Brewery>>> FetchAsync(
+        protected override async Task<IReadOnlyDictionary<long, Brewery>> LoadBatchAsync(
             IReadOnlyList<long> keys,
             CancellationToken cancellationToken)
         {
