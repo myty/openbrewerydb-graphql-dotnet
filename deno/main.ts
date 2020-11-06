@@ -18,66 +18,81 @@ app.use(async (ctx, next) => {
 });
 
 const types = gql`
-    type Beer {
-        breweryId: String!
+    type Review {
         id: ID!
-        name: String!
-        type: String!
+        breweryId: ID!
+        userId: ID!
+        title: String!
+        body: String!
     }
-    input CreateBeerInput {
+    input CreateReviewInput {
         clientMutationId: String!
-        name: String!
-        type: String!
-        breweryId: String!
+        breweryId: ID!
+        userId: ID!
+        title: String!
+        body: String!
     }
-    type CreateBeerPayload {
-        beer: Beer!
+    type CreateReviewPayload {
+        review: Review!
         clientMutationId: String!
     }
     type Query {
-        beer(id: ID!): Beer
-        beers: [Beer!]!
+        review(id: ID!): Review
+        reviews(breweryId: ID): [Review!]!
     }
     type Mutation {
-        createBeer(input: CreateBeerInput!): CreateBeerPayload!
+        createReview(input: CreateReviewInput!): CreateReviewPayload!
     }
 `;
 
-type Beer = { id: number; breweryId: string; name: string; type: string };
+type Review = {
+    id: number;
+    breweryId: number;
+    userId: number;
+    title: string;
+    body: string;
+};
 
-const beers: Beer[] = [
+const reviews: Review[] = [
     {
         id: 1,
-        breweryId: "costumes-and-karaoke",
-        name: "Costumes & Karaoke",
-        type: "IPA",
+        breweryId: 1,
+        userId: 1,
+        title: "Test Title",
+        body: "Test body content",
     },
 ];
 
 const resolvers = {
     Query: {
-        beer: (_: unknown, { id }: Beer) => {
-            const beer = beers.find((beer) => beer.id === id);
-            if (!beer) {
+        review: (_: unknown, { id }: Review) => {
+            const review = reviews.find((review) => review.id === id);
+            if (review == null) {
                 throw new Error(
-                    `Beer with the id of '${id}' was not able to be found.`
+                    `Review with the id of '${id}' was not able to be found.`
                 );
             }
-            return beer;
+            return review;
         },
-        beers: () => {
-            return beers;
+        reviews: (_: unknown, { breweryId }: Review) => {
+            if (breweryId == null) {
+                return reviews;
+            }
+
+            return (
+                reviews.filter((review) => review.breweryId === breweryId) ?? []
+            );
         },
     },
     Mutation: {
-        createBeer: (
+        createReview: (
             _: unknown,
             {
-                input: { clientMutationId, name, type, breweryId },
-            }: InputType<Beer>
-        ): PayloadType<{ beer: Beer }> => {
+                input: { clientMutationId, breweryId, title, body, userId },
+            }: InputType<Review>
+        ): PayloadType<{ review: Review }> => {
             const id =
-                beers.reduce((prev, current) => {
+                reviews.reduce((prev, current) => {
                     if (prev > current.id) {
                         return prev;
                     }
@@ -85,17 +100,18 @@ const resolvers = {
                     return current.id;
                 }, 0) + 1;
 
-            const beer: Beer = {
+            const review: Review = {
                 id,
                 breweryId,
-                name,
-                type,
+                title,
+                body,
+                userId,
             };
 
-            beers.push(beer);
+            reviews.push(review);
 
             return {
-                beer,
+                review,
                 clientMutationId,
             };
         },
