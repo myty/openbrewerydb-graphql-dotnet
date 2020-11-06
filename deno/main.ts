@@ -19,7 +19,7 @@ app.use(async (ctx, next) => {
 
 const types = gql`
     type Beer {
-        breweryId: ID!
+        breweryId: String!
         id: ID!
         name: String!
         type: String!
@@ -28,7 +28,7 @@ const types = gql`
         clientMutationId: String!
         name: String!
         type: String!
-        breweryId: ID!
+        breweryId: String!
     }
     type CreateBeerPayload {
         beer: Beer!
@@ -43,12 +43,12 @@ const types = gql`
     }
 `;
 
-type Beer = { id: number; breweryId: number; name: string; type: string };
+type Beer = { id: number; breweryId: string; name: string; type: string };
 
 const beers: Beer[] = [
     {
         id: 1,
-        breweryId: 1,
+        breweryId: "costumes-and-karaoke",
         name: "Costumes & Karaoke",
         type: "IPA",
     },
