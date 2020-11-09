@@ -1,5 +1,6 @@
 import { Application, Router } from "./deps.ts";
 import { applyGraphQL, gql } from "./deps.ts";
+import Review, { IReview } from "./models/review.ts";
 import type { InputType, PayloadType } from "./types.ts";
 
 const app = new Application();
@@ -45,28 +46,10 @@ const types = gql`
     }
 `;
 
-type Review = {
-    id: number;
-    breweryId: number;
-    userId: number;
-    title: string;
-    body: string;
-};
-
-const reviews: Review[] = [
-    {
-        id: 1,
-        breweryId: 1,
-        userId: 1,
-        title: "Test Title",
-        body: "Test body content",
-    },
-];
-
 const resolvers = {
     Query: {
-        review: (_: unknown, { id }: Review) => {
-            const review = reviews.find((review) => review.id === id);
+        review: async (_: unknown, { id }: IReview) => {
+            const review = await Review.find(id);
             if (review == null) {
                 throw new Error(
                     `Review with the id of '${id}' was not able to be found.`
@@ -74,44 +57,35 @@ const resolvers = {
             }
             return review;
         },
-        reviews: (_: unknown, { breweryId }: Review) => {
+        reviews: async (
+            _: unknown,
+            { breweryId }: IReview
+        ): Promise<IReview[]> => {
             if (breweryId == null) {
-                return reviews;
+                return await Review.all();
             }
 
-            return (
-                reviews.filter((review) => review.breweryId === breweryId) ?? []
-            );
+            return await Review.where("breweryId", breweryId).get();
         },
     },
     Mutation: {
-        createReview: (
+        createReview: async (
             _: unknown,
             {
                 input: { clientMutationId, breweryId, title, body, userId },
-            }: InputType<Review>
-        ): PayloadType<{ review: Review }> => {
-            const id =
-                reviews.reduce((prev, current) => {
-                    if (prev > current.id) {
-                        return prev;
-                    }
-
-                    return current.id;
-                }, 0) + 1;
-
-            const review: Review = {
-                id,
-                breweryId,
-                title,
-                body,
-                userId,
-            };
-
-            reviews.push(review);
+            }: InputType<IReview>
+        ): Promise<PayloadType<{ review: IReview }>> => {
+            const reviews: IReview[] = await Review.create([
+                {
+                    breweryId,
+                    title,
+                    body,
+                    userId,
+                },
+            ]);
 
             return {
-                review,
+                review: reviews[0],
                 clientMutationId,
             };
         },
