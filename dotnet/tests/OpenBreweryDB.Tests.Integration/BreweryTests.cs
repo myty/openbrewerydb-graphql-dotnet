@@ -1,74 +1,27 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using HotChocolate;
 using HotChocolate.Execution;
-using HotChocolate.Execution.Configuration;
-using HotChocolate.Types.Pagination;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using OpenBreweryDB.API.GraphQL.Breweries;
-using OpenBreweryDB.API.GraphQL.Reviews;
-using OpenBreweryDB.API.GraphQL.Types;
-using OpenBreweryDB.API.GraphQL.Users;
-using OpenBreweryDB.Core.Conductors.Breweries;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
 using Snapshooter.Xunit;
 using Xunit;
 
 namespace OpenBreweryDB.Tests.Integration
 {
-    public class BreweryTests
+    public class BreweryTests : IClassFixture<IntegrationFixture>
     {
-        readonly IServiceCollection _serviceCollection;
-        readonly IServiceProvider _serviceProvider;
+        private readonly IntegrationFixture _fixture;
 
-        public BreweryTests()
+        public BreweryTests(IntegrationFixture fixture)
         {
-            var services = new ServiceCollection();
-            services.AddScoped<IBreweryConductor, BreweryConductor>();
-            services.AddScoped<IUserConductor, UserConductor>();
-            services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
-            services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
-            services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
-
-            services.AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile));
-            services.AddDbContext<BreweryDbContext>(options => options.UseInMemoryDatabase("Data Source=openbrewery.db"));
-
-            _serviceCollection = services;
-            _serviceProvider = _serviceCollection.BuildServiceProvider();
-        }
-
-        private IRequestExecutorBuilder GetRequestExecutorBuilder()
-        {
-            return _serviceCollection
-                .AddGraphQL()
-                .AddInMemorySubscriptions()
-                .AddQueryType(d => d.Name("Query"))
-                    .AddTypeExtension<BreweryQueries>()
-                .AddMutationType(d => d.Name("Mutation"))
-                    .AddTypeExtension<UserMutations>()
-                    .AddTypeExtension<BreweryMutations>()
-                    .AddTypeExtension<ReviewMutations>()
-                .AddSubscriptionType(d => d.Name("Subscription"))
-                    .AddTypeExtension<ReviewSubscriptions>()
-                .AddType<BreweryType>()
-
-                .EnableRelaySupport()
-                .SetPagingOptions(new PagingOptions
-                {
-                    IncludeTotalCount = true
-                });
+            _fixture = fixture;
         }
 
         [Fact]
         public async Task When_Query_Schema_It_ReturnResults()
         {
-            var schema = await GetRequestExecutorBuilder()
-                .BuildSchemaAsync();
+            var schema = await _fixture.GetSchemaAsync();
 
             schema
                 .ToString()
@@ -79,9 +32,11 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_Breweries_It_ReturnResults()
         {
             // Arrange
-            var executor = await GetRequestExecutorBuilder()
-                .BuildRequestExecutorAsync();
-            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
@@ -131,9 +86,11 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_Node_It_ReturnResults()
         {
             // Arrange
-            var executor = await GetRequestExecutorBuilder()
-                .BuildRequestExecutorAsync();
-            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
@@ -175,9 +132,11 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_BreweryById_It_ReturnResults()
         {
             // Arrange
-            var executor = await GetRequestExecutorBuilder()
-                .BuildRequestExecutorAsync();
-            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
