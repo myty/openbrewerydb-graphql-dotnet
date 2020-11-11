@@ -1,5 +1,5 @@
 subscription OnReviewAdded {
-    onReviewReceived {
+    review: onReviewReceived {
         id
         subject
         body

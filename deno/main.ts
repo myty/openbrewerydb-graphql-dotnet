@@ -1,5 +1,6 @@
 import { Application, Router } from "./deps.ts";
 import { applyGraphQL, gql } from "./deps.ts";
+import Review, { IReview } from "./models/review.ts";
 import type { InputType, PayloadType } from "./types.ts";
 
 const app = new Application();
@@ -18,84 +19,73 @@ app.use(async (ctx, next) => {
 });
 
 const types = gql`
-    type Beer {
-        breweryId: ID!
+    type Review {
         id: ID!
-        name: String!
-        type: String!
-    }
-    input CreateBeerInput {
-        clientMutationId: String!
-        name: String!
-        type: String!
         breweryId: ID!
+        userId: ID!
+        title: String!
+        body: String!
     }
-    type CreateBeerPayload {
-        beer: Beer!
+    input CreateReviewInput {
+        clientMutationId: String!
+        breweryId: ID!
+        userId: ID!
+        title: String!
+        body: String!
+    }
+    type CreateReviewPayload {
+        review: Review!
         clientMutationId: String!
     }
     type Query {
-        beer(id: ID!): Beer
-        beers: [Beer!]!
+        review(id: ID!): Review
+        reviews(breweryId: ID): [Review!]!
     }
     type Mutation {
-        createBeer(input: CreateBeerInput!): CreateBeerPayload!
+        createReview(input: CreateReviewInput!): CreateReviewPayload!
     }
 `;
 
-type Beer = { id: number; breweryId: number; name: string; type: string };
-
-const beers: Beer[] = [
-    {
-        id: 1,
-        breweryId: 1,
-        name: "Costumes & Karaoke",
-        type: "IPA",
-    },
-];
-
 const resolvers = {
     Query: {
-        beer: (_: unknown, { id }: Beer) => {
-            const beer = beers.find((beer) => beer.id === id);
-            if (!beer) {
+        review: async (_: unknown, { id }: IReview) => {
+            const review = await Review.find(id);
+            if (review == null) {
                 throw new Error(
-                    `Beer with the id of '${id}' was not able to be found.`
+                    `Review with the id of '${id}' was not able to be found.`
                 );
             }
-            return beer;
+            return review;
         },
-        beers: () => {
-            return beers;
+        reviews: async (
+            _: unknown,
+            { breweryId }: IReview
+        ): Promise<IReview[]> => {
+            if (breweryId == null) {
+                return await Review.all();
+            }
+
+            return await Review.where("breweryId", breweryId).get();
         },
     },
     Mutation: {
-        createBeer: (
+        createReview: async (
             _: unknown,
             {
-                input: { clientMutationId, name, type, breweryId },
-            }: InputType<Beer>
-        ): PayloadType<{ beer: Beer }> => {
-            const id =
-                beers.reduce((prev, current) => {
-                    if (prev > current.id) {
-                        return prev;
-                    }
-
-                    return current.id;
-                }, 0) + 1;
-
-            const beer: Beer = {
-                id,
-                breweryId,
-                name,
-                type,
-            };
-
-            beers.push(beer);
+                input: { clientMutationId, breweryId, title, body, userId },
+            }: InputType<IReview>
+        ): Promise<PayloadType<{ review: IReview }>> => {
+            const reviews: IReview[] = await Review.create([
+                {
+                    breweryId,
+                    title,
+                    body,
+                    userId,
+                },
+            ]);
 
             return {
-                beer,
+                review: reviews[0],
                 clientMutationId,
             };
         },
