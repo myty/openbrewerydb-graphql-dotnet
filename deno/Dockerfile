@@ -39,4 +39,4 @@ ADD . .
 # Compile the main app so that it doesn't need to be compiled each startup/entry.
 RUN deno cache main.ts -c tsconfig.json --unstable
 
-CMD ["deno", "run", "--allow-net", "main.ts"]
+CMD ["deno", "run", "--allow-net", "--unstable", "main.ts"]

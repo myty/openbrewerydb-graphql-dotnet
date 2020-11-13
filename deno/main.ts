@@ -2,6 +2,10 @@ import { Application, Router } from "./deps.ts";
 import { applyGraphQL, gql } from "./deps.ts";
 import Review, { IReview } from "./models/review.ts";
 import type { InputType, PayloadType } from "./types.ts";
+import { db } from "./db.ts";
+
+db.link([Review]);
+await db.sync();
 
 const app = new Application();
 
@@ -75,17 +79,15 @@ const resolvers = {
                 input: { clientMutationId, breweryId, title, body, userId },
             }: InputType<IReview>
         ): Promise<PayloadType<{ review: IReview }>> => {
-            const reviews: IReview[] = await Review.create([
-                {
-                    breweryId,
-                    title,
-                    body,
-                    userId,
-                },
-            ]);
+            const review: IReview = await Review.create({
+                body,
+                breweryId,
+                title,
+                userId,
+            });
 
             return {
-                review: reviews[0],
+                review: review,
                 clientMutationId,
             };
         },
