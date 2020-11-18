@@ -46,7 +46,7 @@ namespace OpenBreweryDB.Data
                 .ToTable("tags");
             tagEntityBuilder
                 .HasIndex(b => b.Name)
-                .HasName("Index_Tags_On_Name");
+                .HasDatabaseName("Index_Tags_On_Name");
 
             // Entity: User
             modelBuilder.Entity<User>()
