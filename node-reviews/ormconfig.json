@@ -1,0 +1,18 @@
+{
+    "type": "postgres",
+    "host": "reviews-db",
+    "port": 5432,
+    "username": "unicorn_user",
+    "password": "magical_password",
+    "database": "rainbow_database",
+    "synchronize": false,
+    "logging": false,
+    "entities": ["dist/entity/**/*.js"],
+    "migrations": ["dist/migration/**/*.js"],
+    "subscribers": ["dist/subscriber/**/*.js"],
+    "cli": {
+        "entitiesDir": "src/entity",
+        "migrationsDir": "src/migration",
+        "subscribersDir": "src/subscriber"
+    }
+}

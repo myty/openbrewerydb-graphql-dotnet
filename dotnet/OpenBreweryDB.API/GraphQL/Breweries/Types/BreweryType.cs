@@ -4,7 +4,6 @@ using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using OpenBreweryDB.API.GraphQL.Breweries.Dataloaders;
 using OpenBreweryDB.API.GraphQL.Resolvers;
-using OpenBreweryDB.API.GraphQL.Reviews.Dataloaders;
 using OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.GraphQL.Types
@@ -89,15 +88,6 @@ namespace OpenBreweryDB.API.GraphQL.Types
                 });
 
             descriptor.Field(t => t.BreweryReviews).Ignore();
-
-            descriptor.Field("reviews")
-                .Resolver(ctx =>
-                {
-                    var brewery = ctx.Parent<Brewery>();
-
-                    return ctx.DataLoader<ReviewsByBreweryIdDataLoader>()
-                        .LoadAsync(brewery.Id, ctx.RequestAborted);
-                });
 
             descriptor.Field(t => t.UpdatedAt)
                 .Type<NonNullType<DateTimeType>>()

@@ -12,16 +12,17 @@
         "build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
-        "deno-cache": "deno cache ./deno/main.ts -c ./deno/tsconfig.json --unstable",
-        "deno-build": "yarn deno-cache && docker-compose build",
-        "deno-up": "yarn deno-build && docker-compose up -d",
-        "deno-down": "docker-compose down",
+        "docker-build": "docker-compose build",
+        "docker-up": "yarn docker-build && docker-compose up -d",
+        "docker-down": "docker-compose down",
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
         "dotnet-test": "dotnet test dotnet/tests/OpenBreweryDB.Tests.Integration/OpenBreweryDB.Tests.Integration.csproj",
         "install-all": "cd ./frontend && yarn install",
         "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
-        "frontend": "cd ./frontend && yarn start"
+        "frontend": "cd ./frontend && yarn start",
+        "review-migrations:run": "docker exec -it openbrewerydb-graphql-dotnet_node-graphql_1 npm run migration:run",
+        "review-migrations:revert": "docker exec -it openbrewerydb-graphql-dotnet_node-graphql_1 npm run migration:run"
     }
 }

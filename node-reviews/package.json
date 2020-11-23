@@ -1,0 +1,49 @@
+{
+    "name": "reviews",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "commonjs",
+    "exports": {
+        "node": {
+            "import": "./index.mjs",
+            "require": "./index.js"
+        },
+        "default": "./index.mjs"
+    },
+    "scripts": {
+        "build": "npm run build-ts && npm run lint",
+        "build-ts": "npx tsc",
+        "debug": "npm run build && npm run watch-debug",
+        "lint": "npx tsc --noEmit && npx eslint \"**/*.{js,ts}\" --quiet --fix",
+        "migration:run": "npx ts-node ./node_modules/typeorm/cli.js migration:run",
+        "migration:revert": "npx ts-node ./node_modules/typeorm/cli.js migration:revert",
+        "serve": "npm run build-ts && node dist/server.js",
+        "serve-debug": "npx nodemon --inspect dist/server.js",
+        "start": "npx ts-node src/index.ts",
+        "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npx tsc -w\" \"npx nodemon dist/server.js\"",
+        "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
+        "watch-node": "npx nodemon dist/server.js",
+        "watch-ts": "npx tsc -w"
+    },
+    "author": "Michael Tyson",
+    "license": "ISC",
+    "dependencies": {
+        "apollo-server": "^2.19.0",
+        "graphql": "^15.4.0",
+        "pg": "^8.4.0",
+        "reflect-metadata": "^0.1.10",
+        "typeorm": "0.2.29"
+    },
+    "devDependencies": {
+        "@types/graphql": "^14.5.0",
+        "@types/node": "^14.14.9",
+        "@typescript-eslint/eslint-plugin": "^4.8.1",
+        "@typescript-eslint/parser": "^4.8.1",
+        "concurrently": "^5.3.0",
+        "eslint": "^7.14.0",
+        "nodemon": "^2.0.6",
+        "ts-node": "9.0.0",
+        "typescript": "^4.1.2"
+    }
+}

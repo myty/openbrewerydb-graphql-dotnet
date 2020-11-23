@@ -25,6 +25,7 @@ namespace OpenBreweryDB.API
 {
     public partial class Startup
     {
+        public const string Reviews = "reviews";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -43,6 +44,8 @@ namespace OpenBreweryDB.API
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
 
+            services.AddHttpClient(Reviews, c => c.BaseAddress = new Uri("http://localhost:1993/graphql"));
+
             services
                 .AddGraphQLServer()
                 .AddInMemorySubscriptions()
@@ -50,12 +53,14 @@ namespace OpenBreweryDB.API
                 .AddDataLoader<BreweryByIdDataLoader>()
                 .AddQueryType(d => d.Name("Query"))
                     .AddTypeExtension<BreweryQueries>()
+                    .AddRemoteSchema(Reviews, ignoreRootTypes: true)
+                    .AddTypeExtensionsFromFile("./GraphQL/Stitching.graphql")
                 .AddMutationType(d => d.Name("Mutation"))
                     .AddTypeExtension<UserMutations>()
                     .AddTypeExtension<BreweryMutations>()
-                    .AddTypeExtension<ReviewMutations>()
-                .AddSubscriptionType(d => d.Name("Subscription"))
-                    .AddTypeExtension<ReviewSubscriptions>()
+                // .AddTypeExtension<ReviewMutations>()
+                // .AddSubscriptionType(d => d.Name("Subscription"))
+                //     .AddTypeExtension<ReviewSubscriptions>()
                 .AddType<BreweryType>()
 
                 .EnableRelaySupport()
@@ -65,25 +70,6 @@ namespace OpenBreweryDB.API
                 })
                 .AddAuthorization()
                 .AddApolloTracing();
-
-            // TODO: Add JWT user authentication and authorization
-            // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
-            // {
-            //     if (context.User.Identity.IsAuthenticated)
-            //     {
-            //         var userId =
-            //             Guid.Parse(context.User.FindFirst(WellKnownClaimTypes.UserId).Value);
-
-            //         builder.AddProperty(
-            //             "currentUserId",
-            //             userId);
-            //         builder.AddProperty(
-            //             "currentUserEmail",
-            //             context.User.FindFirst(ClaimTypes.Email).Value);
-
-            //         await Task.Yield();
-            //     }
-            // });
 
             services.Configure<KestrelServerOptions>(options =>
             {

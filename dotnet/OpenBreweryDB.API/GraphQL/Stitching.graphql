@@ -1,0 +1,15 @@
+extend type Brewery {
+    reviews: [Review]
+        @delegate(schema: "reviews", path: "reviews(breweryId: $fields:id)")
+}
+
+extend type Query {
+    reviews(breweryId: ID): [Review!]! @delegate(schema: "reviews")
+}
+
+extend type Mutation {
+    createReview(input: CreateReviewInput!): CreateReviewPayload!
+        @delegate(schema: "reviews")
+    deleteReview(input: DeleteReviewInput!): DeleteReviewPayload!
+        @delegate(schema: "reviews")
+}

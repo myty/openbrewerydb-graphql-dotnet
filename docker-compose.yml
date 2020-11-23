@@ -1,15 +1,21 @@
 version: "3.8"
 services:
-    deno-graphql:
+    node-graphql:
         build:
-            context: ./deno
+            context: ./node-reviews
             dockerfile: Dockerfile
         ports:
             - "1993:1993"
-    database:
+        volumes:
+            - ./node-reviews/src:/app/src
+        depends_on:
+            - reviews-db
+    reviews-db:
         image: "postgres" # use latest official postgres version
         env_file:
             - database.env # configure postgres
+        ports:
+            - "5432:5432"
         volumes:
             - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
 volumes:
