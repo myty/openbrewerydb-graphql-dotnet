@@ -14,6 +14,7 @@
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
         "docker-build": "docker-compose build",
         "docker-up": "yarn docker-build && docker-compose up -d",
+        "docker-restart": "yarn docker-down && yarn docker-up",
         "docker-down": "docker-compose down",
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
