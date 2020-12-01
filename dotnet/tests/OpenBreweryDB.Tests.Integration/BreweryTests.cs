@@ -130,6 +130,65 @@ namespace OpenBreweryDB.Tests.Integration
         }
 
         [Fact]
+        public async Task When_Query_Node_Twice_It_Returns_Two_Results()
+        {
+            // Arrange
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
+            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id-2",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+
+            await dataContext.SaveChangesAsync();
+
+            // Act
+            var result = await executor.ExecuteAsync(@"
+                query Brewery($id: ID!, $id2: ID!) {
+                    brewery1: node(id: $id) {
+                        id
+                        ...BreweryBaseFields
+                    }
+                    brewery2: node(id: $id2) {
+                        id
+                        ...BreweryBaseFields
+                    }
+                }
+
+                fragment BreweryBaseFields on Brewery {
+                    name
+                    brewery_id
+                    street
+                    city
+                    state
+                    country
+                    website_url
+                    brewery_type
+                }
+            ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" }, { "id2", "QnJld2VyeQpsMg==" } });
+
+            // Assert
+            result.MatchSnapshot();
+        }
+
+        [Fact]
         public async Task When_Query_BreweryById_It_ReturnResults()
         {
             // Arrange
