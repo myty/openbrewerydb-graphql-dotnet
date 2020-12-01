@@ -30,41 +30,13 @@ namespace OpenBreweryDB.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IBreweryConductor, BreweryConductor>();
-            services.AddScoped<IUserConductor, UserConductor>();
-            services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
-            services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
-            services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
-
+            services.AddOpenBreweryServices();
             services.AddLogging(builder => builder.AddConsole());
             services.AddHttpContextAccessor();
-
             services.AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile));
             services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
             services.AddControllers();
-
-            services
-                .AddGraphQLServer()
-                .AddInMemorySubscriptions()
-                .AddErrorFilter<ResultErrorFilter>()
-                .AddDataLoader<BreweryByIdDataLoader>()
-                .AddQueryType(d => d.Name("Query"))
-                    .AddTypeExtension<BreweryQueries>()
-                .AddMutationType(d => d.Name("Mutation"))
-                    .AddTypeExtension<UserMutations>()
-                    .AddTypeExtension<BreweryMutations>()
-                    .AddTypeExtension<ReviewMutations>()
-                .AddSubscriptionType(d => d.Name("Subscription"))
-                    .AddTypeExtension<ReviewSubscriptions>()
-                .AddType<BreweryType>()
-
-                .EnableRelaySupport()
-                .SetPagingOptions(new PagingOptions
-                {
-                    IncludeTotalCount = true
-                })
-                .AddAuthorization()
-                .AddApolloTracing();
+            services.AddOpenBreweryGraphQLServer();
 
             // TODO: Add JWT user authentication and authorization
             // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
