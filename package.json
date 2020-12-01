@@ -18,6 +18,7 @@
         "dotnet-test": "dotnet test dotnet/tests/OpenBreweryDB.Tests.Integration/OpenBreweryDB.Tests.Integration.csproj",
         "install-all": "cd ./frontend && yarn install",
         "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
-        "frontend": "cd ./frontend && yarn start"
+        "frontend": "cd ./frontend && yarn start",
+        "test": "cd ./dotnet/ && dotnet test"
     }
 }
