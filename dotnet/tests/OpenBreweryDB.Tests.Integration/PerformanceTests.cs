@@ -25,21 +25,13 @@ namespace OpenBreweryDB.Tests.Integration
         [Fact]
         public async Task When_Query_Schema_It_Is_Performant()
         {
-            // Arrange
-            var iterations = 10;
-            var timer = new Stopwatch();
-
-            // Act
-            timer.Start();
-            for (var i = 0; i < iterations; i++)
+            // Arrange & Act
+            var avgElapsedTime = await _fixture.PerformanceTest(async () =>
             {
                 _ = await _fixture.GetSchemaAsync();
-            }
-            timer.Stop();
+            });
 
             // Assert
-            var avgElapsedTime = timer.ElapsedMilliseconds / iterations;
-
             _output.WriteLine($"Avg. Elapsed Time: {avgElapsedTime}ms.");
             Assert.True(avgElapsedTime < 100);
         }
@@ -48,9 +40,6 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_Breweries_It_Is_Performant()
         {
             // Arrange
-            var timer = new Stopwatch();
-            timer.Start();
-
             using var scope = _fixture.ServiceProvider.CreateScope();
 
             var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
@@ -76,40 +65,38 @@ namespace OpenBreweryDB.Tests.Integration
             _ = await dataContext.SaveChangesAsync();
 
             // Act
-            var executor = await _fixture.GetRequestExecutorAsync();
-            _ = await executor.ExecuteAsync(@"
-                query Breweries {
-                    breweries(first: 1) {
-                        edges {
-                            cursor
-                            node {
-                                name
-                                brewery_id
-                                id
-                                street
-                                city
-                                state
-                                brewery_type
+            var avgElapsedTime = await _fixture.PerformanceTest(async () =>
+            {
+                var executor = await _fixture.GetRequestExecutorAsync();
+                _ = await executor.ExecuteAsync(@"
+                    query Breweries {
+                        breweries(first: 1) {
+                            edges {
+                                cursor
+                                node {
+                                    name
+                                    brewery_id
+                                    id
+                                    street
+                                    city
+                                    state
+                                    brewery_type
+                                }
                             }
                         }
                     }
-                }
-            ");
-
-            timer.Stop();
+                ");
+            }, 5);
 
             // Assert
-            _output.WriteLine($"Elapsed Time: {timer.ElapsedMilliseconds}ms.");
-            Assert.True(timer.ElapsedMilliseconds < 700);
+            _output.WriteLine($"Avg. Elapsed Time: {avgElapsedTime}ms.");
+            Assert.True(avgElapsedTime < 100);
         }
 
         [Fact]
         public async Task When_Query_Node_It_Is_Performant()
         {
             // Arrange
-            var timer = new Stopwatch();
-            timer.Start();
-
             using var scope = _fixture.ServiceProvider.CreateScope();
 
             var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
@@ -126,41 +113,39 @@ namespace OpenBreweryDB.Tests.Integration
             await dataContext.SaveChangesAsync();
 
             // Act
-            var executor = await _fixture.GetRequestExecutorAsync();
-            _ = await executor.ExecuteAsync(@"
-                query Brewery($id: ID!) {
-                    brewery: node(id: $id) {
-                        id
-                        ...BreweryBaseFields
+            var avgElapsedTime = await _fixture.PerformanceTest(async () =>
+            {
+                var executor = await _fixture.GetRequestExecutorAsync();
+                _ = await executor.ExecuteAsync(@"
+                    query Brewery($id: ID!) {
+                        brewery: node(id: $id) {
+                            id
+                            ...BreweryBaseFields
+                        }
                     }
-                }
 
-                fragment BreweryBaseFields on Brewery {
-                    name
-                    brewery_id
-                    street
-                    city
-                    state
-                    country
-                    website_url
-                    brewery_type
-                }
-            ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" } });
-
-            timer.Stop();
+                    fragment BreweryBaseFields on Brewery {
+                        name
+                        brewery_id
+                        street
+                        city
+                        state
+                        country
+                        website_url
+                        brewery_type
+                    }
+                ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" } });
+            }, 5);
 
             // Assert
-            _output.WriteLine($"Elapsed Time: {timer.ElapsedMilliseconds}ms.");
-            Assert.True(timer.ElapsedMilliseconds < 100);
+            _output.WriteLine($"Elapsed Time: {avgElapsedTime}ms.");
+            Assert.True(avgElapsedTime < 100);
         }
 
         [Fact]
         public async Task When_Query_BreweryById_It_Is_Performant()
         {
             // Arrange
-            var timer = new Stopwatch();
-            timer.Start();
-
             using var scope = _fixture.ServiceProvider.CreateScope();
 
             var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
@@ -177,32 +162,33 @@ namespace OpenBreweryDB.Tests.Integration
             await dataContext.SaveChangesAsync();
 
             // Act
-            var executor = await _fixture.GetRequestExecutorAsync();
-            _ = await executor.ExecuteAsync(@"
-                query BreweryById($brewery_id: String!) {
-                    brewery: breweryById(brewery_id: $brewery_id) {
-                        id
-                        ...BreweryBaseFields
+            var avgElapsedTime = await _fixture.PerformanceTest(async () =>
+            {
+                var executor = await _fixture.GetRequestExecutorAsync();
+                _ = await executor.ExecuteAsync(@"
+                    query BreweryById($brewery_id: String!) {
+                        brewery: breweryById(brewery_id: $brewery_id) {
+                            id
+                            ...BreweryBaseFields
+                        }
                     }
-                }
 
-                fragment BreweryBaseFields on Brewery {
-                    name
-                    brewery_id
-                    street
-                    city
-                    state
-                    country
-                    website_url
-                    brewery_type
-                }
-            ", new Dictionary<string, object> { { "brewery_id", "test-id" } });
-
-            timer.Stop();
+                    fragment BreweryBaseFields on Brewery {
+                        name
+                        brewery_id
+                        street
+                        city
+                        state
+                        country
+                        website_url
+                        brewery_type
+                    }
+                ", new Dictionary<string, object> { { "brewery_id", "test-id" } });
+            }, 5);
 
             // Assert
-            _output.WriteLine($"Elapsed Time: {timer.ElapsedMilliseconds}ms.");
-            Assert.True(timer.ElapsedMilliseconds < 700);
+            _output.WriteLine($"Elapsed Time: {avgElapsedTime}ms.");
+            Assert.True(avgElapsedTime < 100);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotChocolate;
@@ -63,6 +64,20 @@ namespace OpenBreweryDB.Tests.Integration
             }
 
             return _graphQLRequestExecutor;
+        }
+
+        public async Task<long> PerformanceTest(Func<Task> performanceActionTest, int iterations = 10)
+        {
+            var timer = new Stopwatch();
+
+            timer.Start();
+            for (var i = 0; i < iterations; i++)
+            {
+                await performanceActionTest();
+            }
+            timer.Stop();
+
+            return timer.ElapsedMilliseconds / iterations;
         }
     }
 }
