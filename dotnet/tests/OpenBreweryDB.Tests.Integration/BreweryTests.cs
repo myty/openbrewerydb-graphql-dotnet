@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotChocolate.Execution;
+using HotChocolate.Types.Relay;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenBreweryDB.Data;
@@ -12,11 +14,14 @@ namespace OpenBreweryDB.Tests.Integration
     public class BreweryTests : IClassFixture<IntegrationFixture>
     {
         private readonly IntegrationFixture _fixture;
+        private readonly IIdSerializer _idSerializer;
 
         public BreweryTests(IntegrationFixture fixture)
         {
             _fixture = fixture;
-            _fixture.Database.RestoreSnapshot();
+            _fixture.ResetDatabase();
+
+            _idSerializer = new IdSerializer();
         }
 
         [Fact]
@@ -50,7 +55,7 @@ namespace OpenBreweryDB.Tests.Integration
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
-                BreweryId = "test-id",
+                BreweryId = "test-id-2",
                 Street = "123 Any St.",
                 City = "My Town",
                 State = "PA",
@@ -92,7 +97,7 @@ namespace OpenBreweryDB.Tests.Integration
             using var scope = _fixture.ServiceProvider.CreateScope();
 
             var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
-            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            var entry = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
                 BreweryId = "test-id",
@@ -105,6 +110,10 @@ namespace OpenBreweryDB.Tests.Integration
             await dataContext.SaveChangesAsync();
 
             // Act
+            var queryParams = new Dictionary<string, object> {
+                { "id", SerializedId(entry.Entity, (e) => e.Id) },
+            };
+
             var result = await executor.ExecuteAsync(@"
                 query Brewery($id: ID!) {
                     brewery: node(id: $id) {
@@ -123,7 +132,7 @@ namespace OpenBreweryDB.Tests.Integration
                     website_url
                     brewery_type
                 }
-            ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" } });
+            ", queryParams);
 
             // Assert
             result.MatchSnapshot();
@@ -138,7 +147,7 @@ namespace OpenBreweryDB.Tests.Integration
             using var scope = _fixture.ServiceProvider.CreateScope();
 
             var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
-            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            var entity1 = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
                 BreweryId = "test-id",
@@ -147,7 +156,7 @@ namespace OpenBreweryDB.Tests.Integration
                 State = "PA",
                 BreweryType = "micro"
             });
-            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            var entity2 = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
                 BreweryId = "test-id-2",
@@ -160,6 +169,11 @@ namespace OpenBreweryDB.Tests.Integration
             await dataContext.SaveChangesAsync();
 
             // Act
+            var queryParams = new Dictionary<string, object> {
+                { "id", SerializedId(entity1.Entity, (e) => e.Id) },
+                { "id2", SerializedId(entity2.Entity, (e) => e.Id) }
+            };
+
             var result = await executor.ExecuteAsync(@"
                 query Brewery($id: ID!, $id2: ID!) {
                     brewery1: node(id: $id) {
@@ -182,7 +196,7 @@ namespace OpenBreweryDB.Tests.Integration
                     website_url
                     brewery_type
                 }
-            ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" }, { "id2", "QnJld2VyeQpsMg==" } });
+            ", queryParams);
 
             // Assert
             result.MatchSnapshot();
@@ -233,5 +247,11 @@ namespace OpenBreweryDB.Tests.Integration
             // Assert
             result.MatchSnapshot();
         }
+
+        private string SerializedId<T, V>(string typeName, T entity, Func<T, V> idValueFunc) =>
+            _idSerializer.Serialize(null, typeName, idValueFunc(entity));
+
+        private string SerializedId<T, V>(T entity, Func<T, V> idValueFunc) =>
+            SerializedId(typeof(T).Name, entity, idValueFunc);
     }
 }

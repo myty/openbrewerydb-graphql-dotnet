@@ -1,5 +1,6 @@
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types.Pagination;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenBreweryDB.API.GraphQL.Breweries;
 using OpenBreweryDB.API.GraphQL.Reviews;
@@ -8,6 +9,7 @@ using OpenBreweryDB.API.GraphQL.Users;
 using OpenBreweryDB.Core.Conductors.Breweries;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
+using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API.Extensions
 {
@@ -20,24 +22,37 @@ namespace OpenBreweryDB.API.Extensions
             .AddScoped<IBreweryOrderConductor, BreweryOrderConductor>()
             .AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
 
-        public static IRequestExecutorBuilder AddOpenBreweryGraphQLServer(this IServiceCollection services) => services
-            .AddGraphQL()
-            .AddInMemorySubscriptions()
-            .AddQueryType(d => d.Name("Query"))
+        public static IRequestExecutorBuilder AddOpenBreweryGraphQLServer(this IServiceCollection services, bool seedData = false)
+        {
+            var requestExecutorBuilder = services
+                .AddGraphQL()
+                .AddInMemorySubscriptions()
+                .AddQueryType(d => d.Name("Query"))
                 .AddTypeExtension<BreweryQueries>()
-            .AddMutationType(d => d.Name("Mutation"))
+                .AddMutationType(d => d.Name("Mutation"))
                 .AddTypeExtension<UserMutations>()
                 .AddTypeExtension<BreweryMutations>()
                 .AddTypeExtension<ReviewMutations>()
-            .AddSubscriptionType(d => d.Name("Subscription"))
+                .AddSubscriptionType(d => d.Name("Subscription"))
                 .AddTypeExtension<ReviewSubscriptions>()
-            .AddType<BreweryType>()
-            .EnableRelaySupport()
-            .SetPagingOptions(new PagingOptions
+                .AddType<BreweryType>()
+                .EnableRelaySupport()
+                .SetPagingOptions(new PagingOptions
+                {
+                    IncludeTotalCount = true
+                })
+                .AddAuthorization()
+                .AddApolloTracing();
+
+            if (seedData)
             {
-                IncludeTotalCount = true
-            })
-            .AddAuthorization()
-            .AddApolloTracing();
+                requestExecutorBuilder.ConfigureSchemaAsync(async (services, builder, ct) =>
+                {
+                    await services.SeedDatabaseAsync("https://github.com/openbrewerydb/openbrewerydb/raw/master/breweries.csv");
+                });
+            }
+
+            return requestExecutorBuilder;
+        }
     }
 }

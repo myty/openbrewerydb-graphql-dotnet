@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using HotChocolate.Execution;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +16,10 @@ namespace OpenBreweryDB.Tests.Integration
 
         public PerformanceTests(IntegrationFixture fixture, ITestOutputHelper output)
         {
-            _output = output;
             _fixture = fixture;
-            _fixture.Database.RestoreSnapshot();
+            _output = output;
+
+            _fixture.ResetDatabase();
         }
 
         [Fact]

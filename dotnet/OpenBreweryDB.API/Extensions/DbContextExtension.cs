@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FlatFiles;
 using FlatFiles.TypeMapping;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -35,17 +34,17 @@ namespace OpenBreweryDB.API.Extensions
             return !total.Except(applied).Any();
         }
 
-        public static void EnsureSeeded(this BreweryDbContext context, Action generator)
+        public static async Task EnsureSeededAsync(this BreweryDbContext context, Func<Task> generator)
         {
             if (context.Breweries.Any() == false)
             {
-                generator();
+                await generator();
             }
         }
 
-        public static void SeedDatabase(this IApplicationBuilder app, string csvUrl)
+        public static async Task SeedDatabaseAsync(this IServiceProvider serviceProvider, string csvUrl)
         {
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var serviceScope = serviceProvider.CreateScope())
             {
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
                 var dbContext = serviceScope.ServiceProvider.GetService<BreweryDbContext>();
@@ -69,13 +68,13 @@ namespace OpenBreweryDB.API.Extensions
                     }, "Passw0rd!");
                 }
 
-                dbContext.EnsureSeeded(() =>
+                await dbContext.EnsureSeededAsync(async () =>
                 {
                     logger.LogInformation($"Downloading: {csvUrl}");
 
                     using (var file = new FileDownload(csvUrl))
                     {
-                        var streamReader = file.StreamReader().ConfigureAwait(false).GetAwaiter().GetResult();
+                        var streamReader = await file.StreamReader();
 
                         var breweryImportEntities = GetBreweries(streamReader)
                             .Select(b =>

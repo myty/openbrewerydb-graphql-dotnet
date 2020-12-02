@@ -1,42 +1,44 @@
-using System;
 using AutoMapper;
-using HotChocolate;
-using HotChocolate.Types.Pagination;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.API.GraphQL.Breweries;
-using OpenBreweryDB.API.GraphQL.Breweries.Dataloaders;
-using OpenBreweryDB.API.GraphQL.Errors;
-using OpenBreweryDB.API.GraphQL.Reviews;
-using OpenBreweryDB.API.GraphQL.Types;
-using OpenBreweryDB.API.GraphQL.Users;
-using OpenBreweryDB.Core.Conductors.Breweries;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API
 {
     public partial class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOpenBreweryServices();
-            services.AddLogging(builder => builder.AddConsole());
-            services.AddHttpContextAccessor();
-            services.AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile));
-            services.AddDbContext<BreweryDbContext>(options => options.UseSqlite("Data Source=openbrewery.db"));
-            services.AddControllers();
-            services.AddOpenBreweryGraphQLServer();
+            services.AddOpenBreweryServices()
+                .AddLogging(builder => builder.AddConsole())
+                .AddHttpContextAccessor()
+                .AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile))
+                .AddDbContext<BreweryDbContext>(options =>
+                {
+                    var connectionString = Configuration["Database:ConnectionString"];
+                    options.UseSqlServer(connectionString);
+                })
+                .AddControllers();
+
+            services
+                .AddOpenBreweryGraphQLServer();
 
             // TODO: Add JWT user authentication and authorization
             // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
@@ -92,15 +94,12 @@ namespace OpenBreweryDB.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
                 endpoints.MapGraphQL();
+                endpoints.MapControllers();
             });
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
-            // Parse and seed the db
-            app.SeedDatabase("https://github.com/openbrewerydb/openbrewerydb/raw/master/breweries.csv");
         }
     }
 }
