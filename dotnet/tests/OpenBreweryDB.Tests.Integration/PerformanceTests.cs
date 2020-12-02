@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using HotChocolate.Execution;
 using Microsoft.EntityFrameworkCore;
@@ -188,7 +188,7 @@ namespace OpenBreweryDB.Tests.Integration
 
             // Assert
             _output.WriteLine($"Elapsed Time: {avgElapsedTime}ms.");
-            Assert.True(avgElapsedTime < 100);
+            Assert.True(avgElapsedTime < 500);
         }
     }
 }

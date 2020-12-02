@@ -23,7 +23,7 @@ namespace OpenBreweryDB.Tests.Integration
 
         public IntegrationFixture()
         {
-            Database = ThrowawayDatabase.FromLocalInstance(".");
+            Database = ThrowawayDatabase.Create("sa", "passw0rd!", ".");
 
             _serviceCollection = new ServiceCollection()
                 .AddOpenBreweryServices()
