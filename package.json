@@ -23,7 +23,9 @@
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
-        "dotnet-test": "npx ts-node ./scripts/dotnet-test.ts db -s && dotnet test ./dotnet",
+        "dotnet-test": "yarn db-start && dotnet test ./dotnet",
+        "db-start": "npx ts-node ./scripts/dotnet-test.ts db -s",
+        "db-stop": "npx ts-node ./scripts/dotnet-test.ts db -t",
         "install-all": "cd ./frontend && yarn install",
         "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
         "frontend": "cd ./frontend && yarn start"
