@@ -1,6 +1,6 @@
-import spawn from "cross-spawn";
 import { Docker, Options } from "docker-cli-js";
 import path from "path";
+import { program } from "commander";
 
 var currentWorkingDirectory = path.join(__dirname, "..");
 
@@ -14,18 +14,23 @@ const docker = new Docker(dockerOptions);
 
 const containerName = "sql-test-db";
 
-const runSqlDockerContainer = async (): Promise<any> => {
-    await shutdownSqlDockerContainer();
+const findDockerContainer = async (name: string) => {
+    const data = await docker.command("ps");
+    const containerList: any[] = data.containerList ?? [];
+    return containerList.find((c) => c.names === name);
+};
 
-    return await docker.command(
-        `run --name ${containerName} -e ACCEPT_EULA=Y -e SA_PASSWORD=passw0rd! -p 9433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
-    );
+const runSqlDockerContainer = async (): Promise<void> => {
+    const dockerContainer = await findDockerContainer(containerName);
+    if (dockerContainer == null) {
+        await docker.command(
+            `run --name ${containerName} -e ACCEPT_EULA=Y -e SA_PASSWORD=passw0rd! -p 9433:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
+        );
+    }
 };
 
 const shutdownSqlDockerContainer = async (): Promise<void> => {
-    const data = await docker.command("ps");
-    const containerList: any[] = data.containerList ?? [];
-    const foundContainer = containerList.find((c) => c.names === containerName);
+    const foundContainer = await findDockerContainer(containerName);
 
     if (foundContainer != null) {
         await docker.command(`stop ${containerName}`);
@@ -33,16 +38,25 @@ const shutdownSqlDockerContainer = async (): Promise<void> => {
     }
 };
 
+program
+    .command("db")
+    .option("-s, --start", "Starts the database container")
+    .option("-t, --stop", "Starts the database container")
+    .action(async (cmdObj) => {
+        if (cmdObj.start) {
+            console.log("Starting docker container...");
+            await runSqlDockerContainer();
+            return;
+        }
+
+        if (cmdObj.stop) {
+            console.log("Shutting down docker container...");
+            await shutdownSqlDockerContainer();
+        }
+    });
+
 const run = async () => {
-    console.log("Starting docker container");
-    const dockerResult = await runSqlDockerContainer();
-    console.log(dockerResult.containerId);
-
-    console.log("Running tests");
-    spawn.sync("dotnet", ["test", "./dotnet/"], { stdio: "inherit" });
-
-    console.log("Shutting down docker container");
-    await shutdownSqlDockerContainer();
+    await program.parseAsync(process.argv);
 };
 
 run();

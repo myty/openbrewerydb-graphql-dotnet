@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using HotChocolate;
@@ -26,7 +25,7 @@ namespace OpenBreweryDB.Tests.Integration
 
         public IntegrationFixture()
         {
-            Database = ThrowawayDatabase.Create("Server=.,9433;User Id=sa;Password=passw0rd!;");
+            Database = CreateDatabase("Server=.,9433;User Id=sa;Password=passw0rd!;");
 
             _serviceCollection = new ServiceCollection()
                 .AddOpenBreweryServices()
@@ -39,6 +38,29 @@ namespace OpenBreweryDB.Tests.Integration
             ServiceProvider = _serviceCollection.BuildServiceProvider();
 
             _ = ServiceProvider.GetService<BreweryDbContext>().Database.EnsureCreated();
+        }
+
+        static ThrowawayDatabase CreateDatabase(string connectionString)
+        {
+            for (var i = 0; i < 5; i++)
+            {
+                try
+                {
+                    Thread.Sleep(i * 2000);
+                    return ThrowawayDatabase.Create(connectionString);
+                }
+                catch (Exception ex)
+                {
+                    // If the exception was a timeout error (-2), continue
+                    if (ex is SqlException sqlException && sqlException.Number == -2)
+                    {
+                        Console.WriteLine($"SQL Timeout. Will retry in {(i + 1) * 2000} seconds. connectionstring='{connectionString}'");
+                        continue;
+                    }
+                }
+            }
+
+            throw new Exception("Could not connect to database.");
         }
 
         public void Dispose() => Database.Dispose();
