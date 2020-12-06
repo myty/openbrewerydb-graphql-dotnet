@@ -1,74 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using HotChocolate;
 using HotChocolate.Execution;
-using HotChocolate.Execution.Configuration;
-using HotChocolate.Types.Pagination;
+using HotChocolate.Types.Relay;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using OpenBreweryDB.API.GraphQL.Breweries;
-using OpenBreweryDB.API.GraphQL.Reviews;
-using OpenBreweryDB.API.GraphQL.Types;
-using OpenBreweryDB.API.GraphQL.Users;
-using OpenBreweryDB.Core.Conductors.Breweries;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
-using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
 using Snapshooter.Xunit;
 using Xunit;
 
 namespace OpenBreweryDB.Tests.Integration
 {
-    public class BreweryTests
+    public class BreweryTests : IClassFixture<IntegrationFixture>
     {
-        readonly IServiceCollection _serviceCollection;
-        readonly IServiceProvider _serviceProvider;
+        private readonly IntegrationFixture _fixture;
+        private readonly IIdSerializer _idSerializer;
 
-        public BreweryTests()
+        public BreweryTests(IntegrationFixture fixture)
         {
-            var services = new ServiceCollection();
-            services.AddScoped<IBreweryConductor, BreweryConductor>();
-            services.AddScoped<IUserConductor, UserConductor>();
-            services.AddScoped<IBreweryFilterConductor, BreweryFilterConductor>();
-            services.AddScoped<IBreweryOrderConductor, BreweryOrderConductor>();
-            services.AddScoped<IBreweryValidationConductor, BreweryValidationConductor>();
+            _fixture = fixture;
+            _fixture.ResetDatabase();
 
-            services.AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile));
-            services.AddDbContext<BreweryDbContext>(options => options.UseInMemoryDatabase("Data Source=openbrewery.db"));
-
-            _serviceCollection = services;
-            _serviceProvider = _serviceCollection.BuildServiceProvider();
-        }
-
-        private IRequestExecutorBuilder GetRequestExecutorBuilder()
-        {
-            return _serviceCollection
-                .AddGraphQL()
-                .AddInMemorySubscriptions()
-                .AddQueryType(d => d.Name("Query"))
-                    .AddTypeExtension<BreweryQueries>()
-                .AddMutationType(d => d.Name("Mutation"))
-                    .AddTypeExtension<UserMutations>()
-                    .AddTypeExtension<BreweryMutations>()
-                    .AddTypeExtension<ReviewMutations>()
-                .AddSubscriptionType(d => d.Name("Subscription"))
-                    .AddTypeExtension<ReviewSubscriptions>()
-                .AddType<BreweryType>()
-
-                .EnableRelaySupport()
-                .SetPagingOptions(new PagingOptions
-                {
-                    IncludeTotalCount = true
-                });
+            _idSerializer = new IdSerializer();
         }
 
         [Fact]
         public async Task When_Query_Schema_It_ReturnResults()
         {
-            var schema = await GetRequestExecutorBuilder()
-                .BuildSchemaAsync();
+            var schema = await _fixture.GetSchemaAsync();
 
             schema
                 .ToString()
@@ -79,9 +38,11 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_Breweries_It_ReturnResults()
         {
             // Arrange
-            var executor = await GetRequestExecutorBuilder()
-                .BuildRequestExecutorAsync();
-            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
@@ -94,7 +55,7 @@ namespace OpenBreweryDB.Tests.Integration
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
-                BreweryId = "test-id",
+                BreweryId = "test-id-2",
                 Street = "123 Any St.",
                 City = "My Town",
                 State = "PA",
@@ -131,10 +92,12 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_Node_It_ReturnResults()
         {
             // Arrange
-            var executor = await GetRequestExecutorBuilder()
-                .BuildRequestExecutorAsync();
-            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
-            _ = dataContext.Breweries.Add(new Data.Models.Brewery
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
+            var entry = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
                 BreweryId = "test-id",
@@ -147,6 +110,10 @@ namespace OpenBreweryDB.Tests.Integration
             await dataContext.SaveChangesAsync();
 
             // Act
+            var queryParams = new Dictionary<string, object> {
+                { "id", SerializedId(entry.Entity, (e) => e.Id) },
+            };
+
             var result = await executor.ExecuteAsync(@"
                 query Brewery($id: ID!) {
                     brewery: node(id: $id) {
@@ -165,7 +132,71 @@ namespace OpenBreweryDB.Tests.Integration
                     website_url
                     brewery_type
                 }
-            ", new Dictionary<string, object> { { "id", "QnJld2VyeQpsMQ==" } });
+            ", queryParams);
+
+            // Assert
+            result.MatchSnapshot();
+        }
+
+        [Fact]
+        public async Task When_Query_Node_Twice_It_Returns_Two_Results()
+        {
+            // Arrange
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
+            var entity1 = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+            var entity2 = dataContext.Breweries.Add(new Data.Models.Brewery
+            {
+                Name = "Test",
+                BreweryId = "test-id-2",
+                Street = "123 Any St.",
+                City = "My Town",
+                State = "PA",
+                BreweryType = "micro"
+            });
+
+            await dataContext.SaveChangesAsync();
+
+            // Act
+            var queryParams = new Dictionary<string, object> {
+                { "id", SerializedId(entity1.Entity, (e) => e.Id) },
+                { "id2", SerializedId(entity2.Entity, (e) => e.Id) }
+            };
+
+            var result = await executor.ExecuteAsync(@"
+                query Brewery($id: ID!, $id2: ID!) {
+                    brewery1: node(id: $id) {
+                        id
+                        ...BreweryBaseFields
+                    }
+                    brewery2: node(id: $id2) {
+                        id
+                        ...BreweryBaseFields
+                    }
+                }
+
+                fragment BreweryBaseFields on Brewery {
+                    name
+                    brewery_id
+                    street
+                    city
+                    state
+                    country
+                    website_url
+                    brewery_type
+                }
+            ", queryParams);
 
             // Assert
             result.MatchSnapshot();
@@ -175,9 +206,11 @@ namespace OpenBreweryDB.Tests.Integration
         public async Task When_Query_BreweryById_It_ReturnResults()
         {
             // Arrange
-            var executor = await GetRequestExecutorBuilder()
-                .BuildRequestExecutorAsync();
-            var dataContext = _serviceProvider.GetService<BreweryDbContext>();
+            var executor = await _fixture.GetRequestExecutorAsync();
+
+            using var scope = _fixture.ServiceProvider.CreateScope();
+
+            var dataContext = scope.ServiceProvider.GetService<BreweryDbContext>();
             _ = dataContext.Breweries.Add(new Data.Models.Brewery
             {
                 Name = "Test",
@@ -214,5 +247,11 @@ namespace OpenBreweryDB.Tests.Integration
             // Assert
             result.MatchSnapshot();
         }
+
+        private string SerializedId<T, V>(string typeName, T entity, Func<T, V> idValueFunc) =>
+            _idSerializer.Serialize(null, typeName, idValueFunc(entity));
+
+        private string SerializedId<T, V>(T entity, Func<T, V> idValueFunc) =>
+            SerializedId(typeof(T).Name, entity, idValueFunc);
     }
 }

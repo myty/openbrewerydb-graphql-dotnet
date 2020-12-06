@@ -2,7 +2,15 @@
     "author": "Michael Tyson",
     "description": "Demo OpenBreweryDB .NET Core GraphQL Implementation",
     "devDependencies": {
-        "prettier": "^2.1.2"
+        "@types/cross-spawn": "^6.0.2",
+        "@types/node": "^14.14.10",
+        "commander": "^6.2.0",
+        "docker-cli-js": "^2.7.1",
+        "nodemon": "^2.0.6",
+        "prettier": "^2.1.2",
+        "ts-node": "^9.0.0",
+        "tsconfig-paths": "^3.9.0",
+        "typescript": "^4.1.2"
     },
     "name": "openbrewerydb-qraphql",
     "private": true,
@@ -15,7 +23,9 @@
         "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
-        "dotnet-test": "dotnet test dotnet/tests/OpenBreweryDB.Tests.Integration/OpenBreweryDB.Tests.Integration.csproj",
+        "dotnet-test": "yarn db-start && dotnet test ./dotnet",
+        "db-start": "npx ts-node ./scripts/dotnet-test.ts db -s",
+        "db-stop": "npx ts-node ./scripts/dotnet-test.ts db -t",
         "install-all": "cd ./frontend && yarn install",
         "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
         "frontend": "cd ./frontend && yarn start"

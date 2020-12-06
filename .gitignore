@@ -440,3 +440,5 @@ frontend/src/styles/index.css
 frontend/src/tailwind.output.css
 
 frontend/src/graphql/autogenerate/
+
+dotnet/tests/OpenBreweryDB.Tests.Integration/__snapshots__/__mismatch__
