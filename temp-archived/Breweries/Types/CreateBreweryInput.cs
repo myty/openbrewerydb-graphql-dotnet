@@ -4,21 +4,14 @@ using OpenBreweryDB.API.GraphQL.Common;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
-    public class CreateBreweryInput : ClientMutationBase
+    public class CreateBreweryInput : MutationInputGraphType
     {
-        public CreateBreweryInput(
-            string name,
-            string breweryType,
-            string clientMutationId)
-            : base(clientMutationId)
+        public CreateBreweryInput()
         {
-            Name = name;
-            BreweryType = breweryType;
-        }
+            Name = nameof(CreateBreweryInput);
 
-        [GraphQLDescription("Name of brewery")]
-        [GraphQLNonNullType]
-        public string Name { get; }
+            Field<StringGraphType>("name").Description("Name of brewery");
+        }
 
         [GraphQLName("brewery_type")]
         [GraphQLDescription("Type of Brewery")]

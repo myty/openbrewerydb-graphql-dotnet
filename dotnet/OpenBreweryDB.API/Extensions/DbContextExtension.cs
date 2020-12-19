@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper;
 using FlatFiles;
 using FlatFiles.TypeMapping;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Core.Conductors.Users.Interfaces;
 using OpenBreweryDB.Data;
 using OpenBreweryDB.Data.Models.Users;
+using Dto = OpenBreweryDB.Core.Models;
 using Entity = OpenBreweryDB.Data.Models;
 
 namespace OpenBreweryDB.API.Extensions
@@ -47,6 +49,7 @@ namespace OpenBreweryDB.API.Extensions
             using (var serviceScope = serviceProvider.CreateScope())
             {
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<Startup>>();
+                var autoMapper = serviceScope.ServiceProvider.GetService<IMapper>();
                 var dbContext = serviceScope.ServiceProvider.GetService<BreweryDbContext>();
                 var breweryConductor = serviceScope.ServiceProvider.GetService<IBreweryConductor>();
                 var userConductor = serviceScope.ServiceProvider.GetService<IUserConductor>();
@@ -76,23 +79,19 @@ namespace OpenBreweryDB.API.Extensions
                     {
                         var streamReader = await file.StreamReader();
 
-                        var breweryImportEntities = GetBreweries(streamReader)
-                            .Select(b =>
-                            {
-                                b.Id = default;
-                                b.BreweryTags = new List<Entity.BreweryTag>();
-
-                                return b;
-                            })
+                        var breweryImportEntities = autoMapper
+                            .Map<IEnumerable<Entity.Brewery>>(
+                                GetBreweries(streamReader)
+                            )
                             .ToList();
 
                         logger.LogInformation($"Importing {breweryImportEntities.Count} breweries");
 
                         var results = breweryConductor.BulkCreate(breweryImportEntities);
 
-                        static IEnumerable<Entity.Brewery> GetBreweries(StreamReader breweriesStreamReader)
+                        static IEnumerable<Dto.Brewery> GetBreweries(StreamReader breweriesStreamReader)
                         {
-                            var mapper = SeparatedValueTypeMapper.Define<Entity.Brewery>();
+                            var mapper = SeparatedValueTypeMapper.Define<Dto.Brewery>();
                             mapper.Property(c => c.BreweryId).ColumnName("id").OnParsing((IColumnContext context, string input) =>
                             {
                                 var dashedString = new string(input.Select(i =>
@@ -107,8 +106,11 @@ namespace OpenBreweryDB.API.Extensions
                             mapper.Property(c => c.Name).ColumnName("name");
                             mapper.Property(c => c.BreweryType).ColumnName("brewery_type");
                             mapper.Property(c => c.Street).ColumnName("street");
+                            mapper.Property(c => c.Address2).ColumnName("address_2");
+                            mapper.Property(c => c.Address3).ColumnName("address_3");
                             mapper.Property(c => c.City).ColumnName("city");
                             mapper.Property(c => c.State).ColumnName("state");
+                            mapper.Property(c => c.CountyProvince).ColumnName("county_province");
                             mapper.Property(c => c.PostalCode).ColumnName("postal_code");
                             mapper.Property(c => c.WebsiteURL).ColumnName("website_url");
                             mapper.Property(c => c.Phone).ColumnName("phone");
@@ -117,6 +119,16 @@ namespace OpenBreweryDB.API.Extensions
                             mapper.Property(c => c.Country).ColumnName("country");
                             mapper.Property(c => c.Longitude).ColumnName("longitude");
                             mapper.Property(c => c.Latitude).ColumnName("latitude");
+
+                            mapper.CustomMapping(new StringColumn("tags"))
+                                .WithReader((b, c) =>
+                                {
+                                    b.Tags = c?.ToString()?.Split(',') ?? Enumerable.Empty<string>();
+                                })
+                                .WithWriter(c =>
+                                {
+                                    return string.Join(",", c.Tags);
+                                });
 
                             var options = new SeparatedValueOptions() { IsFirstRecordSchema = true };
 

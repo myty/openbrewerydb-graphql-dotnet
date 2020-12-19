@@ -1,8 +1,6 @@
 using System.Linq;
 using System.Threading;
 using AutoMapper;
-using HotChocolate;
-using HotChocolate.Execution;
 using OpenBreweryDB.API.GraphQL.Common;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using DTO = OpenBreweryDB.Core.Models;

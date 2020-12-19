@@ -2,21 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Edge",
-            "request": "launch",
-            "type": "pwa-msedge",
-            "url": "http://localhost:3000/",
-            "pathMapping": {
-                "/": "${workspaceRoot}/frontend/public/",
-                "/app/src/": "${workspaceRoot}/frontend/src/",
-            },
-        },
-        {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/dotnet/OpenBreweryDB.API/bin/Debug/netcoreapp3.0/OpenBreweryDB.API.dll",
+            "program": "${workspaceFolder}/dotnet/OpenBreweryDB.API/bin/Debug/netcoreapp3.1/OpenBreweryDB.API.dll",
             "args": [],
             "cwd": "${workspaceFolder}/dotnet/OpenBreweryDB.API",
             "stopAtEntry": false,
@@ -28,7 +18,17 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+                "/Views": "${workspaceFolder}/dotnet/OpenBreweryDB.API/Views"
+            }
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "pwa-msedge",
+            "url": "http://localhost:3000/",
+            "pathMapping": {
+                "/": "${workspaceRoot}/frontend/public/",
+                "/app/src/": "${workspaceRoot}/frontend/src/"
             }
         },
         {

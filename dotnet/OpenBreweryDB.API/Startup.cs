@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
-using OpenBreweryDB.API.GraphQL.Breweries;
+using OpenBreweryDB.API.GraphQL;
 using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API
@@ -26,45 +26,17 @@ namespace OpenBreweryDB.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOpenBreweryServices()
+            services
+                .AddOpenBreweryServices()
                 .AddLogging(builder => builder.AddConsole())
                 .AddHttpContextAccessor()
-                .AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile))
+                .AddAutoMapper(typeof(BreweryProfile))
                 .AddDbContext<BreweryDbContext>(options =>
                 {
                     var connectionString = Configuration["Database:ConnectionString"];
                     options.UseSqlServer(connectionString);
                 })
                 .AddControllers();
-
-            services
-                .AddOpenBreweryGraphQLServer();
-
-            // TODO: Add JWT user authentication and authorization
-            // services.AddQueryRequestInterceptor(async (context, builder, ct) =>
-            // {
-            //     if (context.User.Identity.IsAuthenticated)
-            //     {
-            //         var userId =
-            //             Guid.Parse(context.User.FindFirst(WellKnownClaimTypes.UserId).Value);
-
-            //         builder.AddProperty(
-            //             "currentUserId",
-            //             userId);
-            //         builder.AddProperty(
-            //             "currentUserEmail",
-            //             context.User.FindFirst(ClaimTypes.Email).Value);
-
-            //         await Task.Yield();
-            //     }
-            // });
-
-            services.Configure<KestrelServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
-
-            ConfigureAuthenticationServices(services);
 
             services.AddCors(options =>
             {
@@ -75,6 +47,19 @@ namespace OpenBreweryDB.API
                         .AllowAnyMethod();
                 });
             });
+
+            services.AddGraphQL();
+            services.AddOpenBrewerySchema();
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +67,12 @@ namespace OpenBreweryDB.API
         {
             if (env.IsDevelopment())
             {
+                app.ApplicationServices
+                    .SeedDatabaseAsync("https://github.com/openbrewerydb/openbrewerydb/raw/master/breweries.csv")
+                    .ConfigureAwait(false)
+                    .GetAwaiter()
+                    .GetResult();
+
                 app.UseDeveloperExceptionPage();
             }
 
@@ -94,9 +85,10 @@ namespace OpenBreweryDB.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGraphQL();
                 endpoints.MapControllers();
             });
+
+            app.UseGraphQL();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

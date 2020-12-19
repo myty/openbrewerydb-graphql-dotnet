@@ -3,14 +3,12 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using HotChocolate;
 using HotChocolate.Execution;
 using HotChocolate.Execution.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenBreweryDB.API.Extensions;
-using OpenBreweryDB.API.GraphQL.Breweries;
 using OpenBreweryDB.Data;
 using ThrowawayDb;
 
@@ -29,11 +27,11 @@ namespace OpenBreweryDB.Tests.Integration
 
             _serviceCollection = new ServiceCollection()
                 .AddOpenBreweryServices()
-                .AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile))
+                // .AddAutoMapper(typeof(BreweryProfile), typeof(BreweryMappingProfile))
                 .AddDbContext<BreweryDbContext>(options => options.UseSqlServer(Database.ConnectionString));
 
-            _requestExecutorBuilder = _serviceCollection
-                .AddOpenBreweryGraphQLServer();
+            // _requestExecutorBuilder = _serviceCollection
+            //     .AddOpenBreweryGraphQLServer();
 
             ServiceProvider = _serviceCollection.BuildServiceProvider();
 
