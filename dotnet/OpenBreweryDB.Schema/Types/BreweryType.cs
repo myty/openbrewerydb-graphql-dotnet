@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GraphQL;
 using GraphQL.Types;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Schema.Resolvers;
@@ -72,9 +73,10 @@ namespace OpenBreweryDB.Schema.Types
 
             // TODO: reviews
 
-            Field<NonNullGraphType<ListGraphType<BreweryType>>, IEnumerable<Brewery>>()
+            Connection<BreweryType>()
                 .Name("nearby")
-                .Resolve(breweryResolver.ResolveNearbyBreweries);
+                .Argument<IntGraphType, int>("within", "search radius in miles", 25)
+                .ResolveQueryableResult(breweryResolver.ResolveNearbyBreweries);
         }
     }
 }

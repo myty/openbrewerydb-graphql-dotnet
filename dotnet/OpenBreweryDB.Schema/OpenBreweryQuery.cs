@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+using AndcultureCode.CSharp.Core.Extensions;
+using GraphQL;
 using GraphQL.Types;
-using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Schema.Resolvers;
 using OpenBreweryDB.Schema.Types;
 
@@ -12,10 +12,12 @@ namespace OpenBreweryDB.Schema
         {
             Name = "Query";
 
-            Field<NonNullGraphType<ListGraphType<BreweryType>>, IEnumerable<Brewery>>()
+            Connection<BreweryType>()
                 .Name("breweries")
-                .Argument<IntGraphType>("take")
-                .Resolve(breweryResolver.ResolveBreweries);
+                .Resolve(context => breweryResolver
+                    .ResolveBreweries(context)
+                    .ThrowIfAnyErrors()
+                    .GetPagedResults(context));
         }
     }
 }

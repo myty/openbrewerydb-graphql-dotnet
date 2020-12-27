@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using System.Linq;
-using AndcultureCode.CSharp.Core.Extensions;
 using AndcultureCode.CSharp.Core.Interfaces;
+using AndcultureCode.CSharp.Core.Models.Errors;
 using GraphQL;
+using GraphQL.Builders;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
 
@@ -17,37 +17,32 @@ namespace OpenBreweryDB.Schema.Resolvers
             _breweryConductor = breweryConductor;
         }
 
-        public IEnumerable<Brewery> ResolveBreweries(IResolveFieldContext context) => _breweryConductor
+        public IResult<IQueryable<Brewery>> ResolveBreweries(IResolveFieldContext context) => _breweryConductor
             .FindAllQueryable()
             .Include(
                 nameof(Brewery.BreweryTags),
-                context.FieldSetContains("tag_list"))
-            .Take(
-                context.GetArgument("take", 25))
-            .ThrowIfAnyErrorsOrResultIsNull()
-            .ResultObject;
+                context.ContainsField("tag_list"));
 
-        public IEnumerable<Brewery> ResolveNearbyBreweries(IResolveFieldContext<Brewery> context)
+        public IResult<IQueryable<Brewery>> ResolveNearbyBreweries(IResolveConnectionContext<Brewery> context)
         {
             if (context.Source.Latitude.HasValue &&
                 context.Source.Longitude.HasValue)
             {
                 var latitude = context.Source.Latitude.Value;
                 var longitude = context.Source.Longitude.Value;
+                var within = context.GetArgument("within", 25);
 
                 return _breweryConductor
                     .FindAllByLocation(
                         latitude,
                         longitude,
-                        context.GetArgument("within", 25))
+                        within)
                     .Include(
                         nameof(Brewery.BreweryTags),
-                        context.FieldSetContains("tag_list"))
-                    .ThrowIfAnyErrorsOrResultIsNull()
-                    .ResultObject;
+                        context.ContainsField("tag_list"));
             }
 
-            return Enumerable.Empty<Brewery>();
+            return new Result<IQueryable<Brewery>>(Enumerable.Empty<Brewery>().AsQueryable());
         }
     }
 }

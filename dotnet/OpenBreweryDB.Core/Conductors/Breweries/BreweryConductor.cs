@@ -134,6 +134,10 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
             {
                 query = orderBy(query);
             }
+            else
+            {
+                query = query.OrderBy(e => e.Id);
+            }
 
             if (!string.IsNullOrEmpty(includeProperties?.Trim()))
             {
