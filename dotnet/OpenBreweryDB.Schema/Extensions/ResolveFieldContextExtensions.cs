@@ -46,7 +46,12 @@ namespace GraphQL
             {
                 context.Errors.AddRange(
                     result.Errors.Select(err =>
-                        new ExecutionError(err.Message)));
+                        new ExecutionError(err.Message)
+                        {
+                            Code = err.Key
+                        }
+                    )
+                );
 
                 return null;
             }

@@ -33,6 +33,17 @@ namespace OpenBreweryDB.Schema.Resolvers
             _validationConductor = validationConductor;
         }
 
+        public IResult<Brewery> ResolveBreweryByExternalId(IResolveFieldContext context)
+        {
+            return _breweryConductor
+                .FindAllQueryable(
+                    filter: BuildBreweryFilterByExternalId(context))
+                .Include(
+                    nameof(Brewery.BreweryTags),
+                    context.ContainsField("tag_list"))
+                .FirstOrDefault();
+        }
+
         public IResult<IQueryable<Brewery>> ResolveBreweries(IResolveFieldContext context)
         {
             if (ValidationFails(context, out var errorResult))
@@ -103,6 +114,18 @@ namespace OpenBreweryDB.Schema.Resolvers
             }
 
             return filter;
+        }
+
+        private Expression<Func<Brewery, bool>> BuildBreweryFilterByExternalId(IResolveFieldContext context)
+        {
+            var breweryId = context.GetArgument<string>("external_id");
+
+            if (!string.IsNullOrEmpty(breweryId?.Trim()))
+            {
+                return (b) => b.BreweryId == breweryId;
+            }
+
+            return (b) => false;
         }
 
         private Expression<Func<Brewery, bool>> BuildMainFilter(IResolveFieldContext context)

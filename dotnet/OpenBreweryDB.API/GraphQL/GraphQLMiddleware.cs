@@ -8,21 +8,26 @@ using GraphQL.DataLoader;
 using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Utilities;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace OpenBreweryDB.API.GraphQL
 {
     public class GraphQLMiddleware
     {
+        private readonly IDocumentExecuter _executer;
         private readonly RequestDelegate _next;
         private readonly GraphQLOptions _options;
-        private readonly IDocumentExecuter _executer;
         private readonly IDocumentWriter _writer;
 
         public GraphQLMiddleware(
             RequestDelegate next,
-            IDocumentWriter writer, IDocumentExecuter executer, IOptions<GraphQLOptions> options)
+            IDocumentWriter writer,
+            IDocumentExecuter executer,
+            IOptions<GraphQLOptions> options)
         {
             _next = next;
             _options = options.Value;
@@ -51,6 +56,8 @@ namespace OpenBreweryDB.API.GraphQL
         {
             var request = await Deserialize(context);
 
+            var isDevelopment = serviceProvider.GetRequiredService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
+
             var result = await _executer.ExecuteAsync(_ =>
             {
                 _.Schema = schema;
@@ -60,9 +67,23 @@ namespace OpenBreweryDB.API.GraphQL
                 _.Inputs = request?.Variables.ToInputs();
                 _.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
                 _.UserContext = _options.BuildUserContext?.Invoke(context);
-                _.EnableMetrics = _options.EnableMetrics;
-                if (_options.EnableMetrics)
+                _.ThrowOnUnhandledException = isDevelopment;
+                _.EnableMetrics = isDevelopment;
+
+                if (isDevelopment)
                 {
+                    _.UnhandledExceptionDelegate = context =>
+                    {
+                        try
+                        {
+                            var log = serviceProvider.GetRequiredService<ILogger<GraphQLMiddleware>>();
+                            log.LogError(context.Exception, "Unhandled GraphQL Exception");
+                        }
+                        catch
+                        {
+                        }
+                    };
+
                     _.FieldMiddleware.Use<InstrumentFieldsMiddleware>();
                 }
             });

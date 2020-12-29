@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddOpenBrewerySchema(this IServiceCollection services) => services
             .AddScoped<ISchema, OpenBrewerySchema>()
             .AddScoped<OpenBreweryQuery>()
+            .AddScoped<NodeInterface>()
             .AddScoped<BreweryType>()
             .AddScoped<TagResolver>()
             .AddScoped<BreweryResolver>()

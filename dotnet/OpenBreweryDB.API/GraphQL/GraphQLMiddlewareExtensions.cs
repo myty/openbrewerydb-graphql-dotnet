@@ -1,6 +1,7 @@
 using System;
 using GraphQL;
 using GraphQL.DataLoader;
+using GraphQL.Instrumentation;
 using GraphQL.Server.Ui.Altair;
 using GraphQL.SystemTextJson;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,7 @@ namespace OpenBreweryDB.API.GraphQL
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
             services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
             services.AddSingleton<DataLoaderDocumentListener>();
+            services.AddSingleton<InstrumentFieldsMiddleware>();
 
             if (action != null)
             {

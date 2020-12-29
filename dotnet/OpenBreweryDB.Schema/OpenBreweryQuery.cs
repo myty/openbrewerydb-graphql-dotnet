@@ -1,6 +1,6 @@
-using AndcultureCode.CSharp.Core.Extensions;
 using GraphQL;
 using GraphQL.Types;
+using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Schema.Resolvers;
 using OpenBreweryDB.Schema.Types;
 
@@ -8,10 +8,30 @@ namespace OpenBreweryDB.Schema
 {
     public class OpenBreweryQuery : ObjectGraphType
     {
+        private readonly BreweryResolver _breweryResolver;
+
         public OpenBreweryQuery(BreweryResolver breweryResolver)
         {
+            _breweryResolver = breweryResolver;
+
             Name = "Query";
 
+            Field<NodeInterface>()
+                .Name("node")
+                .Description("Fetches an object given its global Id")
+                .Argument<NonNullGraphType<IdGraphType>>("id", "The global Id of the object")
+                .Resolve(context =>
+                {
+                    return context.GetByGlobalId();
+                });
+
+            BreweryConnection();
+            GetBreweryByExternalId();
+            NearbyBreweryConnection();
+        }
+
+        private void BreweryConnection()
+        {
             Connection<BreweryType>()
                 .Name("breweries")
                 .Argument<StringGraphType>("brewery_id", "filter by brewery id")
@@ -22,16 +42,29 @@ namespace OpenBreweryDB.Schema
                 .Argument<StringGraphType>("search", "general search")
                 .Argument<ListGraphType<StringGraphType>>("sort", "sort by")
                 .Argument<ListGraphType<StringGraphType>>("tags", "filter by tags")
-                .Resolve(context => breweryResolver
+                .Resolve(context => _breweryResolver
                     .ResolveBreweries(context)
                     .ToConnection(context));
+        }
 
+        private void GetBreweryByExternalId()
+        {
+            Field<BreweryType, Brewery>()
+                .Name("breweryByExternalId")
+                .Argument<StringGraphType>("external_id", "filter by external id")
+                .Resolve(context => _breweryResolver
+                    .ResolveBreweryByExternalId(context)
+                    .ResultObject);
+        }
+
+        private void NearbyBreweryConnection()
+        {
             Connection<BreweryType>()
                 .Name("nearbyBreweries")
                 .Argument<DecimalGraphType>("latitude", "latitude")
                 .Argument<DecimalGraphType>("longitude", "longitude")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
-                .Resolve(context => breweryResolver
+                .Resolve(context => _breweryResolver
                     .ResolveNearbyBreweries(context)
                     .ToConnection(context));
         }

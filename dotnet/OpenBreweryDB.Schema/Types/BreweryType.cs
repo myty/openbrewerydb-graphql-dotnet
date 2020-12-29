@@ -1,27 +1,36 @@
 using System.Collections.Generic;
+using AndcultureCode.CSharp.Core.Extensions;
 using GraphQL;
 using GraphQL.Types;
+using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Schema.Resolvers;
 
 namespace OpenBreweryDB.Schema.Types
 {
-    public class BreweryType : ObjectGraphType<Brewery>
+    public class BreweryType : NodeGraphType<Brewery, long>
     {
+        private readonly IBreweryConductor _breweryConductor;
+
         public BreweryType(
+            IBreweryConductor breweryConductor,
             BreweryResolver breweryResolver,
             TagResolver tagResolver)
         {
+            _breweryConductor = breweryConductor;
+
             Name = "Brewery";
             Description = "A brewery of beer";
+
+            Id(d => d.Id);
 
             Field(d => d.BreweryType, nullable: false)
                 .Name("brewery_type")
                 .Description("Type of Brewery");
 
             Field(t => t.BreweryId, nullable: false)
-                .Name("brewery_id")
-                .Description("Friendly id for Brewery");
+                .Name("external_id")
+                .Description("External identifier for Brewery");
 
             Field(t => t.City)
                 .Name("city")
@@ -78,5 +87,12 @@ namespace OpenBreweryDB.Schema.Types
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
                 .ResolveQueryableResult(breweryResolver.ResolveNearbyBreweries);
         }
+
+        public override long ParseId(string id) => long.Parse(id);
+
+        public override Brewery GetById(long id) => _breweryConductor
+            .Find(id)
+            .ThrowIfAnyErrors()
+            .ResultObject;
     }
 }
