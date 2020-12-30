@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Types;
 using GraphQL.Types.Relay;
@@ -10,16 +11,12 @@ namespace OpenBreweryDB.Schema.Types
 {
     public interface IRelayNode
     {
-        object ConvertToId(string id);
-
-        object GetById(object id);
+        object GetById(string id);
     }
 
-    public interface IRelayNode<TId, TOut>
+    public interface IRelayNode<out TOut>
     {
-        TId ParseId(string id);
-
-        TOut GetById(TId id);
+        TOut GetById(string id);
     }
 
     public static class Node
@@ -32,26 +29,23 @@ namespace OpenBreweryDB.Schema.Types
             var parts = StringUtils.Base64Decode(globalId).Split(':');
             var type = parts.FirstOrDefault();
             var node = (IRelayNode)context.Schema.FindType(type);
-            var id = node.ConvertToId(parts.LastOrDefault());
 
-            return node.GetById(id);
+            return node.GetById(parts.LastOrDefault());
         }
     }
 
-    public abstract class NodeGraphType<T, TId> : ObjectGraphType<T>, IRelayNode<TId, T>, IRelayNode
+    public abstract class NodeGraphType<T, TOut> : ObjectGraphType<T>, IRelayNode<TOut>, IRelayNode
     {
-        public static Type Edge => typeof(EdgeType<NodeGraphType<T, TId>>);
+        public static Type Edge => typeof(EdgeType<NodeGraphType<T, TOut>>);
 
-        public static Type Connection => typeof(ConnectionType<NodeGraphType<T, TId>>);
+        public static Type Connection => typeof(ConnectionType<NodeGraphType<T, TOut>>);
 
         protected NodeGraphType()
         {
             Interface<NodeInterface>();
         }
 
-        public abstract TId ParseId(string id);
-
-        public abstract T GetById(TId id);
+        public abstract TOut GetById(string id);
 
         public FieldType Id<TReturnType>(Expression<Func<T, TReturnType>> expression)
         {
@@ -100,16 +94,18 @@ namespace OpenBreweryDB.Schema.Types
             return field;
         }
 
-        object IRelayNode.ConvertToId(string id) => ParseId(id);
+        object IRelayNode.GetById(string id) => GetById(id);
+    }
 
-        public object GetById(object id)
-        {
-            if (!(this is IRelayNode<TId, T> node) || !(id is TId nodeId))
-            {
-                throw new InvalidOperationException();
-            }
+    public abstract class NodeGraphType<TSource> : NodeGraphType<TSource, TSource>
+    {
+    }
 
-            return node.GetById(nodeId);
-        }
+    public abstract class NodeGraphType : NodeGraphType<object>
+    {
+    }
+
+    public abstract class AsyncNodeGraphType<TSource> : NodeGraphType<TSource, Task<TSource>>
+    {
     }
 }

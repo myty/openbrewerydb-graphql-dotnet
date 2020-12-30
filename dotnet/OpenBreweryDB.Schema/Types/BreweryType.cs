@@ -1,23 +1,28 @@
 using System.Collections.Generic;
-using AndcultureCode.CSharp.Core.Extensions;
+using System.Threading.Tasks;
 using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Types;
-using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
+using OpenBreweryDB.Schema.Dataloaders;
 using OpenBreweryDB.Schema.Resolvers;
 
 namespace OpenBreweryDB.Schema.Types
 {
-    public class BreweryType : NodeGraphType<Brewery, long>
+    public class BreweryType : AsyncNodeGraphType<Brewery>
     {
-        private readonly IBreweryConductor _breweryConductor;
+        private readonly IDataLoader<long, Brewery> _loader;
 
         public BreweryType(
-            IBreweryConductor breweryConductor,
             BreweryResolver breweryResolver,
-            TagResolver tagResolver)
+            TagResolver tagResolver,
+            IDataLoaderContextAccessor accessor,
+            BreweryDataloader breweryDataloader)
         {
-            _breweryConductor = breweryConductor;
+            _loader = accessor.Context
+                .GetOrAddBatchLoader<long, Brewery>(
+                    "GetTagById",
+                    breweryDataloader.GetBreweryById);
 
             Name = "Brewery";
             Description = "A brewery of beer";
@@ -80,19 +85,15 @@ namespace OpenBreweryDB.Schema.Types
                 .Name("tag_list")
                 .ResolveAsync(tagResolver.ResolveTagListAsync);
 
-            // TODO: reviews
-
             Connection<BreweryType>()
                 .Name("nearby")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
                 .ResolveQueryableResult(breweryResolver.ResolveNearbyBreweries);
+
+            // TODO: reviews
         }
 
-        public override long ParseId(string id) => long.Parse(id);
-
-        public override Brewery GetById(long id) => _breweryConductor
-            .Find(id)
-            .ThrowIfAnyErrors()
-            .ResultObject;
+        public override async Task<Brewery> GetById(string id) =>
+            await _loader.LoadAsync(long.Parse(id)).GetResultAsync();
     }
 }
