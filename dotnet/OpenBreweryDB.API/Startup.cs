@@ -31,7 +31,7 @@ namespace OpenBreweryDB.API
                 .AddLogging(builder => builder.AddConsole())
                 .AddHttpContextAccessor()
                 .AddAutoMapper(typeof(BreweryProfile))
-                .AddDbContext<BreweryDbContext>(options =>
+                .AddDbContextPool<BreweryDbContext>(options =>
                 {
                     var connectionString = Configuration["Database:ConnectionString"];
                     options.UseSqlServer(connectionString);
@@ -50,16 +50,6 @@ namespace OpenBreweryDB.API
 
             services.AddGraphQL();
             services.AddOpenBrewerySchema();
-
-            services.Configure<KestrelServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
-
-            services.Configure<IISServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

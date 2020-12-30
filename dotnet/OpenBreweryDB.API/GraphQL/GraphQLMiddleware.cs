@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.DataLoader;
+using GraphQL.Execution;
 using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Utilities;

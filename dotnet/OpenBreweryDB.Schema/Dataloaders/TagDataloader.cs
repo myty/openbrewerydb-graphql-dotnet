@@ -18,10 +18,13 @@ namespace OpenBreweryDB.Schema.Dataloaders
             _tagConductor = tagConductor;
         }
 
-        public async Task<IDictionary<long, Tag>> GetTagById(IEnumerable<long> ids, CancellationToken cancellationToken) => await _tagConductor
-            .FindAll(t => ids.Contains(t.Id))
-            .ThrowIfAnyErrorsOrResultIsNull()
-            .ResultObject
-            .ToDictionaryAsync(c => c.Id);
+        public async Task<IDictionary<long, Tag>> GetTagById(
+            IEnumerable<long> ids,
+            CancellationToken cancellationToken) =>
+            await _tagConductor
+                .FindAll(t => ids.Contains(t.Id))
+                .ThrowIfAnyErrorsOrResultIsNull()
+                .ResultObject
+                .ToDictionaryAsync(c => c.Id);
     }
 }

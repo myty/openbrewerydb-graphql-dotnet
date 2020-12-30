@@ -25,7 +25,7 @@ namespace OpenBreweryDB.API.GraphQL
 
         public static IServiceCollection AddGraphQL(this IServiceCollection services, Action<GraphQLOptions> action = null)
         {
-            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<IDocumentExecuter, GraphQLDocumentExecuter>();
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
             services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
             services.AddSingleton<DataLoaderDocumentListener>();
