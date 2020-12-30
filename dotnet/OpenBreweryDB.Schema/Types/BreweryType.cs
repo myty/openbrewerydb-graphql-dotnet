@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GraphQL;
@@ -11,7 +12,7 @@ namespace OpenBreweryDB.Schema.Types
 {
     public class BreweryType : AsyncNodeGraphType<Brewery>
     {
-        private readonly IDataLoader<long, Brewery> _loader;
+        private readonly Func<string, Task<Brewery>> _getByIdAsync;
 
         public BreweryType(
             BreweryResolver breweryResolver,
@@ -19,10 +20,15 @@ namespace OpenBreweryDB.Schema.Types
             IDataLoaderContextAccessor accessor,
             BreweryDataloader breweryDataloader)
         {
-            _loader = accessor.Context
-                .GetOrAddBatchLoader<long, Brewery>(
-                    "GetTagById",
-                    breweryDataloader.GetBreweryById);
+            _getByIdAsync = async (id) =>
+            {
+                var loader = accessor.Context
+                    .GetOrAddBatchLoader<long, Brewery>(
+                        "GetBreweryById",
+                        breweryDataloader.GetBreweryById);
+
+                return await loader.LoadAsync(long.Parse(id)).GetResultAsync();
+            };
 
             Name = "Brewery";
             Description = "A brewery of beer";
@@ -94,6 +100,6 @@ namespace OpenBreweryDB.Schema.Types
         }
 
         public override async Task<Brewery> GetById(string id) =>
-            await _loader.LoadAsync(long.Parse(id)).GetResultAsync();
+            await _getByIdAsync(id);
     }
 }

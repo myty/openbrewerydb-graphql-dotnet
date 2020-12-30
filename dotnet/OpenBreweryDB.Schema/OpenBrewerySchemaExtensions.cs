@@ -15,6 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddScoped<BreweryType>()
             .AddScoped<TagResolver>()
             .AddScoped<BreweryResolver>()
+            .AddScoped<BreweryDataloader>()
             .AddScoped<TagDataloader>();
     }
 }
