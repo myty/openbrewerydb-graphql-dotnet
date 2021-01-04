@@ -37,7 +37,7 @@ const Header = ({ title }: HeaderProps) => {
         !error &&
         (data?.breweries?.edges?.length ?? 0) >= 1
             ? data?.breweries?.edges?.map((b) => {
-                  return b.node as Brewery;
+                  return b?.node as Brewery;
               }) ?? []
             : [];
 
@@ -45,7 +45,7 @@ const Header = ({ title }: HeaderProps) => {
         return (
             <a
                 className="block w-full px-3 py-1 text-left border-t"
-                href={`/breweries/${brewery.brewery_id}`}>
+                href={`/breweries/${brewery.external_id}`}>
                 <div className="font-bold">{brewery.name}</div>
                 <div className="text-xs italic text-gray-700">
                     {brewery.city}, {brewery.state}

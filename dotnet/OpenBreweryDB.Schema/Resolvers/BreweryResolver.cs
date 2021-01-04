@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using AndcultureCode.CSharp.Core.Enumerations;
 using AndcultureCode.CSharp.Core.Interfaces;
 using AndcultureCode.CSharp.Core.Models.Errors;
@@ -89,7 +90,14 @@ namespace OpenBreweryDB.Schema.Resolvers
                 return breweryContext.Source.Latitude;
             }
 
-            return context.GetArgument<decimal?>("latitude");
+            var latitude = context.GetArgument<double?>("latitude");
+
+            if (latitude is null)
+            {
+                return null;
+            }
+
+            return Convert.ToDecimal(latitude.Value);
         }
 
         private decimal? GetLongitude(IResolveFieldContext context)
@@ -99,7 +107,14 @@ namespace OpenBreweryDB.Schema.Resolvers
                 return breweryContext.Source.Longitude;
             }
 
-            return context.GetArgument<decimal?>("longitude");
+            var longitude = context.GetArgument<double?>("longitude");
+
+            if (longitude is null)
+            {
+                return null;
+            }
+
+            return Convert.ToDecimal(longitude.Value);
         }
 
         private Expression<Func<Brewery, bool>> BuildFilter(IResolveFieldContext context)

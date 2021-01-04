@@ -63,7 +63,7 @@ namespace OpenBreweryDB.Schema.Types
                 .Name("name")
                 .Description("Name of brewery");
 
-            Field(t => t.Phone)
+            Field(t => t.Phone, nullable: true)
                 .Name("phone")
                 .Description("The phone number for the brewery");
 
@@ -75,7 +75,7 @@ namespace OpenBreweryDB.Schema.Types
                 .Name("state")
                 .Description("The state of the brewery");
 
-            Field(t => t.Street)
+            Field(t => t.Street, nullable: true)
                 .Name("street")
                 .Description("The street of the brewery");
 
@@ -83,7 +83,7 @@ namespace OpenBreweryDB.Schema.Types
                 .Name("updated_at")
                 .Description("Date timestamp of the last time the record was updated");
 
-            Field(t => t.WebsiteURL)
+            Field(t => t.WebsiteURL, nullable: true)
                 .Name("website_url")
                 .Description("Website address for the brewery");
 
@@ -99,7 +99,6 @@ namespace OpenBreweryDB.Schema.Types
             // TODO: reviews
         }
 
-        public override async Task<Brewery> GetById(string id) =>
-            await _getByIdAsync(id);
+        public override Task<Brewery> GetById(string id) => _getByIdAsync(id);
     }
 }

@@ -8,17 +8,16 @@ import { ApolloProvider } from "@apollo/client";
 import { NearbyPage } from "./pages/nearby-page";
 import "./tailwind.output.css";
 import { SearchPage } from "./pages/search-page";
-import { ReviewPage } from "./pages/review-page";
 import { split, HttpLink } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "@apollo/client/link/ws";
 
 const httpLink = new HttpLink({
-    uri: "https://localhost:5001/graphql",
+    uri: "https://localhost:5001/api/graphql",
 });
 
 const wsLink = new WebSocketLink({
-    uri: `wss://localhost:5001/graphql`,
+    uri: `wss://localhost:5001/api/graphql`,
     options: {
         reconnect: true,
     },
@@ -59,13 +58,13 @@ function App() {
                         <Route path="nearby">
                             <NearbyPage />
                         </Route>
-                        <Route path="reviews">
+                        {/* <Route path="reviews">
                             <ReviewPage />
-                        </Route>
+                        </Route> */}
                         <Route path="search">
                             <SearchPage />
                         </Route>
-                        <Route path="breweries/:brewery_id">
+                        <Route path="breweries/:external_id">
                             <BreweryPage />
                         </Route>
                     </Routes>

@@ -4,6 +4,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { useNearbyBreweriesLazyQuery } from "../services/nearby-breweries-query";
+import { Position } from "google-map-react";
 
 export const NearbyPage = () => {
     const [position, setPosition] = useState<Position>();
@@ -16,7 +17,10 @@ export const NearbyPage = () => {
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((p) => {
             getNearbyBreweries(p.coords.latitude, p.coords.longitude);
-            setPosition(p);
+            setPosition({
+                lat: p.coords.latitude,
+                lng: p.coords.longitude,
+            });
         });
     }, [getNearbyBreweries]);
 

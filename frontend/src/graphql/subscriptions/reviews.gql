@@ -1,11 +1,11 @@
-subscription OnReviewAdded {
-    review: onReviewReceived {
-        id
-        subject
-        body
-        brewery {
-            id
-            name
-        }
-    }
-}
+# subscription OnReviewAdded {
+#     review: onReviewReceived {
+#         id
+#         subject
+#         body
+#         brewery {
+#             id
+#             name
+#         }
+#     }
+# }

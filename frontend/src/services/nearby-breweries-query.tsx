@@ -27,7 +27,7 @@ export const useNearbyBreweriesLazyQuery = (): NearbyBreweriesLazyQueryReturnTyp
     const breweries: Brewery[] =
         data?.breweries?.edges
             ?.filter(isBreweryNode)
-            ?.map(({ node }) => node as Brewery) ?? [];
+            ?.map((edge) => edge?.node as Brewery) ?? [];
 
     const loadMore = () =>
         !!fetchMore

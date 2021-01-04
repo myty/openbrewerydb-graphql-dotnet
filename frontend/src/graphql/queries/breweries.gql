@@ -52,7 +52,7 @@ query Autocomplete($search: String) {
             node {
                 name
                 id
-                brewery_id
+                external_id
                 city
                 state
             }
@@ -87,9 +87,9 @@ query Brewery($id: ID!) {
     }
 }
 
-# Get Brewery by the brewery_id
-query BreweryById($brewery_id: String!) {
-    brewery: breweryById(brewery_id: $brewery_id) {
+# Get Brewery by the external_id
+query BreweryByExternalId($external_id: String!) {
+    brewery: breweryByExternalId(external_id: $external_id) {
         id
         ...BreweryDetailFields
     }
@@ -97,7 +97,7 @@ query BreweryById($brewery_id: String!) {
 
 fragment BreweryBaseFields on Brewery {
     name
-    brewery_id
+    external_id
     street
     city
     state
@@ -108,7 +108,7 @@ fragment BreweryBaseFields on Brewery {
 
 fragment BreweryDetailFields on Brewery {
     name
-    brewery_id
+    external_id
     street
     city
     state
@@ -120,13 +120,15 @@ fragment BreweryDetailFields on Brewery {
     latitude
     longitude
     nearby(within: 15) {
-        id
-        ...BreweryBaseFields
-        latitude
-        longitude
+        items {
+            id
+            ...BreweryBaseFields
+            latitude
+            longitude
+        }
     }
-    reviews {
-        subject
-        body
-    }
+    # reviews {
+    #     subject
+    #     body
+    # }
 }

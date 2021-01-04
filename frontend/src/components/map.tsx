@@ -68,7 +68,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
 
     const nearbyBreweries = !brewery.nearby
         ? []
-        : brewery.nearby?.map((nb) => (
+        : brewery.nearby?.items?.map((nb) => (
               <MarkerComponent
                   key={`marker_${nb?.id}`}
                   lat={nb?.latitude}

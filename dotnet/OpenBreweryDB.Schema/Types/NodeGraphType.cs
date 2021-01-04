@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GraphQL;
+using GraphQL.Builders;
 using GraphQL.Types;
 using GraphQL.Types.Relay;
 using Panic.StringUtils;
@@ -23,12 +24,17 @@ namespace OpenBreweryDB.Schema.Types
     {
         public static string ToGlobalId(string name, object id) => StringUtils.Base64Encode($"{name}:{id}");
 
-        public static object GetByGlobalId(this IResolveFieldContext context)
+        public static FieldBuilder<TSourceType, TReturnType> ResolveByGlobalId<TSourceType, TReturnType>(this FieldBuilder<TSourceType, TReturnType> fieldBuilder) => fieldBuilder.Resolve(context =>
         {
             var globalId = context.GetArgument<string>("id");
+            return context.GetByGlobalId<TReturnType>(globalId);
+        });
+
+        private static T GetByGlobalId<T>(this IResolveFieldContext context, string globalId)
+        {
             var parts = StringUtils.Base64Decode(globalId).Split(':');
             var type = parts.FirstOrDefault();
-            var node = (IRelayNode)context.Schema.FindType(type);
+            var node = (IRelayNode<T>)context.Schema.FindType(type);
 
             return node.GetById(parts.LastOrDefault());
         }

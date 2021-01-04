@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GraphQL;
 using GraphQL.Types;
 using OpenBreweryDB.Data.Models;
@@ -20,10 +21,7 @@ namespace OpenBreweryDB.Schema
                 .Name("node")
                 .Description("Fetches an object given its global Id")
                 .Argument<NonNullGraphType<IdGraphType>>("id", "The global Id of the object")
-                .Resolve(context =>
-                {
-                    return context.GetByGlobalId();
-                });
+                .ResolveByGlobalId();
 
             BreweryConnection();
             GetBreweryByExternalId();
@@ -61,8 +59,8 @@ namespace OpenBreweryDB.Schema
         {
             Connection<BreweryType>()
                 .Name("nearbyBreweries")
-                .Argument<DecimalGraphType>("latitude", "latitude")
-                .Argument<DecimalGraphType>("longitude", "longitude")
+                .Argument<FloatGraphType>("latitude", "latitude")
+                .Argument<FloatGraphType>("longitude", "longitude")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
                 .Resolve(context => _breweryResolver
                     .ResolveNearbyBreweries(context)

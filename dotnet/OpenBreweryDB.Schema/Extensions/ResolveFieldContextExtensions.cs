@@ -35,7 +35,7 @@ namespace GraphQL
             StringUtils.Base64Encode($"{context.Prefix()}:{offset}");
 
         private static string Prefix(this IResolveConnectionContext context) =>
-            $"{context.ParentType.Name}_{context.FieldName}";
+            $"{context.FieldName}";
 
         public static Connection<TSourceType> ToConnection<TSourceType>(
             this IResult<IQueryable<TSourceType>> result,
@@ -56,9 +56,7 @@ namespace GraphQL
                 return null;
             }
 
-            var filteredResult = result.ResultObject;
             var pagedResult = Enumerable.Empty<TSourceType>();
-            var totalCount = filteredResult.Count();
 
             var skip = (context.After != null)
                 ? (context.CursorToOffset(context.After) + 1)
@@ -87,18 +85,31 @@ namespace GraphQL
                 })
                 .ToList();
 
-            return new Connection<TSourceType>
+            var connection = new Connection<TSourceType>
             {
-                Edges = edges,
-                TotalCount = totalCount,
-                PageInfo = new PageInfo
+                Edges = edges
+            };
+
+            var loadTotalCount = context.ContainsField("totalCount");
+            var loadPageInfo = context.ContainsField("pageInfo");
+
+            if (loadTotalCount || loadPageInfo)
+            {
+                connection.TotalCount = result.ResultObject.Count();
+            }
+
+            if (loadPageInfo)
+            {
+                connection.PageInfo = new PageInfo
                 {
                     StartCursor = edges.Select(e => e.Cursor).FirstOrDefault(),
                     EndCursor = edges.Select(e => e.Cursor).LastOrDefault(),
-                    HasPreviousPage = totalCount > 0 && skip > 0,
-                    HasNextPage = (skip + edges.Count) < totalCount
-                }
-            };
+                    HasPreviousPage = connection.TotalCount > 0 && skip > 0,
+                    HasNextPage = (skip + edges.Count) < connection.TotalCount
+                };
+            }
+
+            return connection;
         }
     }
 }
