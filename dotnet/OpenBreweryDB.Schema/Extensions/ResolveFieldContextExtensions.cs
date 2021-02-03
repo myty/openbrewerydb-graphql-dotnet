@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using AndcultureCode.CSharp.Core.Interfaces;
+using GrahpQL.Pagination.Types.OffsetPagination;
 using GraphQL.Builders;
-using GraphQL.Types.Relay.DataObjects;
 using Panic.StringUtils;
 
 using Entities = AndcultureCode.CSharp.Core.Models.Entities;
@@ -12,16 +12,17 @@ namespace GraphQL
     public static class ResolveFieldContextExtensions
     {
         private const int DEFAULT_PAGE_SIZE = 25;
+        private const int DEFAULT_OFFSET__SIZE = 0;
 
         public static bool ContainsField(this IResolveFieldContext context, string name) =>
             context.SubFields.Keys.Contains(name);
 
-        public static void ResolveQueryableResult<TSourceType>(
+        public static void ResolveQueryableOffset<TSourceType>(
             this ConnectionBuilder<TSourceType> connection,
             Func<IResolveConnectionContext<TSourceType>, IResult<IQueryable<TSourceType>>> resolver)
             where TSourceType : Entities.Entity => connection
             .Resolve(context => resolver(context)
-                .ToConnection(context));
+                .ToOffsetConnection(context));
 
         private static int CursorToOffset(
             this IResolveConnectionContext context,
@@ -37,7 +38,7 @@ namespace GraphQL
         private static string Prefix(this IResolveConnectionContext context) =>
             $"{context.FieldName}";
 
-        public static Connection<TSourceType> ToConnection<TSourceType>(
+        public static OffsetConnection<TSourceType> ToOffsetConnection<TSourceType>(
             this IResult<IQueryable<TSourceType>> result,
             IResolveConnectionContext context)
             where TSourceType : Entities.Entity
@@ -56,60 +57,12 @@ namespace GraphQL
                 return null;
             }
 
-            var pagedResult = Enumerable.Empty<TSourceType>();
-
-            var skip = (context.After != null)
-                ? (context.CursorToOffset(context.After) + 1)
-                : 0;
-
-            if (context.IsUnidirectional || context.After != null || context.Before == null)
-            {
-                pagedResult = result.ResultObject
-                    .Skip(skip)
-                    .Take(context.PageSize ?? DEFAULT_PAGE_SIZE)
-                    .AsEnumerable();
-            }
-            else
-            {
-                // TODO: Handle Before cursor
-            }
-
-            var edges = pagedResult
-                .Select((r, idx) =>
-                {
-                    return new Edge<TSourceType>
-                    {
-                        Cursor = context.OffsetToCursor(skip + idx),
-                        Node = r
-                    };
-                })
-                .ToList();
-
-            var connection = new Connection<TSourceType>
-            {
-                Edges = edges
-            };
-
-            var loadTotalCount = context.ContainsField("totalCount");
-            var loadPageInfo = context.ContainsField("pageInfo");
-
-            if (loadTotalCount || loadPageInfo)
-            {
-                connection.TotalCount = result.ResultObject.Count();
-            }
-
-            if (loadPageInfo)
-            {
-                connection.PageInfo = new PageInfo
-                {
-                    StartCursor = edges.Select(e => e.Cursor).FirstOrDefault(),
-                    EndCursor = edges.Select(e => e.Cursor).LastOrDefault(),
-                    HasPreviousPage = connection.TotalCount > 0 && skip > 0,
-                    HasNextPage = (skip + edges.Count) < connection.TotalCount
-                };
-            }
-
-            return connection;
+            return result.ResultObject
+                .ToOffsetConnection(
+                    limit: context.GetArgument<int>("limit", DEFAULT_PAGE_SIZE),
+                    offset: context.GetArgument<int>("offset", DEFAULT_OFFSET__SIZE),
+                    loadTotalCount: context.ContainsField("totalCount"),
+                    loadPageInfo: context.ContainsField("pageInfo"));
         }
     }
 }

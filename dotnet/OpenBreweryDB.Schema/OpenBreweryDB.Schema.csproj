@@ -7,13 +7,14 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenBreweryDB.Data\OpenBreweryDB.Data.csproj" />
     <ProjectReference Include="..\OpenBreweryDB.Core\OpenBreweryDB.Core.csproj" />
+    <ProjectReference Include="..\GraphQL.Pagination\GraphQL.Pagination.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL" Version="3.2.0" />
-    <PackageReference Include="GraphQL.SystemTextJson" Version="3.2.0" />
+    <PackageReference Include="GraphQL" Version="3.3.2" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="3.3.2" />
     <PackageReference Include="Panic.StringUtils" Version="1.0.1" />
-    <PackageReference Include="System.Text.Json" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.1" />
   </ItemGroup>
 
 </Project>

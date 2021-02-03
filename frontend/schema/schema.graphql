@@ -1,0 +1,284 @@
+"""
+A brewery of beer
+"""
+type Brewery implements Node {
+    """
+    Type of Brewery
+    """
+    brewery_type: String!
+
+    """
+    The Id of the Brewery
+    """
+    breweryId: Long!
+
+    """
+    The city of the brewery
+    """
+    city: String!
+
+    """
+    The country of origin for the brewery
+    """
+    country: String!
+
+    """
+    External identifier for Brewery
+    """
+    external_id: String!
+
+    """
+    The Global Id of the Brewery
+    """
+    id: ID!
+
+    """
+    Latitude portion of lat/long coordinates
+    """
+    latitude: Decimal
+
+    """
+    Longitude portion of lat/long coordinates
+    """
+    longitude: Decimal
+
+    """
+    Name of brewery
+    """
+    name: String!
+    nearby(
+        """
+        Only look at connected edges with cursors greater than the value of `after`.
+        """
+        after: String
+
+        """
+        Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified.
+        """
+        first: Int
+
+        """
+        search radius in miles
+        """
+        within: Int = 25
+    ): BreweryConnection
+
+    """
+    The phone number for the brewery
+    """
+    phone: String
+
+    """
+    The state of the brewery
+    """
+    postal_code: String!
+
+    """
+    The state of the brewery
+    """
+    state: String!
+
+    """
+    The street of the brewery
+    """
+    street: String
+    tag_list: [String]!
+
+    """
+    Date timestamp of the last time the record was updated
+    """
+    updated_at: DateTime!
+
+    """
+    Website address for the brewery
+    """
+    website_url: String
+}
+
+"""
+A connection from an object to a list of objects of type `Brewery`.
+"""
+type BreweryConnection {
+    """
+    Information to aid in pagination.
+    """
+    edges: [BreweryEdge]
+
+    """
+    A list of all of the objects returned in the connection. This is a convenience
+    field provided for quickly exploring the API; rather than querying for "{
+    edges { node } }" when no edge data is needed, this field can be used instead.
+    Note that when clients like Relay need to fetch the "cursor" field on the edge
+    to enable efficient pagination, this shortcut cannot be used, and the full "{
+    edges { node } } " version should be used instead.
+    """
+    items: [Brewery]
+
+    """
+    Information to aid in pagination.
+    """
+    pageInfo: PageInfo!
+
+    """
+    A count of the total number of objects in this connection, ignoring
+    pagination. This allows a client to fetch the first five objects by passing
+    "5" as the argument to `first`, then fetch the total count so it could display
+    "5 of 83", for example. In cases where we employ infinite scrolling or don't
+    have an exact count of entries, this field will return `null`.
+    """
+    totalCount: Int
+}
+
+"""
+An edge in a connection from an object to another object of type `Brewery`.
+"""
+type BreweryEdge {
+    """
+    A cursor for use in pagination
+    """
+    cursor: String!
+
+    """
+    The item at the end of the edge
+    """
+    node: Brewery
+}
+
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects
+timestamps to be formatted in accordance with the
+[ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTime
+
+scalar Decimal
+
+scalar Long
+
+interface Node {
+    """
+    Global node Id
+    """
+    id: ID
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+    """
+    When paginating forwards, the cursor to continue.
+    """
+    endCursor: String
+
+    """
+    When paginating forwards, are there more items?
+    """
+    hasNextPage: Boolean!
+
+    """
+    When paginating backwards, are there more items?
+    """
+    hasPreviousPage: Boolean!
+
+    """
+    When paginating backwards, the cursor to continue.
+    """
+    startCursor: String
+}
+
+type Query {
+    breweries(
+        """
+        Only look at connected edges with cursors greater than the value of `after`.
+        """
+        after: String
+
+        """
+        Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified.
+        """
+        first: Int
+
+        """
+        filter by brewery id
+        """
+        brewery_id: String
+
+        """
+        filter by state
+        """
+        state: String
+
+        """
+        filter by type
+        """
+        type: String
+
+        """
+        filter by city name
+        """
+        city: String
+
+        """
+        search by brewery name
+        """
+        name: String
+
+        """
+        general search
+        """
+        search: String
+
+        """
+        sort by
+        """
+        sort: [String]
+
+        """
+        filter by tags
+        """
+        tags: [String]
+    ): BreweryConnection
+    breweryByExternalId(
+        """
+        filter by external id
+        """
+        external_id: String
+    ): Brewery
+    nearbyBreweries(
+        """
+        Only look at connected edges with cursors greater than the value of `after`.
+        """
+        after: String
+
+        """
+        Specifies the number of edges to return starting from `after` or the first entry if `after` is not specified.
+        """
+        first: Int
+
+        """
+        latitude
+        """
+        latitude: Float
+
+        """
+        longitude
+        """
+        longitude: Float
+
+        """
+        search radius in miles
+        """
+        within: Int = 25
+    ): BreweryConnection
+
+    """
+    Fetches an object given its global Id
+    """
+    node(
+        """
+        The global Id of the object
+        """
+        id: ID!
+    ): Node
+}

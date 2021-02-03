@@ -42,7 +42,7 @@ namespace OpenBreweryDB.Schema
                 .Argument<ListGraphType<StringGraphType>>("tags", "filter by tags")
                 .Resolve(context => _breweryResolver
                     .ResolveBreweries(context)
-                    .ToConnection(context));
+                    .ToOffsetConnection(context));
         }
 
         private void GetBreweryByExternalId()
@@ -64,7 +64,7 @@ namespace OpenBreweryDB.Schema
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
                 .Resolve(context => _breweryResolver
                     .ResolveNearbyBreweries(context)
-                    .ToConnection(context));
+                    .ToOffsetConnection(context));
         }
     }
 }

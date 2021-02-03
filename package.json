@@ -28,6 +28,11 @@
         "db-stop": "npx ts-node ./scripts/dotnet-test.ts db -t",
         "install-all": "cd ./frontend && yarn install",
         "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
-        "frontend": "cd ./frontend && yarn start"
+        "frontend": "cd ./frontend && yarn start",
+        "relay": "cd ./frontend && yarn run relay"
+    },
+    "volta": {
+        "node": "14.15.4",
+        "yarn": "1.22.10"
     }
 }
