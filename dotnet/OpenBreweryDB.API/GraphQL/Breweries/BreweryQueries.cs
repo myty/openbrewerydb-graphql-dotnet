@@ -2,6 +2,6 @@ using HotChocolate.Types;
 
 namespace OpenBreweryDB.API.GraphQL.Breweries
 {
-    [ExtendObjectType(Name = "Query")]
+    [ExtendObjectType("Query")]
     public partial class BreweryQueries { }
 }

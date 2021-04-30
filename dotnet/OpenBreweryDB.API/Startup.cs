@@ -38,7 +38,7 @@ namespace OpenBreweryDB.API
                 .AddControllers();
 
             services
-                .AddOpenBreweryGraphQLServer();
+                .AddOpenBreweryGraphQLServer(true);
 
             // TODO: Add JWT user authentication and authorization
             // services.AddQueryRequestInterceptor(async (context, builder, ct) =>

@@ -1,3 +1,4 @@
+using HotChocolate;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -25,25 +26,22 @@ namespace OpenBreweryDB.API.Extensions
         public static IRequestExecutorBuilder AddOpenBreweryGraphQLServer(this IServiceCollection services, bool seedData = false)
         {
             var requestExecutorBuilder = services
-                .AddGraphQL()
-                .AddInMemorySubscriptions()
+                .AddGraphQLServer()
                 .AddQueryType(d => d.Name("Query"))
-                .AddTypeExtension<BreweryQueries>()
+                    .AddTypeExtension<BreweryQueries>()
                 .AddMutationType(d => d.Name("Mutation"))
-                .AddTypeExtension<UserMutations>()
-                .AddTypeExtension<BreweryMutations>()
-                .AddTypeExtension<ReviewMutations>()
+                    .AddTypeExtension<UserMutations>()
+                    .AddTypeExtension<BreweryMutations>()
+                    .AddTypeExtension<ReviewMutations>()
                 .AddSubscriptionType(d => d.Name("Subscription"))
-                .AddTypeExtension<ReviewSubscriptions>()
+                    .AddTypeExtension<ReviewSubscriptions>()
                 .AddType<BreweryType>()
+                .AddFiltering()
+                .AddSorting()
                 .EnableRelaySupport()
-                .SetPagingOptions(new PagingOptions
-                {
-                    IncludeTotalCount = true
-                })
+                .AddInMemorySubscriptions()
                 .AddAuthorization()
                 .AddApolloTracing();
-
             if (seedData)
             {
                 requestExecutorBuilder.ConfigureSchemaAsync(async (services, builder, ct) =>
