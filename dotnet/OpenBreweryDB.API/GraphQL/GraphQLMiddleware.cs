@@ -9,8 +9,10 @@ using GraphQL.Execution;
 using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Utilities;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -57,7 +59,7 @@ namespace OpenBreweryDB.API.GraphQL
         {
             var request = await Deserialize(context);
 
-            var isDevelopment = serviceProvider.GetService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
+            var isDevelopment = serviceProvider.GetRequiredService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
 
             var result = await _executer.ExecuteAsync(_ =>
             {
@@ -88,8 +90,6 @@ namespace OpenBreweryDB.API.GraphQL
                         {
                         }
                     };
-
-                    _.FieldMiddleware.Use<InstrumentFieldsMiddleware>();
                 }
             });
 

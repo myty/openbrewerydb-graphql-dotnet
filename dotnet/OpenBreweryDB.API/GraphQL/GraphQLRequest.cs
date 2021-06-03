@@ -10,7 +10,7 @@ namespace OpenBreweryDB.API.GraphQL
 
         public string Query { get; set; }
 
-        [JsonConverter(typeof(ObjectDictionaryConverter))]
+        [JsonConverter(typeof(InputsConverter))]
         public Dictionary<string, object> Variables
         {
             get; set;

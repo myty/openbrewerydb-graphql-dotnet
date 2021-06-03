@@ -1,14 +1,24 @@
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using GraphQL.Instrumentation;
 
 namespace OpenBreweryDB.Schema
 {
     public class OpenBrewerySchema : GraphQL.Types.Schema
     {
-        public OpenBrewerySchema(IServiceProvider serviceProvider) : base(serviceProvider)
+        public OpenBrewerySchema(
+            IServiceProvider serviceProvider,
+            OpenBreweryQuery query,
+            IEnumerable<IFieldMiddleware> middlewares)
+            : base(serviceProvider)
         {
-            Query = serviceProvider.GetRequiredService<OpenBreweryQuery>();
+            Query = query;
+
+            foreach (var middleware in middlewares)
+            {
+                _ = FieldMiddleware.Use(middleware);
+            }
         }
     }
 }
