@@ -34,9 +34,10 @@ namespace OpenBreweryDB.Schema.Types
         {
             var parts = StringUtils.Base64Decode(globalId).Split(':');
             var type = parts.FirstOrDefault();
-            var node = (IRelayNode<T>)context.Schema.FindType(type);
 
-            return node.GetById(parts.LastOrDefault());
+            return context.Schema.AllTypes[type] is IRelayNode<T> node ?
+                node.GetById(parts.LastOrDefault()) :
+                default;
         }
     }
 

@@ -3,7 +3,7 @@
     "isRoot": true,
     "tools": {
         "dotnet-ef": {
-            "version": "5.0.1",
+            "version": "5.0.6",
             "commands": ["dotnet-ef"]
         },
         "dotnet-aspnet-codegenerator": {
@@ -11,7 +11,7 @@
             "commands": ["dotnet-aspnet-codegenerator"]
         },
         "dotnet-format": {
-            "version": "4.1.131201",
+            "version": "5.1.225507",
             "commands": ["dotnet-format"]
         }
     }

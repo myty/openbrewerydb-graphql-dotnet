@@ -57,7 +57,7 @@ namespace OpenBreweryDB.API.GraphQL
         {
             var request = await Deserialize(context);
 
-            var isDevelopment = serviceProvider.GetRequiredService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
+            var isDevelopment = serviceProvider.GetService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
 
             var result = await _executer.ExecuteAsync(_ =>
             {
@@ -66,7 +66,11 @@ namespace OpenBreweryDB.API.GraphQL
                 _.OperationName = request?.OperationName;
                 _.RequestServices = context.RequestServices;
                 _.Inputs = request?.Variables.ToInputs();
-                _.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
+
+                if (serviceProvider.GetService(typeof(DataLoaderDocumentListener)) is DataLoaderDocumentListener dataloaderDocListener)
+                {
+                    _.Listeners.Add(dataloaderDocListener);
+                }
                 _.UserContext = _options.BuildUserContext?.Invoke(context);
                 _.ThrowOnUnhandledException = isDevelopment;
                 _.EnableMetrics = isDevelopment;

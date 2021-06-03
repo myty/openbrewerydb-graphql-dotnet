@@ -15,10 +15,7 @@ namespace OpenBreweryDB.API.GraphQL
         {
             builder.UseMiddleware<GraphQLMiddleware>();
 
-            builder.UseGraphQLAltair(new GraphQLAltairOptions
-            {
-                GraphQLEndPoint = "/api/graphql"
-            });
+            builder.UseGraphQLAltair(path: "/api/graphql");
 
             return builder;
         }

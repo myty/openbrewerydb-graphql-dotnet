@@ -36,7 +36,7 @@ namespace GraphQL
             StringUtils.Base64Encode($"{context.Prefix()}:{offset}");
 
         private static string Prefix(this IResolveConnectionContext context) =>
-            $"{context.FieldName}";
+            $"{context.FieldDefinition.Name}";
 
         public static OffsetConnection<TSourceType> ToOffsetConnection<TSourceType>(
             this IResult<IQueryable<TSourceType>> result,

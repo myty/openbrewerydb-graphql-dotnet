@@ -11,10 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphQL" Version="3.3.2" />
-    <PackageReference Include="GraphQL.SystemTextJson" Version="3.3.2" />
+    <PackageReference Include="GraphQL" Version="4.5.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="4.5.0" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="4.5.0" />
     <PackageReference Include="Panic.StringUtils" Version="1.0.1" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 
 </Project>
