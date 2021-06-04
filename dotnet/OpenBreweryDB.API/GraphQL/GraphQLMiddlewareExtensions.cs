@@ -2,7 +2,6 @@ using System;
 using GraphQL;
 using GraphQL.DataLoader;
 using GraphQL.Instrumentation;
-using GraphQL.Server.Ui.Altair;
 using GraphQL.SystemTextJson;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

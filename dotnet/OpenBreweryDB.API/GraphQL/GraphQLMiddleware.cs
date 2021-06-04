@@ -5,11 +5,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.DataLoader;
-using GraphQL.Execution;
 using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Utilities;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,11 +66,7 @@ namespace OpenBreweryDB.API.GraphQL
                 _.OperationName = request?.OperationName;
                 _.RequestServices = context.RequestServices;
                 _.Inputs = request?.Variables.ToInputs();
-
-                if (serviceProvider.GetService(typeof(DataLoaderDocumentListener)) is DataLoaderDocumentListener dataloaderDocListener)
-                {
-                    _.Listeners.Add(dataloaderDocListener);
-                }
+                _.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
                 _.UserContext = _options.BuildUserContext?.Invoke(context);
                 _.ThrowOnUnhandledException = isDevelopment;
                 _.EnableMetrics = isDevelopment;

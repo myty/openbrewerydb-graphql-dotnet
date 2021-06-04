@@ -29,10 +29,11 @@
         "install-all": "cd ./frontend && yarn install",
         "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
         "frontend": "cd ./frontend && yarn start",
-        "relay": "cd ./frontend && yarn run relay"
+        "relay": "cd ./frontend && yarn run relay",
+        "update": "cd ./dotnet && dotnet outdated -u"
     },
     "volta": {
-        "node": "14.15.4",
+        "node": "14.17.0",
         "yarn": "1.22.10"
     }
 }

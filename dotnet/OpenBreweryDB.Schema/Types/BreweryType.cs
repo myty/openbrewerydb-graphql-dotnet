@@ -94,7 +94,7 @@ namespace OpenBreweryDB.Schema.Types
             Connection<BreweryType>()
                 .Name("nearby")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
-                .ResolveQueryableResult(breweryResolver.ResolveNearbyBreweries);
+                .ResolveQueryableOffset(breweryResolver.ResolveNearbyBreweries);
 
             // TODO: reviews
         }
