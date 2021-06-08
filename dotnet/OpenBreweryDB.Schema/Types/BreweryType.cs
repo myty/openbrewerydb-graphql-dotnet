@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.DataLoader;
+using GraphQL.Relay.Types;
 using GraphQL.Types;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Schema.Dataloaders;
@@ -12,7 +12,8 @@ namespace OpenBreweryDB.Schema.Types
 {
     public class BreweryType : AsyncNodeGraphType<Brewery>
     {
-        private readonly Func<string, Task<Brewery>> _getByIdAsync;
+        private readonly IDataLoaderContextAccessor _accessor;
+        private readonly BreweryDataloader _breweryDataloader;
 
         public BreweryType(
             BreweryResolver breweryResolver,
@@ -20,16 +21,6 @@ namespace OpenBreweryDB.Schema.Types
             IDataLoaderContextAccessor accessor,
             BreweryDataloader breweryDataloader)
         {
-            _getByIdAsync = async (id) =>
-            {
-                var loader = accessor.Context
-                    .GetOrAddBatchLoader<long, Brewery>(
-                        "GetBreweryById",
-                        breweryDataloader.GetBreweryById);
-
-                return await loader.LoadAsync(long.Parse(id)).GetResultAsync();
-            };
-
             Name = "Brewery";
             Description = "A brewery of beer";
 
@@ -94,11 +85,21 @@ namespace OpenBreweryDB.Schema.Types
             Connection<BreweryType>()
                 .Name("nearby")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
-                .ResolveQueryableOffset(breweryResolver.ResolveNearbyBreweries);
+                .ResolveWith(breweryResolver.ResolveNearbyBreweries);
+
+            _accessor = accessor;
+            _breweryDataloader = breweryDataloader;
 
             // TODO: reviews
         }
 
-        public override Task<Brewery> GetById(string id) => _getByIdAsync(id);
+        public override Task<Brewery> GetById(
+            IResolveFieldContext<object> context,
+            string id) => _accessor.Context
+            .GetOrAddBatchLoader<long, Brewery>(
+                "GetBreweryById",
+                _breweryDataloader.GetBreweryById)
+            .LoadAsync(long.Parse(id))
+            .GetResultAsync();
     }
 }
