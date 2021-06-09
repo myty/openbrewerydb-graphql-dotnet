@@ -1,5 +1,8 @@
+using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Instrumentation;
 using GraphQL.MicrosoftDI;
+using GraphQL.SystemTextJson;
 using GraphQL.Types;
 using OpenBreweryDB.Schema;
 using OpenBreweryDB.Schema.Dataloaders;
@@ -17,6 +20,10 @@ namespace Microsoft.Extensions.DependencyInjection
             var baseServices = services
                 .AddSingleton<ISchema, OpenBrewerySchema>(services =>
                     new OpenBrewerySchema(new SelfActivatingServiceProvider(services)))
+                .AddSingleton<IDocumentExecuter, OpenBreweryDocumentExecuter>()
+                .AddSingleton<IDocumentWriter, DocumentWriter>()
+                .AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>()
+                .AddSingleton<DataLoaderDocumentListener>()
                 .AddScoped<TagResolver>()
                 .AddScoped<BreweryResolver>()
                 .AddScoped<BreweryDataloader>()

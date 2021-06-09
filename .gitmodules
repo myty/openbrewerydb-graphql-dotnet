@@ -1,3 +1,4 @@
 [submodule "graphql-dotnet/relay"]
 	path = graphql-dotnet/relay
 	url = https://github.com/graphql-dotnet/relay.git
+    ignore = dirty

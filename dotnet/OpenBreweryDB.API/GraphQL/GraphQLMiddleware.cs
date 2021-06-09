@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.DataLoader;
-using GraphQL.Instrumentation;
+using GraphQL.SystemTextJson;
 using GraphQL.Types;
 using GraphQL.Utilities;
 using Microsoft.AspNetCore.Hosting;
@@ -55,7 +55,8 @@ namespace OpenBreweryDB.API.GraphQL
 
         private async Task ExecuteAsync(HttpContext context, ISchema schema, IServiceProvider serviceProvider)
         {
-            var request = await Deserialize(context);
+            var request = await context.Request.Body.FromJsonAsync<GraphQLRequest>();
+            // var request = await Deserialize(context);
 
             var isDevelopment = serviceProvider.GetRequiredService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
 
@@ -65,7 +66,7 @@ namespace OpenBreweryDB.API.GraphQL
                 _.Query = request?.Query;
                 _.OperationName = request?.OperationName;
                 _.RequestServices = context.RequestServices;
-                _.Inputs = request?.Variables.ToInputs();
+                _.Inputs = request?.Variables;
                 _.Listeners.Add(serviceProvider.GetRequiredService<DataLoaderDocumentListener>());
                 _.UserContext = _options.BuildUserContext?.Invoke(context);
                 _.ThrowOnUnhandledException = isDevelopment;

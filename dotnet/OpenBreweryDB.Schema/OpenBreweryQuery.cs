@@ -8,12 +8,8 @@ namespace OpenBreweryDB.Schema
 {
     public class OpenBreweryQuery : QueryGraphType
     {
-        private readonly BreweryResolver _breweryResolver;
-
-        public OpenBreweryQuery(BreweryResolver breweryResolver)
+        public OpenBreweryQuery()
         {
-            _breweryResolver = breweryResolver;
-
             Name = "Query";
 
             BreweryConnection();
@@ -33,7 +29,7 @@ namespace OpenBreweryDB.Schema
                 .Argument<StringGraphType>("search", "general search")
                 .Argument<ListGraphType<StringGraphType>>("sort", "sort by")
                 .Argument<ListGraphType<StringGraphType>>("tags", "filter by tags")
-                .ResolveWith(_breweryResolver.ResolveBreweries);
+                .ScopedResolver<BreweryResolver, object, Brewery>(r => r.ResolveBreweries);
         }
 
         private void GetBreweryByExternalId()
@@ -41,9 +37,7 @@ namespace OpenBreweryDB.Schema
             Field<BreweryType, Brewery>()
                 .Name("breweryByExternalId")
                 .Argument<StringGraphType>("external_id", "filter by external id")
-                .Resolve(context => _breweryResolver
-                    .ResolveBreweryByExternalId(context)
-                    .ResultObject);
+                .ScopedResolver<BreweryResolver, object, Brewery>(r => r.ResolveBreweryByExternalId);
         }
 
         private void NearbyBreweryConnection()
@@ -53,7 +47,7 @@ namespace OpenBreweryDB.Schema
                 .Argument<FloatGraphType>("latitude", "latitude")
                 .Argument<FloatGraphType>("longitude", "longitude")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
-                .ResolveWith(_breweryResolver.ResolveNearbyBreweries, 5);
+                .ScopedResolver<BreweryResolver, object, Brewery>(r => r.ResolveNearbyBreweries, 5);
         }
     }
 }

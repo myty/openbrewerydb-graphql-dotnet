@@ -14,6 +14,7 @@
     <PackageReference Include="GraphQL" Version="4.5.0" />
     <PackageReference Include="GraphQL.DataLoader" Version="4.5.0" />
     <PackageReference Include="GraphQL.MicrosoftDI" Version="4.5.0" />
+    <PackageReference Include="GraphQL.SystemReactive" Version="4.5.0" />
     <PackageReference Include="GraphQL.SystemTextJson" Version="4.5.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>

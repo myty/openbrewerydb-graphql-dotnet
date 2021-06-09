@@ -10,7 +10,7 @@
     <PackageReference Include="automapper" Version="10.1.1" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
   </ItemGroup>
 
   <ItemGroup>

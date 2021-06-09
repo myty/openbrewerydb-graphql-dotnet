@@ -4,6 +4,7 @@ using GraphQL;
 using GraphQL.DataLoader;
 using GraphQL.Relay.Types;
 using GraphQL.Types;
+using Microsoft.Extensions.DependencyInjection;
 using OpenBreweryDB.Data.Models;
 using OpenBreweryDB.Schema.Dataloaders;
 using OpenBreweryDB.Schema.Resolvers;
@@ -13,13 +14,8 @@ namespace OpenBreweryDB.Schema.Types
     public class BreweryType : AsyncNodeGraphType<Brewery>
     {
         private readonly IDataLoaderContextAccessor _accessor;
-        private readonly BreweryDataloader _breweryDataloader;
 
-        public BreweryType(
-            BreweryResolver breweryResolver,
-            TagResolver tagResolver,
-            IDataLoaderContextAccessor accessor,
-            BreweryDataloader breweryDataloader)
+        public BreweryType(IDataLoaderContextAccessor accessor)
         {
             Name = "Brewery";
             Description = "A brewery of beer";
@@ -80,26 +76,33 @@ namespace OpenBreweryDB.Schema.Types
 
             Field<NonNullGraphType<ListGraphType<StringGraphType>>, IEnumerable<string>>()
                 .Name("tag_list")
-                .ResolveAsync(tagResolver.ResolveTagListAsync);
+                .ScopedResolverAsync<TagResolver, Brewery, IEnumerable<string>>(r => r.ResolveTagListAsync);
 
             Connection<BreweryType>()
                 .Name("nearby")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
-                .ResolveWith(breweryResolver.ResolveNearbyBreweries);
+                .ScopedResolver<BreweryResolver, Brewery, Brewery>(r => r.ResolveNearbyBreweries);
 
             _accessor = accessor;
-            _breweryDataloader = breweryDataloader;
 
             // TODO: reviews
         }
 
         public override Task<Brewery> GetById(
             IResolveFieldContext<object> context,
-            string id) => _accessor.Context
-            .GetOrAddBatchLoader<long, Brewery>(
-                "GetBreweryById",
-                _breweryDataloader.GetBreweryById)
-            .LoadAsync(long.Parse(id))
-            .GetResultAsync();
+            string id)
+        {
+            using var scope = context.RequestServices.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var breweryDataloader = services.GetRequiredService<BreweryDataloader>();
+
+            return _accessor.Context
+                .GetOrAddBatchLoader<long, Brewery>(
+                    "GetBreweryById",
+                    breweryDataloader.GetBreweryById)
+                        .LoadAsync(long.Parse(id))
+                        .GetResultAsync();
+        }
     }
 }

@@ -16,10 +16,10 @@
             },
             "launchBrowser": {
                 "enabled": true,
-                "args": "${auto-detect-url}/ui/altair",
+                "args": "${auto-detect-url}/api/graphql",
                 "windows": {
                     "command": "cmd.exe",
-                    "args": "/C start ${auto-detect-url}/ui/altair"
+                    "args": "/C start ${auto-detect-url}/api/graphql"
                 }
             },
             "env": {

@@ -2,13 +2,42 @@ using System;
 using System.Linq;
 using AndcultureCode.CSharp.Core.Interfaces;
 using GraphQL.Builders;
+using GraphQL.MicrosoftDI;
 using GraphQL.Relay.Types;
+using Microsoft.Extensions.DependencyInjection;
 using Entities = AndcultureCode.CSharp.Core.Models.Entities;
 
 namespace OpenBreweryDB.Schema
 {
     public static class ConnectionBuilderExtensions
     {
+        public static void ScopedResolver<TResolver, TSourceType, TEnity>(
+            this ConnectionBuilder<TSourceType> builder,
+            Func<TResolver, Func<IResolveConnectionContext, IResult<IQueryable<TEnity>>>> resolverFunc,
+            int defaultPageSize = 25
+        ) where TEnity : Entities.Entity
+        {
+            builder.ResolveScoped(context =>
+            {
+                var resolverObject = context.RequestServices.GetRequiredService<TResolver>();
+                var resolver = resolverFunc(resolverObject);
+
+                var query = resolver(context).ResultObject;
+                var totalCount = query.Count();
+
+                var (startingIndex, pageSize) = GetStartingIndexAndPageSize(
+                    defaultPageSize,
+                    totalCount,
+                    context);
+
+                return ConnectionUtils.ToConnection(
+                    query.Take(pageSize),
+                    context,
+                    startingIndex,
+                    totalCount,
+                    false);
+            });
+        }
         public static void ResolveWith<TSourceType, TEnity>(
             this ConnectionBuilder<TSourceType> builder,
             Func<IResolveConnectionContext, IResult<IQueryable<TEnity>>> resolver,

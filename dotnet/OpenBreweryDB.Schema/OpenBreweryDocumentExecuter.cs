@@ -3,11 +3,10 @@ using GraphQL;
 using GraphQL.Execution;
 using GraphQL.Language.AST;
 
-namespace OpenBreweryDB.API.GraphQL
+namespace OpenBreweryDB.Schema
 {
-    public class GraphQLDocumentExecuter : DocumentExecuter
+    public class OpenBreweryDocumentExecuter : DocumentExecuter
     {
-        private static readonly IExecutionStrategy _parallelExecutionStrategy = new ParallelExecutionStrategy();
         private static readonly IExecutionStrategy _serialExecutionStrategy = new SerialExecutionStrategy();
         private static readonly IExecutionStrategy _subscriptionExecutionStrategy = new SubscriptionExecutionStrategy();
 

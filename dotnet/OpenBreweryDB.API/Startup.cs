@@ -49,7 +49,6 @@ namespace OpenBreweryDB.API
                 });
             });
 
-            services.AddGraphQL();
             services.AddOpenBrewerySchema(Environment.IsDevelopment());
         }
 

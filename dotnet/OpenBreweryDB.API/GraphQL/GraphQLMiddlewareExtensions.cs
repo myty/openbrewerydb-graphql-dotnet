@@ -12,27 +12,8 @@ namespace OpenBreweryDB.API.GraphQL
     {
         public static IApplicationBuilder UseGraphQL(this IApplicationBuilder builder)
         {
-            builder.UseMiddleware<GraphQLMiddleware>();
-
-            builder.UseGraphQLAltair(path: "/api/graphql");
-
-            return builder;
-        }
-
-        public static IServiceCollection AddGraphQL(this IServiceCollection services, Action<GraphQLOptions> action = null)
-        {
-            services.AddSingleton<IDocumentExecuter, GraphQLDocumentExecuter>();
-            services.AddSingleton<IDocumentWriter, DocumentWriter>();
-            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
-            services.AddSingleton<DataLoaderDocumentListener>();
-            services.AddSingleton<InstrumentFieldsMiddleware>();
-
-            if (action != null)
-            {
-                return services.Configure(action);
-            }
-
-            return services;
+            return builder.UseMiddleware<GraphQLMiddleware>()
+                .UseGraphQLAltair(path: "/api/graphql");
         }
     }
 }
