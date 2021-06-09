@@ -9,10 +9,8 @@ import { Position } from "google-map-react";
 export const NearbyPage = () => {
     const [position, setPosition] = useState<Position>();
 
-    const [
-        getNearbyBreweries,
-        { breweries, error, loading, hasMore, loadMore },
-    ] = useNearbyBreweriesLazyQuery();
+    const [getNearbyBreweries, { breweries, error, loading, hasMore, loadMore }] =
+        useNearbyBreweriesLazyQuery();
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((p) => {

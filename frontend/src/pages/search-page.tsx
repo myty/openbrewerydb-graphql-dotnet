@@ -12,14 +12,8 @@ export const SearchPage = () => {
 
     const searchTerm = params.get("q") ?? "";
 
-    const {
-        breweries,
-        error,
-        loading,
-        hasMore,
-        loadMore,
-        totalResults,
-    } = useSearchQuery(searchTerm);
+    const { breweries, error, loading, hasMore, loadMore, totalResults } =
+        useSearchQuery(searchTerm);
 
     if (loading) return <Loading />;
     if (error) return <p>Error :(</p>;

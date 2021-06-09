@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { useBreweryByExternalIdQuery } from "../graphql/autogenerate/hooks";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { Card } from "../components/card";
-import { ExternalLink } from "heroicons-react";
 
 const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
     const [markedAsFavorite, setMarkedAsFavorite] = useState(false);
@@ -26,9 +25,7 @@ const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
         <Card className="py-4">
             <div className="px-6">
                 <div className="flex mb-2">
-                    <div className="flex-grow text-xl font-bold">
-                        {brewery.name}
-                    </div>
+                    <div className="flex-grow text-xl font-bold">{brewery.name}</div>
                     <svg
                         role="button"
                         tabIndex={0}
@@ -121,9 +118,7 @@ export const BreweryPage = () => {
                     brewery_id={brewery_id}
                     reviews={brewery.reviews}
                 /> */}
-                <NearbyBreweries
-                    breweries={brewery.nearby?.items as Brewery[]}
-                />
+                <NearbyBreweries breweries={brewery.nearby?.items as Brewery[]} />
             </div>
             <div className="flex-grow">
                 <BreweryMap brewery={brewery} />

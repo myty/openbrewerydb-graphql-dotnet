@@ -3,37 +3,35 @@
     "description": "Demo OpenBreweryDB .NET Core GraphQL Implementation",
     "devDependencies": {
         "@types/cross-spawn": "^6.0.2",
-        "@types/node": "^14.14.10",
-        "commander": "^6.2.0",
-        "docker-cli-js": "^2.7.1",
-        "nodemon": "^2.0.6",
-        "prettier": "^2.1.2",
-        "ts-node": "^9.0.0",
+        "@types/node": "^14.17.3",
+        "commander": "^6.2.1",
+        "docker-cli-js": "^2.8.0",
+        "nodemon": "^2.0.7",
+        "prettier": "^2.3.1",
+        "ts-node": "^9.1.1",
         "tsconfig-paths": "^3.9.0",
-        "typescript": "^4.1.2"
+        "typescript": "^4.3.2"
     },
     "name": "openbrewerydb-qraphql",
     "private": true,
     "version": "0.3.0",
-    "dependencies": {},
     "scripts": {
         "build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "database": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
-        "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
-        "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
-        "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
-        "dotnet-test": "yarn db-start && dotnet test ./dotnet",
         "db-start": "npx ts-node ./scripts/dotnet-test.ts db -s",
         "db-stop": "npx ts-node ./scripts/dotnet-test.ts db -t",
-        "install-all": "cd ./frontend && yarn install",
-        "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
-        "frontend": "cd ./frontend && yarn start",
+        "dotnet-test": "yarn run db-start && dotnet test ./dotnet",
+        "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
+        "frontend": "cd ./frontend && yarn run start",
+        "install-all": "cd ./frontend && yarn run install",
+        "migrations": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ migrations",
         "relay": "cd ./frontend && yarn run relay",
+        "restore": "dotnet tool restore && dotnet restore ./dotnet/openbrewerydb-qraphql-sharp.sln",
+        "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local",
         "update": "cd ./dotnet && dotnet outdated -u"
     },
     "volta": {
-        "node": "14.17.0",
-        "yarn": "1.22.10"
+        "node": "14.17.0"
     }
 }

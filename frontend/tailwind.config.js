@@ -1,5 +1,6 @@
 module.exports = {
-    purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
+    mode: "jit",
+    purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
     darkMode: false, // or 'media' or 'class'
     theme: {
         extend: {
@@ -11,5 +12,10 @@ module.exports = {
     variants: {
         outline: ["focus", "responsive", "hover"],
     },
-    plugins: [],
+    plugins: [
+        require("@tailwindcss/typography"),
+        require("@tailwindcss/forms"),
+        require("@tailwindcss/line-clamp"),
+        require("@tailwindcss/aspect-ratio"),
+    ],
 };
