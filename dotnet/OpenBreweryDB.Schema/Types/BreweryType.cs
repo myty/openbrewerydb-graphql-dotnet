@@ -81,6 +81,7 @@ namespace OpenBreweryDB.Schema.Types
             Connection<BreweryType>()
                 .Name("nearby")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
+                .Bidirectional()
                 .ScopedResolver<BreweryResolver, Brewery, Brewery>(r => r.ResolveNearbyBreweries);
 
             _accessor = accessor;

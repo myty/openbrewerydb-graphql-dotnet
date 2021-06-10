@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OpenBreweryDB.Data.Migrations
 {
-    public partial class InitialDatabaseSchema : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,8 +28,8 @@ namespace OpenBreweryDB.Data.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Longitude = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Latitude = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    Longitude = table.Column<decimal>(type: "decimal(9,6)", precision: 9, scale: 6, nullable: true),
+                    Latitude = table.Column<decimal>(type: "decimal(8,6)", precision: 8, scale: 6, nullable: true)
                 },
                 constraints: table =>
                 {

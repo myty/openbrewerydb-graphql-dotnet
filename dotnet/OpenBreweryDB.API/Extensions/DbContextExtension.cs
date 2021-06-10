@@ -61,7 +61,7 @@ namespace OpenBreweryDB.API.Extensions
                     dbContext.Database.Migrate();
                 }
 
-                if (dbContext.Users.LongCount() < 1)
+                if (!dbContext.Users.Any())
                 {
                     _ = userConductor.Create(new User
                     {
@@ -85,7 +85,7 @@ namespace OpenBreweryDB.API.Extensions
                             )
                             .ToList();
 
-                        logger.LogInformation($"Importing {breweryImportEntities.Count} breweries");
+                        logger.LogInformation($"<******************* Importing {breweryImportEntities.Count} breweries *******************>");
 
                         var results = breweryConductor.BulkCreate(breweryImportEntities);
 

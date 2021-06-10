@@ -34,12 +34,5 @@ namespace OpenBreweryDB.Schema
 
             return resolver(context);
         });
-
-        public static void ResolveWith<TSourceType, TEnity>(
-            this FieldBuilder<TSourceType, TEnity> builder,
-            Func<IResolveFieldContext, IResult<TEnity>> resolver,
-            int defaultPageSize = 25
-        ) where TEnity : Entities.Entity => builder
-            .Resolve(context => resolver(context).ResultObject);
     }
 }

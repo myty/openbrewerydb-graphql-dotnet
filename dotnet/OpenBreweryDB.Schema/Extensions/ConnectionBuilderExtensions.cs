@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using AndcultureCode.CSharp.Core.Interfaces;
 using GraphQL.Builders;
 using GraphQL.MicrosoftDI;
 using GraphQL.Relay.Types;
+using GraphQL.Types.Relay.DataObjects;
 using Microsoft.Extensions.DependencyInjection;
 using Entities = AndcultureCode.CSharp.Core.Models.Entities;
 
@@ -30,32 +32,8 @@ namespace OpenBreweryDB.Schema
                     totalCount,
                     context);
 
-                return ConnectionUtils.ToConnection(
-                    query.Take(pageSize),
-                    context,
-                    startingIndex,
-                    totalCount,
-                    false);
-            });
-        }
-        public static void ResolveWith<TSourceType, TEnity>(
-            this ConnectionBuilder<TSourceType> builder,
-            Func<IResolveConnectionContext, IResult<IQueryable<TEnity>>> resolver,
-            int defaultPageSize = 25
-        ) where TEnity : Entities.Entity
-        {
-            builder.Resolve(context =>
-            {
-                var query = resolver(context).ResultObject;
-                var totalCount = query.Count();
-
-                var (startingIndex, pageSize) = GetStartingIndexAndPageSize(
-                    defaultPageSize,
-                    totalCount,
-                    context);
-
-                return ConnectionUtils.ToConnection(
-                    query.Take(pageSize),
+                return ToConnection(
+                    query.Skip(startingIndex).Take(pageSize),
                     context,
                     startingIndex,
                     totalCount);
@@ -79,6 +57,11 @@ namespace OpenBreweryDB.Schema
                         startingIndex: startingIndex < after ? after : startingIndex,
                         pageSize);
                 }
+
+                return (
+                    startingIndex: after + 1,
+                    pageSize
+                );
             }
 
             if (!string.IsNullOrEmpty(context.Before))
@@ -122,6 +105,37 @@ namespace OpenBreweryDB.Schema
             return (
                 first: context.First.HasValue ? context.First : null,
                 last: context.First.HasValue ? null : context.Last);
+        }
+        public static Connection<TSource> ToConnection<TSource, TParent>(
+            IEnumerable<TSource> slice,
+            IResolveConnectionContext<TParent> context,
+            int sliceStartIndex,
+            int totalCount
+        )
+        {
+            var edges = slice
+                .Select((item, i) => new Edge<TSource>
+                {
+                    Node = item,
+                    Cursor = ConnectionUtils.OffsetToCursor(sliceStartIndex + i)
+                })
+                .ToList();
+
+            var firstEdge = edges.FirstOrDefault();
+            var lastEdge = edges.LastOrDefault();
+
+            return new Connection<TSource>
+            {
+                Edges = edges,
+                TotalCount = totalCount,
+                PageInfo = new PageInfo
+                {
+                    StartCursor = firstEdge?.Cursor,
+                    EndCursor = lastEdge?.Cursor,
+                    HasPreviousPage = sliceStartIndex > 0,
+                    HasNextPage = (sliceStartIndex + edges.Count) < totalCount,
+                }
+            };
         }
     }
 }

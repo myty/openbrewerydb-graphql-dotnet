@@ -29,6 +29,7 @@ namespace OpenBreweryDB.Schema
                 .Argument<StringGraphType>("search", "general search")
                 .Argument<ListGraphType<StringGraphType>>("sort", "sort by")
                 .Argument<ListGraphType<StringGraphType>>("tags", "filter by tags")
+                .Bidirectional()
                 .ScopedResolver<BreweryResolver, object, Brewery>(r => r.ResolveBreweries);
         }
 
@@ -47,6 +48,7 @@ namespace OpenBreweryDB.Schema
                 .Argument<FloatGraphType>("latitude", "latitude")
                 .Argument<FloatGraphType>("longitude", "longitude")
                 .Argument<IntGraphType, int>("within", "search radius in miles", 25)
+                .Bidirectional()
                 .ScopedResolver<BreweryResolver, object, Brewery>(r => r.ResolveNearbyBreweries, 5);
         }
     }
