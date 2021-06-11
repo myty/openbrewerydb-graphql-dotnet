@@ -1,23 +1,23 @@
-mutation LoginUser($loginInput: LoginInput!) {
-    login(input: $loginInput) {
-        clientMutationId
-        me {
-            id
-            email
-            fullName
-        }
-        scheme
-        token
-    }
-}
+# mutation LoginUser($loginInput: LoginInput!) {
+#     login(input: $loginInput) {
+#         clientMutationId
+#         me {
+#             id
+#             email
+#             fullName
+#         }
+#         scheme
+#         token
+#     }
+# }
 
-mutation CreateUser($createUserInput: CreateUserInput!) {
-    createUser(input: $createUserInput) {
-        clientMutationId
-        user {
-            id
-            email
-            fullName
-        }
-    }
-}
+# mutation CreateUser($createUserInput: CreateUserInput!) {
+#     createUser(input: $createUserInput) {
+#         clientMutationId
+#         user {
+#             id
+#             email
+#             fullName
+#         }
+#     }
+# }

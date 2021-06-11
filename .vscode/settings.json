@@ -16,7 +16,7 @@
     },
     "files.exclude": {
         "**/._*": true,
-        "**/node_modules/**": true,
+        // "**/node_modules/**": true,
         "dotnet/**/bin/**": true,
         "dotnet/**/obj/**": true,
         "dotnet/.idea/**": true,

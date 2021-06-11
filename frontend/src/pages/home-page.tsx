@@ -4,18 +4,12 @@ import { HeadingOne } from "../components/heading-1";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useBreweriesQuery } from "../services/breweries-query";
+import { useBreweries } from "../hooks/use-breweries";
 
 export const HomePage = () => {
-    const {
-        breweries,
-        error,
-        loading,
-        hasMore,
-        loadMore,
-    } = useBreweriesQuery();
+    const { breweries, error, loading, hasMore, loadMore } = useBreweries();
 
-    if (loading) return <Loading />;
+    if (loading && breweries.length < 1) return <Loading />;
     if (error) return <p>Error :(</p>;
 
     if (breweries.length === 0) {

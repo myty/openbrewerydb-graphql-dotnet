@@ -1,20 +1,36 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
+        "allowJs": false,
         "allowSyntheticDefaultImports": true,
-        "strict": true,
+        "baseUrl": "./src",
+        "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
+        "incremental": true,
         "isolatedModules": true,
-        "noEmit": true,
         "jsx": "react",
-        "noFallthroughCasesInSwitch": true
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "noEmit": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "paths": {
+            "ramda": ["@types/ramda/templates"]
+        },
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "target": "ESNext",
+        "types": [
+            "vite/client",
+            "jest",
+            "@testing-library/jest-dom",
+            "jest-chain",
+            "jest-extended",
+            "node"
+        ]
     },
-    "include": ["src"]
+    "include": ["./src"],
+    "exclude": ["node_modules"]
 }

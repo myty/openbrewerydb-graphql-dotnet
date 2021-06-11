@@ -2,12 +2,12 @@ import { RefObject, useCallback, useEffect } from "react";
 
 type UseHasFocusObserverFunction = (
     callback: (hasFocus: boolean) => void,
-    elementRef: RefObject<HTMLElement>
+    elementRef: RefObject<HTMLElement>,
 ) => void;
 
 export const useHasFocusObserver: UseHasFocusObserverFunction = (
     callback,
-    elementRef
+    elementRef,
 ) => {
     const onChange = useCallback(
         (e: FocusEvent | MouseEvent) => {
@@ -30,7 +30,7 @@ export const useHasFocusObserver: UseHasFocusObserverFunction = (
             callback(false);
             return;
         },
-        [callback, elementRef]
+        [callback, elementRef],
     );
 
     useEffect(() => {

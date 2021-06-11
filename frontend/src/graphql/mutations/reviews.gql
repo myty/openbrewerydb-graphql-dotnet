@@ -1,9 +1,9 @@
-mutation CreateReview($createReviewInput: ReviewInput!) {
-    createReview(input: $createReviewInput) {
-        clientMutationId
-        review {
-            subject
-            body
-        }
-    }
-}
+# mutation CreateReview($createReviewInput: ReviewInput!) {
+#     createReview(input: $createReviewInput) {
+#         clientMutationId
+#         review {
+#             subject
+#             body
+#         }
+#     }
+# }

@@ -24,6 +24,14 @@ namespace OpenBreweryDB.Data
                 .ToTable("breweries");
 
             modelBuilder.Entity<Brewery>()
+                .Property(b => b.Latitude)
+                .HasPrecision(8, 6);
+
+            modelBuilder.Entity<Brewery>()
+                .Property(b => b.Longitude)
+                .HasPrecision(9, 6);
+
+            modelBuilder.Entity<Brewery>()
                 .HasMany(b => b.BreweryReviews)
                 .WithOne(r => r.Brewery);
 

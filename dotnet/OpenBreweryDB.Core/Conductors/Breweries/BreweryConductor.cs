@@ -73,11 +73,12 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
         public IResult<IEnumerable<Brewery>> FindAll(
             Expression<Func<Brewery, bool>> filter = null,
+            string includeProperties = null,
             Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null,
             int skip = 0,
             int take = 100) => Do<IEnumerable<Brewery>>.Try((r) =>
         {
-            var query = FindAllQueryable(filter, orderBy);
+            var query = FindAllQueryable(filter, includeProperties, orderBy);
 
             if (query.HasErrorsOrResultIsNull())
             {
@@ -90,8 +91,8 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
         }).Result;
 
         public IResult<IQueryable<Brewery>> FindAllByLocation(
-            double latitude,
-            double longitude,
+            decimal latitude,
+            decimal longitude,
             int? mileRadius = null) => Do<IQueryable<Brewery>>.Try((r) =>
         {
             var breweryResult = FindAllQueryable(b => b.Latitude.HasValue && b.Longitude.HasValue);
@@ -118,6 +119,7 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
 
         public IResult<IQueryable<Brewery>> FindAllQueryable(
             Expression<Func<Brewery, bool>> filter = null,
+            string includeProperties = null,
             Func<IQueryable<Brewery>, IQueryable<Brewery>> orderBy = null
         ) => Do<IQueryable<Brewery>>.Try((r) =>
         {
@@ -126,14 +128,20 @@ namespace OpenBreweryDB.Core.Conductors.Breweries
                 filter = b => true;
             }
 
-            var query = _data.Breweries
-                .Include(b => b.BreweryTags)
-                    .ThenInclude(bt => bt.Tag)
-                .Where(filter);
+            var query = _data.Breweries.Include($"{nameof(Brewery.BreweryTags)}").Where(filter);
 
             if (orderBy != null)
             {
                 query = orderBy(query);
+            }
+            else
+            {
+                query = query.OrderBy(e => e.Id);
+            }
+
+            if (!string.IsNullOrEmpty(includeProperties?.Trim()))
+            {
+                query = query.Include(includeProperties);
             }
 
             return query;

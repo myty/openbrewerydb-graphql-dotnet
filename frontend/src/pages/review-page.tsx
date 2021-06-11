@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Loading } from "../components/loading";
-import { useOnReviewAddedSubscription } from "../graphql/autogenerate/hooks";
+import React, { useState } from "react";
+// import { useOnReviewAddedSubscription } from "../graphql/autogenerate/hooks";
 
 interface ReviewInternal {
     id: string;
@@ -10,24 +9,24 @@ interface ReviewInternal {
 }
 
 export const ReviewPage = () => {
-    const [reviews, setReviews] = useState<ReviewInternal[]>([]);
-    const { data, error, loading } = useOnReviewAddedSubscription();
+    const [reviews] = useState<ReviewInternal[]>([]);
+    // const { data, error, loading } = useOnReviewAddedSubscription();
 
-    useEffect(() => {
-        if (data?.review == null) return;
+    // useEffect(() => {
+    //     if (data?.review == null) return;
 
-        const newReview: ReviewInternal = {
-            id: data?.review?.id?.toString(),
-            subject: data?.review?.subject ?? "",
-            body: data?.review?.body ?? "",
-            breweryName: data?.review?.brewery?.name ?? "",
-        };
+    //     const newReview: ReviewInternal = {
+    //         id: data?.review?.id?.toString(),
+    //         subject: data?.review?.subject ?? "",
+    //         body: data?.review?.body ?? "",
+    //         breweryName: data?.review?.brewery?.name ?? "",
+    //     };
 
-        setReviews((r) => [newReview, ...r]);
-    }, [data]);
+    //     setReviews((r) => [newReview, ...r]);
+    // }, [data]);
 
-    if (loading || reviews.length === 0) return <Loading />;
-    if (error) return <p>Error :(</p>;
+    // if (loading || reviews.length === 0) return <Loading />;
+    // if (error) return <p>Error :(</p>;
 
     return (
         <>

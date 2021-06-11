@@ -1,10 +1,15 @@
 import React from "react";
 
 interface LoadingProps {
+    loading?: boolean;
     loadingText?: string;
 }
 
-export const Loading = ({ loadingText }: LoadingProps) => {
+export const Loading = ({ loading = true, loadingText }: LoadingProps) => {
+    if (!loading) {
+        return null;
+    }
+
     return (
         <div className="block w-full max-w-xl p-4 mx-auto font-semibold text-center">
             <svg

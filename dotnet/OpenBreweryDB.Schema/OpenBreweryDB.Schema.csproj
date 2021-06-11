@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenBreweryDB.Data\OpenBreweryDB.Data.csproj" />
+    <ProjectReference Include="..\OpenBreweryDB.Core\OpenBreweryDB.Core.csproj" />
+    <ProjectReference Include="..\..\graphql-dotnet\relay\src\GraphQL.Relay\GraphQL.Relay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphQL" Version="4.5.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="4.5.0" />
+    <PackageReference Include="GraphQL.MicrosoftDI" Version="4.5.0" />
+    <PackageReference Include="GraphQL.SystemReactive" Version="4.5.0" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="4.5.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>

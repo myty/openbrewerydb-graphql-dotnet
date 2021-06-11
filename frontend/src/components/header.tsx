@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useAutocompleteLazyQuery } from "../graphql/autogenerate/hooks";
+import { useAutocompleteQuery as useQuery } from "../graphql/autogenerate/hooks";
 import { AutocompleteTextbox } from "./autocomplete-textbox";
 
 interface HeaderProps {
@@ -21,23 +21,22 @@ const Header = ({ title }: HeaderProps) => {
     const navigate = useNavigate();
 
     const [searchText, setSearchText] = useState("");
-    const [
-        getAutocompleteResults,
-        { data, loading, error },
-    ] = useAutocompleteLazyQuery();
+    const [result] = useQuery({
+        variables: { search: searchText },
+        pause: searchText == null,
+    });
 
     const onAutocompleteTextChange = (text: string) => {
         setSearchText(text);
-        getAutocompleteResults({ variables: { search: text } });
     };
 
     const autoCompleteResults: Brewery[] =
         (searchText?.length ?? 0) >= 1 &&
-        !loading &&
-        !error &&
-        (data?.breweries?.edges?.length ?? 0) >= 1
-            ? data?.breweries?.edges?.map((b) => {
-                  return b.node as Brewery;
+        !result.fetching &&
+        !result.error &&
+        (result.data?.breweries?.edges?.length ?? 0) >= 1
+            ? result.data?.breweries?.edges?.map((b) => {
+                  return b?.node as Brewery;
               }) ?? []
             : [];
 
@@ -45,7 +44,7 @@ const Header = ({ title }: HeaderProps) => {
         return (
             <a
                 className="block w-full px-3 py-1 text-left border-t"
-                href={`/breweries/${brewery.brewery_id}`}>
+                href={`/breweries/${brewery.external_id}`}>
                 <div className="font-bold">{brewery.name}</div>
                 <div className="text-xs italic text-gray-700">
                     {brewery.city}, {brewery.state}
@@ -63,7 +62,7 @@ const Header = ({ title }: HeaderProps) => {
                     {title}
                 </NavLink>
             </div>
-            <div className="block lg:hidden">
+            {/* <div className="block lg:hidden">
                 <button className="flex items-center px-3 py-2 text-gray-800 border border-gray-800 rounded hover:text-white hover:border-white">
                     <svg
                         className="w-3 h-3 fill-current"
@@ -73,11 +72,11 @@ const Header = ({ title }: HeaderProps) => {
                         <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
                     </svg>
                 </button>
-            </div>
+            </div> */}
             <div className="flex-grow block w-full lg:flex lg:items-center lg:w-auto">
                 <div className="text-sm lg:flex-grow">
                     <MenuLink to="nearby" text="Nearby" />
-                    <MenuLink to="reviews" text="Reviews" />
+                    {/* <MenuLink to="reviews" text="Reviews" /> */}
                     <AutocompleteTextbox
                         className="w-64"
                         onEnter={(text) =>

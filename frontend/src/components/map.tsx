@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import GoogleMapReact, { Coords } from "google-map-react";
 import { Brewery } from "../graphql/autogenerate/schemas";
 
+const defaultApiKey: string = (import.meta.env.VITE_DEFAULT_MAPS_KEY as string) ?? "";
+const apiKey: string = (import.meta.env.VITE_GOOGLE_MAPS_KEY as string) ?? "";
+
 interface BreweryMapProps {
     brewery: Brewery;
 }
@@ -30,10 +33,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
         return <p className="mt-6">Location Not Found</p>;
     }
 
-    if (
-        process.env.REACT_APP_GOOGLE_MAPS_API_KEY ===
-        process.env.REACT_APP_DEFAULT_API_KEY
-    ) {
+    if (apiKey === defaultApiKey) {
         if (warningDismissed) {
             return null;
         }
@@ -44,8 +44,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
                 role="alert">
                 <strong className="font-bold">Google Maps</strong>
                 <span className="block sm:inline">
-                    Update your Google Maps API key in order to have the map be
-                    visible.
+                    Update your Google Maps API key in order to have the map be visible.
                 </span>
                 <button
                     className="absolute top-0 bottom-0 right-0 inline px-4 py-3"
@@ -63,17 +62,16 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
         );
     }
 
-    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY ?? "";
     const { latitude: lat, longitude: lng, name: text } = brewery;
 
     const nearbyBreweries = !brewery.nearby
         ? []
-        : brewery.nearby?.map((nb) => (
+        : brewery.nearby?.items?.map((nb) => (
               <MarkerComponent
                   key={`marker_${nb?.id}`}
                   lat={nb?.latitude}
                   lng={nb?.longitude}
-                  text={nb?.name!}
+                  text={nb?.name ?? "N/A"}
                   primary={false}
               />
           ));
@@ -89,12 +87,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
                 bootstrapURLKeys={{ key: apiKey }}
                 defaultCenter={{ lat, lng }}
                 defaultZoom={15}>
-                <MarkerComponent
-                    lat={lat}
-                    lng={lng}
-                    text={text}
-                    primary={true}
-                />
+                <MarkerComponent lat={lat} lng={lng} text={text} primary={true} />
                 {nearbyBreweries}
             </GoogleMapReact>
         </div>
