@@ -16,6 +16,10 @@ To get started, will need all of the prerequisites installed, then run this from
 
 ### Server (.NET Core)
 
+This is using the latest bits from the graphql-dotnet/relay project and since that is not released on nuget yet, it is being referenced via a git submodules. Make sure you run this before you start on the dotnet portion of the code:
+
+    git submodule update --init --recursive
+
 To start the GraphQL server, run this (The first time this runs, it will download seed data so it may take a few minutes more to get things spun up):
 
     yarn db:start
