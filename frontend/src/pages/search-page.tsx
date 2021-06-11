@@ -4,7 +4,7 @@ import { HeadingOne } from "../components/heading-1";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useSearchQuery } from "../services/search-breweries-query";
+import { useSearchBreweries } from "../services/use-search-breweries";
 import { useSearchParams } from "react-router-dom";
 
 export const SearchPage = () => {
@@ -12,8 +12,14 @@ export const SearchPage = () => {
 
     const searchTerm = params.get("q") ?? "";
 
-    const { breweries, error, loading, hasMore, loadMore, totalResults } =
-        useSearchQuery(searchTerm);
+    const {
+        breweries,
+        error,
+        loading,
+        hasMore,
+        loadMore,
+        totalResults,
+    } = useSearchBreweries(searchTerm);
 
     if (loading) return <Loading />;
     if (error) return <p>Error :(</p>;

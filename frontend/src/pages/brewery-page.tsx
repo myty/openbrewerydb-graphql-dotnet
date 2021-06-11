@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useBreweryByExternalIdQuery } from "../graphql/autogenerate/hooks";
 import { Brewery } from "../graphql/autogenerate/schemas";
 import { Card } from "../components/card";
+import { ExternalLinkIcon } from "@heroicons/react/solid";
 
 const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
     const [markedAsFavorite, setMarkedAsFavorite] = useState(false);
@@ -45,7 +46,7 @@ const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
                         rel="noopener noreferrer"
                         target="_blank">
                         {`${brewery.website_url}`}
-                        <ExternalLink size={14} className="inline" />
+                        <ExternalLinkIcon className="inline h-14 w-14" />
                     </a>
                 )}
                 <p className="text-base text-gray-700">{`${breweryAddress}`}</p>
@@ -92,14 +93,14 @@ const NearbyBreweries = ({ breweries }: { breweries?: Brewery[] }) => {
 export const BreweryPage = () => {
     const { external_id } = useParams();
 
-    const { loading, error, data } = useBreweryByExternalIdQuery({
+    const [result] = useBreweryByExternalIdQuery({
         variables: { external_id },
     });
 
-    if (loading) return <Loading />;
-    if (error) return <p>Error :(</p>;
+    if (result.fetching) return <Loading />;
+    if (result.error) return <p>Error :(</p>;
 
-    const brewery: Brewery = data?.brewery as Brewery;
+    const brewery: Brewery = result.data?.brewery as Brewery;
 
     if (!brewery) {
         return (
