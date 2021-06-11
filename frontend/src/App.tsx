@@ -5,24 +5,26 @@ import { HomePage } from "./pages/home-page";
 import { BreweryPage } from "./pages/brewery-page";
 import { NearbyPage } from "./pages/nearby-page";
 import { SearchPage } from "./pages/search-page";
-import { createClient, Provider } from "urql";
+import { createClient, dedupExchange, fetchExchange, Provider } from "urql";
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { relayPagination } from "@urql/exchange-graphcache/extras";
 
 const httpLink = "https://localhost:5001/api/graphql";
 const wsLink = "wss://localhost:5001/api/graphql";
 
-const cache = cacheExchange({
-    resolvers: {
-        Query: {
-            breweries: relayPagination(),
-            nearbyBreweries: relayPagination(),
-        },
-    },
-});
-
 const client = createClient({
-    // exchanges: [cache],
+    exchanges: [
+        dedupExchange,
+        cacheExchange({
+            resolvers: {
+                Query: {
+                    breweries: relayPagination(),
+                    nearbyBreweries: relayPagination(),
+                },
+            },
+        }),
+        fetchExchange,
+    ],
     url: httpLink,
 });
 

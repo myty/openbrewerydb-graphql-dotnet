@@ -58,7 +58,7 @@ namespace OpenBreweryDB.Schema.Types
                 .Name("postal_code")
                 .Description("The state of the brewery");
 
-            Field(t => t.State)
+            Field(t => t.State, nullable: true)
                 .Name("state")
                 .Description("The state of the brewery");
 

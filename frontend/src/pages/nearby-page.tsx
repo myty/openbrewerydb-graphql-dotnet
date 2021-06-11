@@ -23,7 +23,7 @@ export const NearbyPage = () => {
         });
     }, []);
 
-    if (loading || breweries.length === 0) return <Loading />;
+    if (loading && breweries.length === 0) return <Loading />;
     if (error) return <p>Error :(</p>;
 
     return (

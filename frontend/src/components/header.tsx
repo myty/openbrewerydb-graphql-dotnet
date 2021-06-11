@@ -62,7 +62,7 @@ const Header = ({ title }: HeaderProps) => {
                     {title}
                 </NavLink>
             </div>
-            <div className="block lg:hidden">
+            {/* <div className="block lg:hidden">
                 <button className="flex items-center px-3 py-2 text-gray-800 border border-gray-800 rounded hover:text-white hover:border-white">
                     <svg
                         className="w-3 h-3 fill-current"
@@ -72,11 +72,11 @@ const Header = ({ title }: HeaderProps) => {
                         <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
                     </svg>
                 </button>
-            </div>
+            </div> */}
             <div className="flex-grow block w-full lg:flex lg:items-center lg:w-auto">
                 <div className="text-sm lg:flex-grow">
                     <MenuLink to="nearby" text="Nearby" />
-                    <MenuLink to="reviews" text="Reviews" />
+                    {/* <MenuLink to="reviews" text="Reviews" /> */}
                     <AutocompleteTextbox
                         className="w-64"
                         onEnter={(text) =>

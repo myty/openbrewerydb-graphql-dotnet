@@ -1,6 +1,6 @@
 import { Brewery, BreweryEdge } from "../graphql/autogenerate/schemas";
 import { useNearbyBreweriesQuery as useQuery } from "../graphql/autogenerate/hooks";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CombinedError } from "urql";
 
 interface UseNearbyBreweriesHookResult {
@@ -22,9 +22,11 @@ export const useNearbyBreweries = (
     options?: UseNearbyBreweriesOptions,
 ): UseNearbyBreweriesHookResult => {
     const { latitude, longitude } = options ?? {};
-    const [cursor, setCursor] = useState<string>();
 
-    const [result] = useQuery({
+    const [cursor, setCursor] = useState<string>();
+    const [breweries, setBreweries] = useState<Array<Brewery>>([]);
+
+    const [{ data, error, fetching: loading }] = useQuery({
         variables: {
             cursor,
             latitude: latitude ?? 0,
@@ -34,14 +36,9 @@ export const useNearbyBreweries = (
     });
 
     const endCursor = useMemo<string | undefined | null>(
-        () => result.data?.breweries?.pageInfo.endCursor,
-        [result],
+        () => data?.breweries?.pageInfo.endCursor,
+        [data],
     );
-
-    const breweries: Brewery[] =
-        result.data?.breweries?.edges
-            ?.filter((b): b is BreweryValueEdge => b?.node != null)
-            ?.map((edge) => edge.node) ?? [];
 
     const loadMore = useCallback(() => {
         if (endCursor != null) {
@@ -49,16 +46,28 @@ export const useNearbyBreweries = (
         }
     }, [endCursor]);
 
-    const hasMore = useMemo(
-        () => result.data?.breweries?.pageInfo?.hasNextPage ?? false,
-        [result],
-    );
+    const hasMore = useMemo(() => data?.breweries?.pageInfo?.hasNextPage ?? false, [
+        data,
+    ]);
+
+    useEffect(() => {
+        const nextBreweries: Array<Brewery> =
+            data?.breweries?.edges
+                ?.filter((b): b is BreweryValueEdge => b?.node != null)
+                ?.map((edge) => edge.node) ?? [];
+
+        setBreweries(
+            (prev): Array<Brewery> => {
+                return [...prev, ...nextBreweries.slice(prev.length)];
+            },
+        );
+    }, [data]);
 
     return {
         breweries,
-        error: result.error,
+        error,
         hasMore,
-        loading: result.fetching,
+        loading,
         loadMore,
     };
 };

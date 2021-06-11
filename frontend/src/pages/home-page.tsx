@@ -9,7 +9,7 @@ import { useBreweries } from "../hooks/use-breweries";
 export const HomePage = () => {
     const { breweries, error, loading, hasMore, loadMore } = useBreweries();
 
-    if (loading) return <Loading />;
+    if (loading && breweries.length < 1) return <Loading />;
     if (error) return <p>Error :(</p>;
 
     if (breweries.length === 0) {

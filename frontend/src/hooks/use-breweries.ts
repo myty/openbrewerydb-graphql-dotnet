@@ -1,6 +1,6 @@
 import { Brewery, BreweryEdge } from "../graphql/autogenerate/schemas";
 import { useBreweriesQuery as useQuery } from "../graphql/autogenerate/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useMemo } from "react";
 
@@ -8,16 +8,13 @@ type BreweryValueEdge = Required<BreweryEdge> & { node: Brewery };
 
 export const useBreweries = () => {
     const [cursor, setCursor] = useState<string>();
-    const [result] = useQuery({ variables: { cursor } });
+    const [breweries, setBreweries] = useState<Array<Brewery>>([]);
 
-    const breweries: Brewery[] =
-        result.data?.breweries?.edges
-            ?.filter((b): b is BreweryValueEdge => b?.node != null)
-            ?.map((edge) => edge.node) ?? [];
+    const [{ data, error, fetching: loading }] = useQuery({ variables: { cursor } });
 
     const endCursor = useMemo<string | undefined | null>(
-        () => result.data?.breweries?.pageInfo.endCursor,
-        [result],
+        () => data?.breweries?.pageInfo.endCursor,
+        [data],
     );
 
     const loadMore = useCallback(() => {
@@ -26,16 +23,28 @@ export const useBreweries = () => {
         }
     }, [endCursor]);
 
-    const hasMore = useMemo(
-        () => result.data?.breweries?.pageInfo?.hasNextPage ?? false,
-        [result],
-    );
+    const hasMore = useMemo(() => data?.breweries?.pageInfo?.hasNextPage ?? false, [
+        data,
+    ]);
+
+    useEffect(() => {
+        const nextBreweries: Array<Brewery> =
+            data?.breweries?.edges
+                ?.filter((b): b is BreweryValueEdge => b?.node != null)
+                ?.map((edge) => edge.node) ?? [];
+
+        setBreweries(
+            (prev): Array<Brewery> => {
+                return [...prev, ...nextBreweries.slice(prev.length)];
+            },
+        );
+    }, [data]);
 
     return {
         breweries,
-        error: result.error,
+        error,
         hasMore,
-        loading: result.fetching,
+        loading,
         loadMore,
     };
 };
