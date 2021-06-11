@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useCallback, useMemo } from "react";
 
 export interface ModalProps {
@@ -11,8 +13,8 @@ export interface ModalProps {
 export const Modal = ({
     actionButtonText = "Submit",
     children,
-    onAction = () => {},
-    onClose = () => {},
+    onAction,
+    onClose,
     showModal = false,
     title,
 }: React.PropsWithChildren<ModalProps>) => {
@@ -22,10 +24,10 @@ export const Modal = ({
             const isEscape = evt.key === "Escape" || evt.key === "Esc";
 
             if (isEscape && showModal) {
-                onClose();
+                onClose?.();
             }
         },
-        [onClose, showModal]
+        [onClose, showModal],
     );
 
     useEffect(() => {
@@ -45,7 +47,7 @@ export const Modal = ({
 
     const showClassName = useMemo(
         () => (!showModal ? "opacity-0 pointer-events-none" : ""),
-        [showModal]
+        [showModal],
     );
 
     const focusableTabIndex = useMemo(() => (!showModal ? -1 : 0), [showModal]);

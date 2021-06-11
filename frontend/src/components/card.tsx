@@ -7,8 +7,7 @@ export const Card: React.FC<HTMLAttributes<HTMLDivElement>> = ({
     ...args
 }) => {
     const divClasses =
-        "max-w-sm overflow-hidden border border-gray-300 rounded shadow-lg " +
-        className;
+        "max-w-sm overflow-hidden border border-gray-300 rounded shadow-lg " + className;
 
     return (
         <div className={divClasses} {...args}>

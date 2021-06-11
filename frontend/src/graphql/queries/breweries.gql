@@ -1,6 +1,6 @@
 # List breweries
 query Breweries($cursor: String) {
-    breweries(first: 25, after: $cursor) @connection(key: "default_breweries") {
+    breweries(first: 25, after: $cursor) {
         totalCount
         pageInfo {
             startCursor

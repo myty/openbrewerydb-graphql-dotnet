@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useAutocompleteLazyQuery } from "../graphql/autogenerate/hooks";
+import { useAutocompleteQuery as useQuery } from "../graphql/autogenerate/hooks";
 import { AutocompleteTextbox } from "./autocomplete-textbox";
 
 interface HeaderProps {
@@ -21,22 +21,21 @@ const Header = ({ title }: HeaderProps) => {
     const navigate = useNavigate();
 
     const [searchText, setSearchText] = useState("");
-    const [
-        getAutocompleteResults,
-        { data, loading, error },
-    ] = useAutocompleteLazyQuery();
+    const [result] = useQuery({
+        variables: { search: searchText },
+        pause: searchText == null,
+    });
 
     const onAutocompleteTextChange = (text: string) => {
         setSearchText(text);
-        getAutocompleteResults({ variables: { search: text } });
     };
 
     const autoCompleteResults: Brewery[] =
         (searchText?.length ?? 0) >= 1 &&
-        !loading &&
-        !error &&
-        (data?.breweries?.edges?.length ?? 0) >= 1
-            ? data?.breweries?.edges?.map((b) => {
+        !result.fetching &&
+        !result.error &&
+        (result.data?.breweries?.edges?.length ?? 0) >= 1
+            ? result.data?.breweries?.edges?.map((b) => {
                   return b?.node as Brewery;
               }) ?? []
             : [];

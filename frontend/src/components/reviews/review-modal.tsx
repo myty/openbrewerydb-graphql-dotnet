@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useEffect, useState } from "react";
 import { Card } from "../card";
 import { Modal, ModalProps } from "../modal";
@@ -77,8 +78,8 @@ export const BreweryReviewList = ({
 
     return (
         <>
-            {reviews.map((r) => (
-                <div>
+            {reviews.map((r, i) => (
+                <div key={i}>
                     {r?.subject}
                     <br />
                     {r?.body}

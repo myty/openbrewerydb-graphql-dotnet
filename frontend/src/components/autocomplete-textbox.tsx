@@ -10,11 +10,9 @@ interface AutocompleteTextboxProps<T = any> {
     renderResultOption: (option: T) => React.ReactNode;
 }
 
-export const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<
-    Brewery
->> = ({
+export const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<Brewery>> = ({
     className,
-    onEnter = () => {},
+    onEnter,
     onTextChange,
     results,
     renderResultOption,
@@ -38,7 +36,7 @@ export const AutocompleteTextbox: React.FC<AutocompleteTextboxProps<
 
     const onKeyPressCapture = (evt: React.KeyboardEvent<HTMLElement>) => {
         if (evt.key === "Enter") {
-            onEnter(searchText);
+            onEnter?.(searchText);
             changeText();
         }
     };

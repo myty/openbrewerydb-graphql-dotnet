@@ -44,8 +44,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
                 role="alert">
                 <strong className="font-bold">Google Maps</strong>
                 <span className="block sm:inline">
-                    Update your Google Maps API key in order to have the map be
-                    visible.
+                    Update your Google Maps API key in order to have the map be visible.
                 </span>
                 <button
                     className="absolute top-0 bottom-0 right-0 inline px-4 py-3"
@@ -73,7 +72,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
                   key={`marker_${nb?.id}`}
                   lat={nb?.latitude}
                   lng={nb?.longitude}
-                  text={nb?.name!}
+                  text={nb?.name ?? "N/A"}
                   primary={false}
               />
           ));
@@ -89,12 +88,7 @@ export const BreweryMap = ({ brewery }: BreweryMapProps) => {
                 bootstrapURLKeys={{ key: apiKey }}
                 defaultCenter={{ lat, lng }}
                 defaultZoom={15}>
-                <MarkerComponent
-                    lat={lat}
-                    lng={lng}
-                    text={text}
-                    primary={true}
-                />
+                <MarkerComponent lat={lat} lng={lng} text={text} primary={true} />
                 {nearbyBreweries}
             </GoogleMapReact>
         </div>

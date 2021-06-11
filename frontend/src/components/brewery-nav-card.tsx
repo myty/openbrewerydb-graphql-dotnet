@@ -9,13 +9,7 @@ interface BreweryNavCardProps {
     showDistanceFromPosition?: boolean;
 }
 
-const DistanceFromPosition = ({
-    from,
-    to,
-}: {
-    from?: Position;
-    to: Brewery;
-}) => {
+const DistanceFromPosition = ({ from, to }: { from?: Position; to: Brewery }) => {
     if (
         from?.lat == null ||
         from?.lng == null ||
@@ -35,8 +29,8 @@ const DistanceFromPosition = ({
             {
                 latitude: to.latitude,
                 longitude: to.longitude,
-            }
-        ) * 0.00062137
+            },
+        ) * 0.00062137,
     );
 
     return (
