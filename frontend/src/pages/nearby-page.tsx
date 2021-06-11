@@ -3,7 +3,7 @@ import { Loading } from "../components/loading";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useNearbyBreweries } from "../services/use-nearby-breweries";
+import { useNearbyBreweries } from "../hooks/use-nearby-breweries";
 import { Position } from "google-map-react";
 
 export const NearbyPage = () => {

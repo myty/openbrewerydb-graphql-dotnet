@@ -4,7 +4,7 @@ import { HeadingOne } from "../components/heading-1";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useBreweries } from "../services/use-breweries";
+import { useBreweries } from "../hooks/use-breweries";
 
 export const HomePage = () => {
     const { breweries, error, loading, hasMore, loadMore } = useBreweries();

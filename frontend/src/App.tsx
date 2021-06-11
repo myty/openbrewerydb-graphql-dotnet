@@ -22,7 +22,7 @@ const cache = cacheExchange({
 });
 
 const client = createClient({
-    exchanges: [cache],
+    // exchanges: [cache],
     url: httpLink,
 });
 

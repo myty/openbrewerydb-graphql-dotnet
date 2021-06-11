@@ -46,7 +46,7 @@ const BreweryCard = ({ brewery }: { brewery: Brewery }) => {
                         rel="noopener noreferrer"
                         target="_blank">
                         {`${brewery.website_url}`}
-                        <ExternalLinkIcon className="inline h-14 w-14" />
+                        <ExternalLinkIcon className="inline w-4 h-4 pb-1 ml-1" />
                     </a>
                 )}
                 <p className="text-base text-gray-700">{`${breweryAddress}`}</p>

@@ -4,7 +4,7 @@ import { HeadingOne } from "../components/heading-1";
 import InfiniteScroll from "react-infinite-scroller";
 import { BreweryNavCard } from "../components/brewery-nav-card";
 import { Brewery } from "../graphql/autogenerate/schemas";
-import { useSearchBreweries } from "../services/use-search-breweries";
+import { useSearchBreweries } from "../hooks/use-search-breweries";
 import { useSearchParams } from "react-router-dom";
 
 export const SearchPage = () => {
