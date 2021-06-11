@@ -7,7 +7,7 @@ var currentWorkingDirectory = path.join(__dirname, "..");
 const dockerOptions = new Options(
     /* machineName */ undefined,
     /* currentWorkingDirectory */ currentWorkingDirectory,
-    /* echo*/ false
+    /* echo*/ false,
 );
 
 const docker = new Docker(dockerOptions);
@@ -24,7 +24,7 @@ const runSqlDockerContainer = async (): Promise<void> => {
     const dockerContainer = await findDockerContainer(containerName);
     if (dockerContainer == null) {
         await docker.command(
-            `run --name ${containerName} -e ACCEPT_EULA=Y -e SA_PASSWORD=passw0rd! -p 9433:1433 -v sqlvolume:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2019-latest`
+            `run --name ${containerName} -e ACCEPT_EULA=Y -e SA_PASSWORD=passw0rd! -p 9433:1433 -v sqlvolume:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2019-latest`,
         );
     }
 };
