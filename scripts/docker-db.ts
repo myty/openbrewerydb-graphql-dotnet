@@ -7,12 +7,12 @@ var currentWorkingDirectory = path.join(__dirname, "..");
 const dockerOptions = new Options(
     /* machineName */ undefined,
     /* currentWorkingDirectory */ currentWorkingDirectory,
-    /* echo*/ false,
+    /* echo*/ true,
 );
 
 const docker = new Docker(dockerOptions);
 
-const containerName = "sql-test-db";
+const DEFAULT_CONTAINER_NAME = "openbrewerydb-sql-db";
 
 const findDockerContainer = async (name: string) => {
     const data = await docker.command("ps");
@@ -20,7 +20,7 @@ const findDockerContainer = async (name: string) => {
     return containerList.find((c) => c.names === name);
 };
 
-const runSqlDockerContainer = async (): Promise<void> => {
+const runSqlDockerContainer = async (containerName: string): Promise<void> => {
     const dockerContainer = await findDockerContainer(containerName);
     if (dockerContainer == null) {
         await docker.command(
@@ -29,7 +29,7 @@ const runSqlDockerContainer = async (): Promise<void> => {
     }
 };
 
-const shutdownSqlDockerContainer = async (): Promise<void> => {
+const shutdownSqlDockerContainer = async (containerName: string): Promise<void> => {
     const foundContainer = await findDockerContainer(containerName);
 
     if (foundContainer != null) {
@@ -40,18 +40,23 @@ const shutdownSqlDockerContainer = async (): Promise<void> => {
 
 program
     .command("db")
+    .option(
+        "-n, --container-name",
+        `Container name (defaults to ${DEFAULT_CONTAINER_NAME})`,
+        DEFAULT_CONTAINER_NAME,
+    )
     .option("-s, --start", "Starts the database container")
     .option("-t, --stop", "Starts the database container")
     .action(async (cmdObj) => {
         if (cmdObj.start) {
             console.log("Starting docker container...");
-            await runSqlDockerContainer();
+            await runSqlDockerContainer(cmdObj.containerName);
             return;
         }
 
         if (cmdObj.stop) {
             console.log("Shutting down docker container...");
-            await shutdownSqlDockerContainer();
+            await shutdownSqlDockerContainer(cmdObj.containerName);
         }
     });
 

@@ -17,8 +17,8 @@
     "version": "0.3.0",
     "scripts": {
         "db": "dotnet ef --project ./dotnet/OpenBreweryDB.Data/ --startup-project ./dotnet/OpenBreweryDB.API/ database",
-        "db:start": "npx ts-node ./scripts/docker-db.ts db -s",
-        "db:stop": "npx ts-node ./scripts/docker-db.ts db -t",
+        "db:start": "npx ts-node ./scripts/docker-db.ts db -s -n openbrewerydb-sql-db",
+        "db:stop": "npx ts-node ./scripts/docker-db.ts db -t -n openbrewerydb-sql-db",
         "dotnet": "cd ./dotnet/OpenBreweryDB.API && dotnet watch run",
         "dotnet:build": "dotnet build ./dotnet/openbrewerydb-qraphql-sharp.sln",
         "dotnet:clean": "dotnet clean ./dotnet/openbrewerydb-qraphql-sharp.sln",
@@ -28,7 +28,7 @@
         "dotnet:update": "cd ./dotnet && dotnet outdated -u",
         "frontend": "cd ./frontend && yarn run start",
         "install-all": "yarn install && cd ./frontend && yarn install && cd ..",
-        "setup": "git config core.hooksPath .githooks && dotnet tool install dotnet-format --local && yarn install-all"
+        "setup": "git config core.hooksPath .githooks && yarn dotnet:restore && dotnet tool install dotnet-format --local && yarn install-all"
     },
     "volta": {
         "node": "14.17.0"
