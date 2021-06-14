@@ -1,7 +1,7 @@
 import { Docker, Options } from "docker-cli-js";
 import path from "path";
 import { program } from "commander";
-import { grep } from "shelljs";
+import shell, { grep } from "shelljs";
 
 var currentWorkingDirectory = path.join(__dirname, "..");
 
@@ -42,6 +42,20 @@ const runSqlDockerContainer = async (containerName: string): Promise<void> => {
         // const logs = await docker.command(`logs ${containerName}`);
         // grep
     }
+};
+
+const waitForLogs = (containerName: string, logPattern: string): Promise<void> => {
+    return new Promise<void>((resolve) => {
+        const containerLog = () => {
+            shell.exec(`docker logs ${containerName}`);
+        };
+
+        setInterval(() => {
+            if (true) {
+                resolve();
+            }
+        }, 1000);
+    });
 };
 
 const shutdownSqlDockerContainer = async (containerName: string): Promise<void> => {
