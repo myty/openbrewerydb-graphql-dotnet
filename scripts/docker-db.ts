@@ -1,7 +1,9 @@
 import { Docker, Options } from "docker-cli-js";
 import path from "path";
 import { program } from "commander";
-import shell, { grep } from "shelljs";
+import { ChildProcess, exec, spawn } from "child_process";
+import { SIGINT, SIGQUIT, SIGTERM } from "constants";
+// import { exec} from "shelljs";
 
 var currentWorkingDirectory = path.join(__dirname, "..");
 
@@ -27,35 +29,32 @@ const runSqlDockerContainer = async (containerName: string): Promise<void> => {
         await docker.command(
             `run --name ${containerName} -e ACCEPT_EULA=Y -e SA_PASSWORD=passw0rd! -p 9433:1433 -v sqlvolume:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2019-latest`,
         );
-
-        // TODO - DUPLICATE THE FOLLOWING
-        /*
-            #!/bin/bash
-
-            while ! docker logs container | grep -q "[services.d] done.";
-            do
-                sleep 1
-                echo "working..."
-            done
-        */
-
-        // const logs = await docker.command(`logs ${containerName}`);
-        // grep
+        await waitForLogs(containerName, /Server is listening on(.*)/);
     }
 };
 
-const waitForLogs = (containerName: string, logPattern: string): Promise<void> => {
-    return new Promise<void>((resolve) => {
-        const containerLog = () => {
-            shell.exec(`docker logs ${containerName}`);
-        };
+const waitForLogs = async (containerName: string, logPattern: RegExp): Promise<void> => {
+    try {
+        const containerLogs = spawn("docker", ["logs", containerName, "-f"], {
+            detached: true,
+            shell: false,
+        });
 
-        setInterval(() => {
-            if (true) {
-                resolve();
-            }
-        }, 1000);
-    });
+        await new Promise<void>((resolve) => {
+            containerLogs.stdout?.on("data", (chunk: string) => {
+                const matches = logPattern.exec(chunk) ?? [];
+                if (matches.length > 0) {
+                    resolve();
+                }
+            });
+        });
+
+        console.log(`**** Matched on '${logPattern.source}' ****`);
+
+        process.kill(-containerLogs.pid);
+    } catch (error) {
+        console.error(error);
+    }
 };
 
 const shutdownSqlDockerContainer = async (containerName: string): Promise<void> => {
