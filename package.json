@@ -4,7 +4,6 @@
     "devDependencies": {
         "@types/cross-spawn": "^6.0.2",
         "@types/node": "^14.17.3",
-        "@types/shelljs": "^0.8.8",
         "commander": "^6.2.1",
         "docker-cli-js": "^2.8.0",
         "nodemon": "^2.0.7",
