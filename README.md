@@ -10,23 +10,21 @@ This project is a learning tool and playground for ideas and concepts around Gra
 
 ## Getting Started
 
-To get started, will need all of the prerequisites installed, then run this from the command line:
+This is using the latest bits from the graphql-dotnet/relay project and since that is not released on nuget yet, it is being referenced via a git submodules. Make sure you run this before you start on the dotnet portion of the code:
+
+    git submodule update --init --recursive
+
+To get started, all of the prerequisites will need to be installed; and then run this from the command line:
 
     yarn setup
 
 ### Server (.NET Core)
 
-This is using the latest bits from the graphql-dotnet/relay project and since that is not released on nuget yet, it is being referenced via a git submodules. Make sure you run this before you start on the dotnet portion of the code:
-
-    git submodule update --init --recursive
-
-To start the GraphQL server, run this (The first time this runs, it will download seed data so it may take a few minutes more to get things spun up):
-
-    yarn db:start
-
-For the time being, wait 10-15 seconds to allow the SQL instance to boot up and get into a ready state. Once SQL is ready, you can then run
+To start the GraphQL server, run:
 
     yarn dotnet
+
+The first time this runs, it will download a SQL docker container, start it, and finally download seed data. Keep all of these inital steps in mind, since it will most liklet take a few minutes to get things spun up) _(Also, if you are running on Windows, make sure Docker is set for Linux containers)_
 
 Once you see `Application started. Press Ctrl+C to shut down.`, go to this url, https://localhost:5001/api/graphql and play around with the GraphQL data and schema. It is using the Altair UI.
 
