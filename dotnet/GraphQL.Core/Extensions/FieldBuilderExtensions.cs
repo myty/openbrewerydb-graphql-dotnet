@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using AndcultureCode.CSharp.Core.Interfaces;
-using GraphQL;
 using GraphQL.Builders;
 using GraphQL.MicrosoftDI;
 using Microsoft.Extensions.DependencyInjection;
 using Entities = AndcultureCode.CSharp.Core.Models.Entities;
 
-namespace OpenBreweryDB.Schema
+namespace GraphQL.Core.Extensions
 {
     public static class FieldBuilderExtensions
     {

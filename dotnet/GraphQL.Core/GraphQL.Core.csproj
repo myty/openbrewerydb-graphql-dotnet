@@ -2,16 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>GraphQL.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenBreweryDB.Data\OpenBreweryDB.Data.csproj" />
-    <ProjectReference Include="..\OpenBreweryDB.Core\OpenBreweryDB.Core.csproj" />
-    <ProjectReference Include="..\GraphQL.Core\GraphQL.Core.csproj" />
     <ProjectReference Include="..\..\graphql-dotnet\relay\src\GraphQL.Relay\GraphQL.Relay.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AndcultureCode.CSharp.Core" Version="0.9.0" />
     <PackageReference Include="GraphQL" Version="4.5.0" />
     <PackageReference Include="GraphQL.DataLoader" Version="4.5.0" />
     <PackageReference Include="GraphQL.MicrosoftDI" Version="4.5.0" />

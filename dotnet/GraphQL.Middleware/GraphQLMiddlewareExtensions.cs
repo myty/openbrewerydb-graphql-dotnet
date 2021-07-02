@@ -1,12 +1,6 @@
-using System;
-using GraphQL;
-using GraphQL.DataLoader;
-using GraphQL.Instrumentation;
-using GraphQL.SystemTextJson;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace OpenBreweryDB.API.GraphQL
+namespace GraphQL.Middleware
 {
     public static class GraphQLMiddlewareExtensions
     {

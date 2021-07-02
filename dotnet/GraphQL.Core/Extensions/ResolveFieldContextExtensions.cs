@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace GraphQL
+namespace GraphQL.Core.Extensions
 {
     public static class ResolveFieldContextExtensions
     {

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using AndcultureCode.CSharp.Core.Enumerations;
 using AndcultureCode.CSharp.Core.Interfaces;
 using AndcultureCode.CSharp.Core.Models.Errors;
 using AndcultureCode.CSharp.Extensions;
 using GraphQL;
 using GraphQL.Builders;
+using GraphQL.Core.Extensions;
 using OpenBreweryDB.Core.Conductors;
 using OpenBreweryDB.Core.Conductors.Breweries.Interfaces;
 using OpenBreweryDB.Data.Models;
@@ -68,6 +68,7 @@ namespace OpenBreweryDB.Schema.Resolvers
 
             if (latitude.HasValue && longitude.HasValue)
             {
+                var id = GetBreweryId(context);
                 var within = context.GetArgument("within", 25);
 
                 return _breweryConductor
@@ -75,12 +76,23 @@ namespace OpenBreweryDB.Schema.Resolvers
                         latitude.Value,
                         longitude.Value,
                         within)
+                    .Filter(b => id == null || b.Id != id.Value)
                     .Include(
                         nameof(Brewery.BreweryTags),
                         context.ContainsField("tag_list"));
             }
 
             return new Result<IQueryable<Brewery>>(Enumerable.Empty<Brewery>().AsQueryable());
+        }
+
+        private long? GetBreweryId(IResolveFieldContext context)
+        {
+            if (context is IResolveConnectionContext<Brewery> breweryContext)
+            {
+                return breweryContext.Source.Id;
+            }
+
+            return default;
         }
 
         private decimal? GetLatitude(IResolveFieldContext context)

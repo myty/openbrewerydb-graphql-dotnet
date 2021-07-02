@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GraphQL;
+using GraphQL.Core.Extensions;
 using GraphQL.DataLoader;
 using GraphQL.Relay.Types;
 using GraphQL.Types;

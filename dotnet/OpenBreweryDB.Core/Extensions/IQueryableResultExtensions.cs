@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using AndcultureCode.CSharp.Core.Models.Errors;
 using Microsoft.EntityFrameworkCore;
 using Entities = AndcultureCode.CSharp.Core.Models.Entities;
@@ -24,6 +26,21 @@ namespace AndcultureCode.CSharp.Core.Interfaces
             transformedResult.ResultObject = result.ResultObject.FirstOrDefault();
 
             return transformedResult;
+        }
+
+        public static IResult<IQueryable<T>> Filter<T>(
+            this IResult<IQueryable<T>> result,
+            Expression<Func<T, bool>> filter)
+            where T : Entities.Entity
+        {
+            if (result.HasErrors)
+            {
+                return result;
+            }
+
+            result.ResultObject = result.ResultObject.Where(filter);
+
+            return result;
         }
 
         public static IResult<IQueryable<T>> Include<T>(

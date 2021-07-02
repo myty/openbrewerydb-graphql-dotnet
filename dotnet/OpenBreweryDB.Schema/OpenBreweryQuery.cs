@@ -1,3 +1,4 @@
+using GraphQL.Core.Extensions;
 using GraphQL.Relay.Types;
 using GraphQL.Types;
 using OpenBreweryDB.Data.Models;

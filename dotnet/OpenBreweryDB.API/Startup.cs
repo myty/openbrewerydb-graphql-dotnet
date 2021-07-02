@@ -1,3 +1,4 @@
+using GraphQL.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
-using OpenBreweryDB.API.GraphQL;
 using OpenBreweryDB.Data;
 
 namespace OpenBreweryDB.API

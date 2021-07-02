@@ -31,6 +31,6 @@
         "setup": "git config core.hooksPath .githooks && yarn dotnet:restore && dotnet tool install dotnet-format --local && yarn install-all"
     },
     "volta": {
-        "node": "14.17.0"
+        "node": "14.17.2"
     }
 }

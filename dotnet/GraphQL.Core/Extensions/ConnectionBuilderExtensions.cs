@@ -9,7 +9,7 @@ using GraphQL.Types.Relay.DataObjects;
 using Microsoft.Extensions.DependencyInjection;
 using Entities = AndcultureCode.CSharp.Core.Models.Entities;
 
-namespace OpenBreweryDB.Schema
+namespace GraphQL.Core.Extensions
 {
     public static class ConnectionBuilderExtensions
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
-namespace OpenBreweryDB.API.GraphQL
+namespace GraphQL.Middleware
 {
     public class GraphQLOptions
     {

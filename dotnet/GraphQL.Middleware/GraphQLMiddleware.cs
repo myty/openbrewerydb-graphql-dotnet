@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using GraphQL;
 using GraphQL.DataLoader;
 using GraphQL.SystemTextJson;
 using GraphQL.Types;
@@ -15,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace OpenBreweryDB.API.GraphQL
+namespace GraphQL.Middleware
 {
     public class GraphQLMiddleware
     {
@@ -56,7 +55,6 @@ namespace OpenBreweryDB.API.GraphQL
         private async Task ExecuteAsync(HttpContext context, ISchema schema, IServiceProvider serviceProvider)
         {
             var request = await context.Request.Body.FromJsonAsync<GraphQLRequest>();
-            // var request = await Deserialize(context);
 
             var isDevelopment = serviceProvider.GetRequiredService<IWebHostEnvironment>()?.IsDevelopment() ?? true;
 
