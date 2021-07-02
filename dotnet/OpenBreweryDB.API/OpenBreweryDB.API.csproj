@@ -27,7 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GraphQL.Middleware\GraphQL.Middleware.csproj" />
+    <ProjectReference Include="..\GraphQL.AspNetCore.DependencyInjection\GraphQL.AspNetCore.DependencyInjection.csproj" />
+    <ProjectReference Include="..\GraphQL.AspNetCore.Middleware\GraphQL.AspNetCore.Middleware.csproj" />
     <ProjectReference Include="..\OpenBreweryDB.Core\OpenBreweryDB.Core.csproj" />
     <ProjectReference Include="..\OpenBreweryDB.Data\OpenBreweryDB.Data.csproj" />
     <ProjectReference Include="..\OpenBreweryDB.Schema\OpenBreweryDB.Schema.csproj" />

@@ -8,6 +8,7 @@
     <ProjectReference Include="..\OpenBreweryDB.Data\OpenBreweryDB.Data.csproj" />
     <ProjectReference Include="..\OpenBreweryDB.Core\OpenBreweryDB.Core.csproj" />
     <ProjectReference Include="..\GraphQL.Core\GraphQL.Core.csproj" />
+    <ProjectReference Include="..\GraphQL.AspNetCore.DependencyInjection\GraphQL.AspNetCore.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\graphql-dotnet\relay\src\GraphQL.Relay\GraphQL.Relay.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-namespace GraphQL.Middleware
+namespace GraphQL.AspNetCore.Middleware
 {
     public class GraphQLRequest
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
-namespace GraphQL.Middleware
+namespace GraphQL.AspNetCore.Middleware
 {
     public class GraphQLOptions
     {

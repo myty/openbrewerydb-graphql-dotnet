@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace GraphQL.Middleware
+namespace GraphQL.AspNetCore.Middleware
 {
     public class GraphQLMiddleware
     {

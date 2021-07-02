@@ -1,21 +1,19 @@
 using GraphQL;
+using GraphQL.AspNetCore.DependencyInjection;
 using GraphQL.DataLoader;
 using GraphQL.Instrumentation;
 using GraphQL.MicrosoftDI;
 using GraphQL.SystemTextJson;
 using GraphQL.Types;
-using OpenBreweryDB.Schema;
+using Microsoft.Extensions.DependencyInjection;
 using OpenBreweryDB.Schema.Dataloaders;
 using OpenBreweryDB.Schema.Resolvers;
-using OpenBreweryDB.Schema.Types;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace OpenBreweryDB.Schema
 {
-    public static class OpenBrewerySchemaExtensions
+    public class OpenBrewerySchemaConfiguration : IGraphQLSchemaConfiguration
     {
-        public static IServiceCollection AddOpenBrewerySchema(
-            this IServiceCollection services,
-            bool isDevelopment = true)
+        public IServiceCollection Configure(IServiceCollection services, bool includeInstrumentation = false)
         {
             var baseServices = services
                 .AddSingleton<ISchema, OpenBrewerySchema>(services =>
@@ -29,12 +27,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<BreweryDataloader>()
                 .AddScoped<TagDataloader>();
 
-            if (isDevelopment)
+            if (includeInstrumentation)
             {
                 baseServices = baseServices.AddSingleton<IFieldMiddleware, InstrumentFieldsMiddleware>();
             }
 
             return baseServices;
+
         }
     }
 }

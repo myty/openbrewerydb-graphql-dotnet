@@ -1,4 +1,5 @@
-using GraphQL.Middleware;
+using GraphQL.AspNetCore.DependencyInjection;
+using GraphQL.AspNetCore.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenBreweryDB.API.Extensions;
 using OpenBreweryDB.Data;
+using OpenBreweryDB.Schema;
 
 namespace OpenBreweryDB.API
 {
@@ -49,7 +51,9 @@ namespace OpenBreweryDB.API
                 });
             });
 
-            services.AddOpenBrewerySchema(Environment.IsDevelopment());
+            services.AddGraphQLSchemaConfiguration<OpenBrewerySchemaConfiguration>(
+                includeInstrumentation: Environment.IsDevelopment()
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

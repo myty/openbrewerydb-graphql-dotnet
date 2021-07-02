@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace GraphQL.Middleware
+namespace GraphQL.AspNetCore.Middleware
 {
     public static class GraphQLMiddlewareExtensions
     {
